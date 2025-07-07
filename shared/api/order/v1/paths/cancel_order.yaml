@@ -1,0 +1,38 @@
+delete:
+  tags:
+    - Order
+  summary: Cancel an order by UUID
+  operationId: cancelOrder
+
+  parameters:
+    - name: order_uuid
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    '200':
+      description: Order successfully cancelled
+      content:
+        application/json:
+          schema:
+            type: object
+    '404':
+      description: Order not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/not_found_error.yaml
+    '409':
+      description: Order conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/conflict_error.yaml
+    '500': 
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml

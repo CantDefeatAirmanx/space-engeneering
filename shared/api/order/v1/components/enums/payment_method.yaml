@@ -1,0 +1,21 @@
+type: integer
+description: |
+  Способ оплаты заказа.
+enum:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+x-enum-varnames:
+  - UNKNOWN
+  - CARD
+  - SBP
+  - CREDIT_CARD
+  - INVESTOR_MONEY
+x-enum-descriptions:
+  - Неизвестный способ
+  - Банковская карта
+  - Система быстрых платежей
+  - Кредитная карта
+  - Деньги инвестора
