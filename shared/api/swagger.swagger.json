@@ -1,0 +1,72 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Package payment.v1 содержит API для работы с оплатой заказа",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "PaymentService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1PayOrderResponse": {
+      "type": "object",
+      "properties": {
+        "transaction_uuid": {
+          "type": "string",
+          "title": "transaction_uuid идентификатор транзакции"
+        }
+      },
+      "title": "PayOrderResponse описывает ответ на запрос на оплату заказа"
+    },
+    "v1PaymentMethod": {
+      "type": "string",
+      "enum": [
+        "PAYMENT_METHOD_UNKNOWN_UNSPECIFIED",
+        "PAYMENT_METHOD_CARD",
+        "PAYMENT_METHOD_SPB",
+        "PAYMENT_METHOD_CREDIT_CARD",
+        "PAYMENT_METHOD_INVESTOR_MONEY"
+      ],
+      "default": "PAYMENT_METHOD_UNKNOWN_UNSPECIFIED",
+      "description": "- PAYMENT_METHOD_UNKNOWN_UNSPECIFIED: PAYMENT_METHOD_UNKNOWN_UNSPECIFIED неизвестный метод оплаты\n - PAYMENT_METHOD_CARD: PAYMENT_METHOD_CARD оплата картой\n - PAYMENT_METHOD_SPB: PAYMENT_METHOD_SPB оплата через СПБ\n - PAYMENT_METHOD_CREDIT_CARD: PAYMENT_METHOD_CREDIT_CARD оплата кредитной картой\n - PAYMENT_METHOD_INVESTOR_MONEY: PAYMENT_METHOD_INVESTOR_MONEY оплата инвестиционными деньгами",
+      "title": "PaymentMethod описывает метод оплаты"
+    }
+  }
+}

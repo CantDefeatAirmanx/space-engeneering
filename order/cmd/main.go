@@ -69,8 +69,7 @@ func main() {
 	defer cancel()
 
 	if err := httpServer.Shutdown(ctx); err != nil {
-		cancel()
-		log.Fatalf("Ошибка при завершении работы сервера: %v", err)
+		log.Printf("Ошибка при завершении работы сервера: %v", err)
 	}
 	log.Println("Сервер остановлен")
 }
@@ -152,7 +151,6 @@ func (o *OrderHandler) PayOrder(
 		TransactionUUID: &transactionUUID,
 		PaymentMethod:   &req.PaymentMethod,
 	})
-
 	if err != nil {
 		return &order_v1.InternalServerError{
 			Code:    http.StatusInternalServerError,
