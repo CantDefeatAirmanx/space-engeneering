@@ -6,6 +6,36 @@ import (
 	"github.com/go-faster/errors"
 )
 
+// Ref: #/components/schemas/bad_request_error
+type BadRequestError struct {
+	// HTTP-код ошибки.
+	Code int `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *BadRequestError) GetCode() int {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *BadRequestError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *BadRequestError) SetCode(val int) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *BadRequestError) SetMessage(val string) {
+	s.Message = val
+}
+
+func (*BadRequestError) createOrderRes() {}
+
 type CancelOrderOK struct{}
 
 func (*CancelOrderOK) cancelOrderRes() {}
@@ -449,23 +479,64 @@ func (*PayOrderResponseBody) payOrderRes() {}
 
 // Способ оплаты заказа.
 // Ref: #/components/schemas/payment_method
-type PaymentMethod int
+type PaymentMethod string
 
 const (
-	PaymentMethod0 PaymentMethod = 0
-	PaymentMethod1 PaymentMethod = 1
-	PaymentMethod2 PaymentMethod = 2
-	PaymentMethod3 PaymentMethod = 3
-	PaymentMethod4 PaymentMethod = 4
+	PaymentMethodUNKNOWN       PaymentMethod = "UNKNOWN"
+	PaymentMethodCARD          PaymentMethod = "CARD"
+	PaymentMethodSBP           PaymentMethod = "SBP"
+	PaymentMethodCREDITCARD    PaymentMethod = "CREDIT_CARD"
+	PaymentMethodINVESTORMONEY PaymentMethod = "INVESTOR_MONEY"
 )
 
 // AllValues returns all PaymentMethod values.
 func (PaymentMethod) AllValues() []PaymentMethod {
 	return []PaymentMethod{
-		PaymentMethod0,
-		PaymentMethod1,
-		PaymentMethod2,
-		PaymentMethod3,
-		PaymentMethod4,
+		PaymentMethodUNKNOWN,
+		PaymentMethodCARD,
+		PaymentMethodSBP,
+		PaymentMethodCREDITCARD,
+		PaymentMethodINVESTORMONEY,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s PaymentMethod) MarshalText() ([]byte, error) {
+	switch s {
+	case PaymentMethodUNKNOWN:
+		return []byte(s), nil
+	case PaymentMethodCARD:
+		return []byte(s), nil
+	case PaymentMethodSBP:
+		return []byte(s), nil
+	case PaymentMethodCREDITCARD:
+		return []byte(s), nil
+	case PaymentMethodINVESTORMONEY:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *PaymentMethod) UnmarshalText(data []byte) error {
+	switch PaymentMethod(data) {
+	case PaymentMethodUNKNOWN:
+		*s = PaymentMethodUNKNOWN
+		return nil
+	case PaymentMethodCARD:
+		*s = PaymentMethodCARD
+		return nil
+	case PaymentMethodSBP:
+		*s = PaymentMethodSBP
+		return nil
+	case PaymentMethodCREDITCARD:
+		*s = PaymentMethodCREDITCARD
+		return nil
+	case PaymentMethodINVESTORMONEY:
+		*s = PaymentMethodINVESTORMONEY
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
 	}
 }

@@ -20,7 +20,6 @@
 # env file
 .env
 /.idea
-/.vscode
 /.cursor
 .DS_Store
 
@@ -28,3 +27,4 @@
 node_modules
 /shared/api/bundles/
 /coverage/
+/build/

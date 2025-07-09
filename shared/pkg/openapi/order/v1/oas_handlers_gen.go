@@ -34,13 +34,13 @@ func (c *codeRecorder) WriteHeader(status int) {
 //
 // Cancel an order by UUID.
 //
-// DELETE /api/v1/orders/{order_uuid}/cancel
+// POST /api/v1/orders/{order_uuid}/cancel
 func (s *Server) handleCancelOrderRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("cancelOrder"),
-		semconv.HTTPRequestMethodKey.String("DELETE"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/api/v1/orders/{order_uuid}/cancel"),
 	}
 

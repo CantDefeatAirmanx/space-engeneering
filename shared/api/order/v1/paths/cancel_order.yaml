@@ -1,4 +1,4 @@
-delete:
+post:
   tags:
     - Order
   summary: Cancel an order by UUID

@@ -121,12 +121,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						if len(elem) == 0 {
 							// Leaf node.
 							switch r.Method {
-							case "DELETE":
+							case "POST":
 								s.handleCancelOrderRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
-								s.notAllowed(w, r, "DELETE")
+								s.notAllowed(w, r, "POST")
 							}
 
 							return
@@ -318,7 +318,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						if len(elem) == 0 {
 							// Leaf node.
 							switch method {
-							case "DELETE":
+							case "POST":
 								r.name = CancelOrderOperation
 								r.summary = "Cancel an order by UUID"
 								r.operationID = "cancelOrder"

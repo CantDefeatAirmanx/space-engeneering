@@ -32,7 +32,7 @@ type Invoker interface {
 	//
 	// Cancel an order by UUID.
 	//
-	// DELETE /api/v1/orders/{order_uuid}/cancel
+	// POST /api/v1/orders/{order_uuid}/cancel
 	CancelOrder(ctx context.Context, params CancelOrderParams) (CancelOrderRes, error)
 	// CreateOrder invokes createOrder operation.
 	//
@@ -101,7 +101,7 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 //
 // Cancel an order by UUID.
 //
-// DELETE /api/v1/orders/{order_uuid}/cancel
+// POST /api/v1/orders/{order_uuid}/cancel
 func (c *Client) CancelOrder(ctx context.Context, params CancelOrderParams) (CancelOrderRes, error) {
 	res, err := c.sendCancelOrder(ctx, params)
 	return res, err
@@ -110,7 +110,7 @@ func (c *Client) CancelOrder(ctx context.Context, params CancelOrderParams) (Can
 func (c *Client) sendCancelOrder(ctx context.Context, params CancelOrderParams) (res CancelOrderRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("cancelOrder"),
-		semconv.HTTPRequestMethodKey.String("DELETE"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/api/v1/orders/{order_uuid}/cancel"),
 	}
 
@@ -167,7 +167,7 @@ func (c *Client) sendCancelOrder(ctx context.Context, params CancelOrderParams) 
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "DELETE", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}

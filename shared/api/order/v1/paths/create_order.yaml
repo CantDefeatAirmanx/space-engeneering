@@ -18,6 +18,12 @@ post:
         application/json:
           schema:
             $ref: ../components/requests/create_order/create_order_response_body.yaml
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/bad_request_error.yaml
     '500': 
       description: Internal server error
       content:
