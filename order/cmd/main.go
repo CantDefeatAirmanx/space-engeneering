@@ -11,13 +11,19 @@ import (
 	"slices"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
+	"google.golang.org/grpc/credentials/insecure"
 
-	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server"
+	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
+	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
 const (
@@ -25,12 +31,39 @@ const (
 )
 
 func main() {
+	ctx := context.Background()
 	orderRepo := NewOrderRepositoryMap()
-	orderHandler := NewOrderHandler(orderRepo)
 
-	orderServer, err := order_v1.NewServer(orderHandler)
-	if err != nil {
-		log.Fatalf("Ошибка при создании сервера заказов: %v", err)
+	paymentGrpcClient, pErr := grpc.NewClient(
+		configs_order.PaymentServiceURL,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	inventoryGrpcClient, iErr := grpc.NewClient(
+		configs_order.InventoryServiceURL,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if pErr != nil || iErr != nil {
+		log.Fatalf("Ошибка при создании клиента gRPC: %v", pErr)
+	}
+	paymentGrpcClient.Connect()
+	inventoryGrpcClient.Connect()
+
+	for _, con := range []*grpc.ClientConn{paymentGrpcClient, inventoryGrpcClient} {
+		con.WaitForStateChange(ctx, connectivity.Ready)
+	}
+
+	paymentClient := payment_v1.NewPaymentServiceClient(paymentGrpcClient)
+	inventoryClient := inventory_v1.NewInventoryServiceClient(inventoryGrpcClient)
+
+	orderHandler := NewOrderHandler(NewOrderHandlerParams{
+		OrderRepo:       orderRepo,
+		PaymentClient:   paymentClient,
+		InventoryClient: inventoryClient,
+	})
+
+	orderServer, pErr := order_v1.NewServer(orderHandler)
+	if pErr != nil {
+		log.Fatalf("Ошибка при создании сервера заказов: %v", pErr)
 	}
 
 	router := chi.NewRouter()
@@ -38,7 +71,7 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.StripSlashes)
-	router.Use(middleware.Timeout(configs_order.Timeout))
+	// router.Use(middleware.Timeout(configs_order.Timeout))
 
 	router.Mount("/", orderServer)
 
@@ -63,7 +96,7 @@ func main() {
 	log.Println("Завершение работы сервера")
 
 	ctx, cancel := context.WithTimeout(
-		context.Background(),
+		ctx,
 		configs_order.ShutdownTimeout,
 	)
 	defer cancel()
@@ -71,25 +104,81 @@ func main() {
 	if err := httpServer.Shutdown(ctx); err != nil {
 		log.Printf("Ошибка при завершении работы сервера: %v", err)
 	}
+
+	// Закрываем gRPC соединения
+	if err := paymentGrpcClient.Close(); err != nil {
+		log.Printf("Ошибка при закрытии payment gRPC клиента: %v", err)
+	}
+	if err := inventoryGrpcClient.Close(); err != nil {
+		log.Printf("Ошибка при закрытии inventory gRPC клиента: %v", err)
+	}
+
 	log.Println("Сервер остановлен")
 }
 
 type OrderHandler struct {
-	repo OrderRepository
+	repo            OrderRepository
+	paymentClient   payment_v1.PaymentServiceClient
+	inventoryClient inventory_v1.InventoryServiceClient
 }
 
-func NewOrderHandler(orderRepo OrderRepository) *OrderHandler {
+type NewOrderHandlerParams struct {
+	OrderRepo       OrderRepository
+	PaymentClient   payment_v1.PaymentServiceClient
+	InventoryClient inventory_v1.InventoryServiceClient
+}
+
+func NewOrderHandler(params NewOrderHandlerParams) *OrderHandler {
 	return &OrderHandler{
-		repo: orderRepo,
+		repo:            params.OrderRepo,
+		paymentClient:   params.PaymentClient,
+		inventoryClient: params.InventoryClient,
 	}
 }
 
-func (o *OrderHandler) CreateOrder(
+func (handler *OrderHandler) CreateOrder(
 	ctx context.Context,
 	req *order_v1.CreateOrderRequestBody,
 ) (order_v1.CreateOrderRes, error) {
-	// ToDo: integration with inventory service
 	orderUUID := uuid.New().String()
+
+	inventoryCtx, cancel := context.WithTimeout(
+		ctx,
+		10*time.Second,
+	)
+	defer cancel()
+
+	orderParts, err := handler.inventoryClient.ListParts(
+		inventoryCtx,
+		&inventory_v1.ListPartsRequest{
+			Filter: &inventory_v1.PartsFilter{
+				Uuids: req.PartUuids,
+			},
+		},
+	)
+	if err != nil {
+		return &order_v1.InternalServerError{
+			Code:    http.StatusInternalServerError,
+			Message: internalServerErrorMessage,
+		}, nil
+	}
+
+	if len(orderParts.Parts) != len(req.PartUuids) {
+		notAvailableParts := []string{}
+		for _, uuid := range req.PartUuids {
+			for _, orderPart := range orderParts.Parts {
+				if orderPart.Uuid == uuid {
+					break
+				}
+				notAvailableParts = append(notAvailableParts, uuid)
+			}
+		}
+
+		return &order_v1.BadRequestError{
+			Code:    http.StatusBadRequest,
+			Message: fmt.Sprintf("Not all parts are available: %v", notAvailableParts),
+		}, nil
+	}
 
 	order := order_v1.Order{
 		OrderUUID:  orderUUID,
@@ -99,7 +188,7 @@ func (o *OrderHandler) CreateOrder(
 		Status:     order_v1.OrderStatusPENDINGPAYMENT,
 	}
 
-	err := o.repo.CreateOrder(ctx, order)
+	err = handler.repo.CreateOrder(ctx, order)
 	if err != nil {
 		return &order_v1.InternalServerError{
 			Code:    http.StatusInternalServerError,
@@ -113,11 +202,11 @@ func (o *OrderHandler) CreateOrder(
 	}, nil
 }
 
-func (o *OrderHandler) GetOrder(
+func (handler *OrderHandler) GetOrder(
 	ctx context.Context,
 	params order_v1.GetOrderParams,
 ) (order_v1.GetOrderRes, error) {
-	order, err := o.repo.GetOrder(ctx, params.OrderUUID)
+	order, err := handler.repo.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
 		return &order_v1.NotFoundError{
 			Code:    http.StatusNotFound,
@@ -128,25 +217,59 @@ func (o *OrderHandler) GetOrder(
 	return &order, nil
 }
 
-func (o *OrderHandler) PayOrder(
+var paymentMethodMap = map[order_v1.PaymentMethod]payment_v1.PaymentMethod{
+	order_v1.PaymentMethodUNKNOWN:       payment_v1.PaymentMethod_PAYMENT_METHOD_UNKNOWN_UNSPECIFIED,
+	order_v1.PaymentMethodCARD:          payment_v1.PaymentMethod_PAYMENT_METHOD_CARD,
+	order_v1.PaymentMethodSBP:           payment_v1.PaymentMethod_PAYMENT_METHOD_SPB,
+	order_v1.PaymentMethodCREDITCARD:    payment_v1.PaymentMethod_PAYMENT_METHOD_CREDIT_CARD,
+	order_v1.PaymentMethodINVESTORMONEY: payment_v1.PaymentMethod_PAYMENT_METHOD_INVESTOR_MONEY,
+}
+
+func (handler *OrderHandler) PayOrder(
 	ctx context.Context,
 	req *order_v1.PayOrderRequestBody,
 	params order_v1.PayOrderParams,
 ) (order_v1.PayOrderRes, error) {
-	_, err := o.repo.GetOrder(ctx, params.OrderUUID)
+	order, err := handler.repo.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
 		return &order_v1.NotFoundError{
 			Code:    http.StatusNotFound,
 			Message: fmt.Sprintf("Order %s not found", params.OrderUUID),
 		}, nil
 	}
-	// ToDo: integration with payment service
 
-	transactionUUID := uuid.New().String()
+	if order.Status != order_v1.OrderStatusPENDINGPAYMENT {
+		return &order_v1.ConflictError{
+			Code:    http.StatusConflict,
+			Message: fmt.Sprintf("Order %s is not in pending payment status", params.OrderUUID),
+		}, nil
+	}
 
+	payDeadline, cancel := context.WithTimeout(
+		ctx,
+		10*time.Second,
+	)
+	defer cancel()
+
+	paymentResponse, err := handler.paymentClient.PayOrder(
+		payDeadline,
+		&payment_v1.PayOrderRequest{
+			OrderUuid:     params.OrderUUID,
+			PaymentMethod: paymentMethodMap[req.PaymentMethod],
+			UserUuid:      order.UserUUID,
+		},
+	)
+	if err != nil {
+		return &order_v1.InternalServerError{
+			Code:    http.StatusInternalServerError,
+			Message: internalServerErrorMessage,
+		}, nil
+	}
+
+	transactionUUID := paymentResponse.TransactionUuid
 	newStatus := order_v1.OrderStatusPAID
 
-	err = o.repo.UpdateOrderFields(ctx, params.OrderUUID, OrderUpdate{
+	err = handler.repo.UpdateOrderFields(ctx, params.OrderUUID, OrderUpdate{
 		Status:          &newStatus,
 		TransactionUUID: &transactionUUID,
 		PaymentMethod:   &req.PaymentMethod,
@@ -183,11 +306,11 @@ var conflictStatuses = []conflictStatus{
 	},
 }
 
-func (o *OrderHandler) CancelOrder(
+func (handler *OrderHandler) CancelOrder(
 	ctx context.Context,
 	params order_v1.CancelOrderParams,
 ) (order_v1.CancelOrderRes, error) {
-	order, err := o.repo.GetOrder(ctx, params.OrderUUID)
+	order, err := handler.repo.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
 		return &order_v1.NotFoundError{
 			Code:    http.StatusNotFound,
@@ -207,7 +330,7 @@ func (o *OrderHandler) CancelOrder(
 	}
 
 	newStatus := order_v1.OrderStatusCANCELLED
-	err = o.repo.UpdateOrderFields(ctx, params.OrderUUID, OrderUpdate{
+	err = handler.repo.UpdateOrderFields(ctx, params.OrderUUID, OrderUpdate{
 		Status: &newStatus,
 	})
 	if err != nil {
