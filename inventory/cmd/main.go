@@ -19,15 +19,15 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/mocks"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/test_data"
 	configs_inventory "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/inventory"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
 func main() {
 	inventoryRepo := NewInventoryRepositoryMap()
-	for idx := range mocks.InitialParts {
-		err := inventoryRepo.CreatePart(context.Background(), &mocks.InitialParts[idx])
+	for idx := range test_data.InitialParts {
+		err := inventoryRepo.CreatePart(context.Background(), &test_data.InitialParts[idx])
 		if err != nil {
 			log.Printf("Failed to create part: %v", err)
 		}
@@ -104,7 +104,7 @@ func (s *InventoryServiceServer) ListParts(
 ) (*inventory_v1.ListPartsResponse, error) {
 	parts, err := s.repository.ListAllParts(ctx, req.Filter)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to list parts. %v", err)
+		return nil, status.Errorf(codes.NotFound, "failed to list parts. %v", err)
 	}
 
 	return &inventory_v1.ListPartsResponse{
