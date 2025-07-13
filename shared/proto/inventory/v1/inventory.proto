@@ -49,6 +49,8 @@ message PartsFilter {
   repeated string manufacturer_countries = 3;
   // tags теги детали
   repeated string tags = 4;
+  // names названия деталей
+  repeated string names = 5;
 }
 
 // Part описывает деталь

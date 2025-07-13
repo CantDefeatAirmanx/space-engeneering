@@ -20,7 +20,6 @@
 # env file
 .env
 /.idea
-/.cursor
 .DS_Store
 
 /bin

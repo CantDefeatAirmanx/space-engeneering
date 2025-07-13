@@ -89,8 +89,9 @@ func (s *InventoryServiceServer) GetPart(
 	req *inventory_v1.GetPartRequest,
 ) (*inventory_v1.GetPartResponse, error) {
 	part, err := s.repository.GetPart(ctx, req.Uuid)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "part %s not found. %v", req.Uuid, err)
+
+	if err != nil && errors.Is(err, &ErrInventoryPartNotFound{}) {
+		return nil, status.Errorf(codes.NotFound, "Part %s is not found. %v", req.Uuid, err)
 	}
 
 	return &inventory_v1.GetPartResponse{
@@ -104,7 +105,8 @@ func (s *InventoryServiceServer) ListParts(
 ) (*inventory_v1.ListPartsResponse, error) {
 	parts, err := s.repository.ListAllParts(ctx, req.Filter)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "failed to list parts. %v", err)
+		log.Printf("Error listing parts: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to list parts")
 	}
 
 	return &inventory_v1.ListPartsResponse{
@@ -123,13 +125,17 @@ type InventoryRepositoryMap struct {
 	parts map[string]*inventory_v1.Part
 }
 
-type PartNotFoundError struct {
+type ErrInventoryPartNotFound struct {
 	PartID string
 	Err    error
 }
 
-func (e *PartNotFoundError) Error() string {
+func (e *ErrInventoryPartNotFound) Error() string {
 	return fmt.Sprintf("part %s not found. %v", e.PartID, e.Err)
+}
+
+func (e *ErrInventoryPartNotFound) Unwrap() error {
+	return e.Err
 }
 
 func NewInventoryRepositoryMap() *InventoryRepositoryMap {
@@ -156,7 +162,7 @@ func (r *InventoryRepositoryMap) GetPart(ctx context.Context, partID string) (*i
 
 	part, ok := r.parts[partID]
 	if !ok {
-		return nil, &PartNotFoundError{
+		return nil, &ErrInventoryPartNotFound{
 			PartID: partID,
 			Err:    errors.New("not in map repo"),
 		}
@@ -177,6 +183,7 @@ func (r *InventoryRepositoryMap) ListAllParts(
 		createFilterByManufacturerCountries(filter.ManufacturerCountries),
 		createFilterByTags(filter.Tags),
 		createFilterByUuids(filter.Uuids),
+		createFilterByNames(filter.Names),
 	}
 	parts := make([]*inventory_v1.Part, 0)
 
@@ -238,5 +245,15 @@ func createFilterByUuids(uuids []string) FilterFunc {
 		}
 
 		return slices.Contains(uuids, part.Uuid)
+	}
+}
+
+func createFilterByNames(names []string) FilterFunc {
+	return func(part *inventory_v1.Part) bool {
+		if len(names) == 0 {
+			return true
+		}
+
+		return slices.Contains(names, part.Name)
 	}
 }

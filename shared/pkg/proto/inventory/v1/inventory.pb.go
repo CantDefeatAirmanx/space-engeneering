@@ -279,7 +279,9 @@ type PartsFilter struct {
 	// manufacturer производитель детали
 	ManufacturerCountries []string `protobuf:"bytes,3,rep,name=manufacturer_countries,json=manufacturerCountries,proto3" json:"manufacturer_countries,omitempty"`
 	// tags теги детали
-	Tags          []string `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
+	Tags []string `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
+	// names названия деталей
+	Names         []string `protobuf:"bytes,5,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -338,6 +340,13 @@ func (x *PartsFilter) GetManufacturerCountries() []string {
 func (x *PartsFilter) GetTags() []string {
 	if x != nil {
 		return x.Tags
+	}
+	return nil
+}
+
+func (x *PartsFilter) GetNames() []string {
+	if x != nil {
+		return x.Names
 	}
 	return nil
 }
@@ -891,14 +900,15 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"\x10ListPartsRequest\x121\n" +
 	"\x06filter\x18\x01 \x01(\v2\x19.inventory.v1.PartsFilterR\x06filter\"=\n" +
 	"\x11ListPartsResponse\x12(\n" +
-	"\x05parts\x18\x01 \x03(\v2\x12.inventory.v1.PartR\x05parts\"\xa6\x01\n" +
+	"\x05parts\x18\x01 \x03(\v2\x12.inventory.v1.PartR\x05parts\"\xbc\x01\n" +
 	"\vPartsFilter\x12\x14\n" +
 	"\x05uuids\x18\x01 \x03(\tR\x05uuids\x126\n" +
 	"\n" +
 	"categories\x18\x02 \x03(\x0e2\x16.inventory.v1.CategoryR\n" +
 	"categories\x125\n" +
 	"\x16manufacturer_countries\x18\x03 \x03(\tR\x15manufacturerCountries\x12\x12\n" +
-	"\x04tags\x18\x04 \x03(\tR\x04tags\"\xec\x05\n" +
+	"\x04tags\x18\x04 \x03(\tR\x04tags\x12\x14\n" +
+	"\x05names\x18\x05 \x03(\tR\x05names\"\xec\x05\n" +
 	"\x04Part\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +

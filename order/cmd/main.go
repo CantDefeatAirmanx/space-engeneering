@@ -71,7 +71,7 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.StripSlashes)
-	// router.Use(middleware.Timeout(configs_order.Timeout))
+	router.Use(middleware.Timeout(configs_order.Timeout))
 
 	router.Mount("/", orderServer)
 
@@ -109,6 +109,7 @@ func main() {
 	if err := paymentGrpcClient.Close(); err != nil {
 		log.Printf("Ошибка при закрытии payment gRPC клиента: %v", err)
 	}
+
 	if err := inventoryGrpcClient.Close(); err != nil {
 		log.Printf("Ошибка при закрытии inventory gRPC клиента: %v", err)
 	}
@@ -136,15 +137,23 @@ func NewOrderHandler(params NewOrderHandlerParams) *OrderHandler {
 	}
 }
 
+const inventoryResponseTimeout = 3 * time.Second
+
 func (handler *OrderHandler) CreateOrder(
 	ctx context.Context,
 	req *order_v1.CreateOrderRequestBody,
 ) (order_v1.CreateOrderRes, error) {
-	orderUUID := uuid.New().String()
+	orderUUID, err := uuid.NewV7()
+	if err != nil {
+		return &order_v1.InternalServerError{
+			Message: internalServerErrorMessage,
+			Code:    http.StatusInternalServerError,
+		}, nil
+	}
 
 	inventoryCtx, cancel := context.WithTimeout(
 		ctx,
-		10*time.Second,
+		inventoryResponseTimeout,
 	)
 	defer cancel()
 
@@ -165,12 +174,12 @@ func (handler *OrderHandler) CreateOrder(
 
 	if len(orderParts.Parts) != len(req.PartUuids) {
 		notAvailableParts := []string{}
-		for _, uuid := range req.PartUuids {
+		for _, UUID := range req.PartUuids {
 			for _, orderPart := range orderParts.Parts {
-				if orderPart.Uuid == uuid {
+				if orderPart.Uuid == UUID {
 					break
 				}
-				notAvailableParts = append(notAvailableParts, uuid)
+				notAvailableParts = append(notAvailableParts, UUID)
 			}
 		}
 
@@ -180,11 +189,16 @@ func (handler *OrderHandler) CreateOrder(
 		}, nil
 	}
 
+	var totalPrice float64 = 0
+	for _, part := range orderParts.Parts {
+		totalPrice += part.Price
+	}
+
 	order := order_v1.Order{
-		OrderUUID:  orderUUID,
+		OrderUUID:  orderUUID.String(),
 		UserUUID:   req.UserUUID,
 		PartUuids:  req.PartUuids,
-		TotalPrice: 100,
+		TotalPrice: totalPrice,
 		Status:     order_v1.OrderStatusPENDINGPAYMENT,
 	}
 
@@ -208,9 +222,16 @@ func (handler *OrderHandler) GetOrder(
 ) (order_v1.GetOrderRes, error) {
 	order, err := handler.repo.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
-		return &order_v1.NotFoundError{
-			Code:    http.StatusNotFound,
-			Message: fmt.Sprintf("Order %s not found", params.OrderUUID),
+		if errors.Is(err, &ErrOrderNotFound{}) {
+			return &order_v1.NotFoundError{
+				Code:    http.StatusNotFound,
+				Message: fmt.Sprintf("Ordee %s not found. %v", params.OrderUUID, err),
+			}, nil
+		}
+
+		return &order_v1.InternalServerError{
+			Code:    http.StatusInternalServerError,
+			Message: internalServerErrorMessage,
 		}, nil
 	}
 
@@ -291,21 +312,6 @@ type conflictStatus struct {
 	GetErrMessage func(orderUUID string) string
 }
 
-var conflictStatuses = []conflictStatus{
-	{
-		Value: order_v1.OrderStatusPAID,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already paid", orderUUID)
-		},
-	},
-	{
-		Value: order_v1.OrderStatusCANCELLED,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already cancelled", orderUUID)
-		},
-	},
-}
-
 func (handler *OrderHandler) CancelOrder(
 	ctx context.Context,
 	params order_v1.CancelOrderParams,
@@ -318,14 +324,11 @@ func (handler *OrderHandler) CancelOrder(
 		}, nil
 	}
 
-	conflictIdx := slices.IndexFunc(conflictStatuses, func(c conflictStatus) bool {
-		return c.Value == order.Status
-	})
-
-	if conflictIdx != -1 {
+	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(order)
+	if !isOrderAvailableForCancel {
 		return &order_v1.ConflictError{
 			Code:    http.StatusConflict,
-			Message: conflictStatuses[conflictIdx].GetErrMessage(params.OrderUUID),
+			Message: errMessage,
 		}, nil
 	}
 
@@ -341,6 +344,36 @@ func (handler *OrderHandler) CancelOrder(
 	}
 
 	return &order_v1.CancelOrderOK{}, nil
+}
+
+var conflictStatuses = []conflictStatus{
+	{
+		Value: order_v1.OrderStatusPAID,
+		GetErrMessage: func(orderUUID string) string {
+			return fmt.Sprintf("Order %s already paid", orderUUID)
+		},
+	},
+	{
+		Value: order_v1.OrderStatusCANCELLED,
+		GetErrMessage: func(orderUUID string) string {
+			return fmt.Sprintf("Order %s already cancelled", orderUUID)
+		},
+	},
+}
+
+func getIsOrderAvailableForCancel(order order_v1.Order) (isAvailable bool, errMessage string) {
+	conflictIdx := slices.IndexFunc(conflictStatuses, func(c conflictStatus) bool {
+		return c.Value == order.Status
+	})
+
+	if conflictIdx != -1 {
+		conflictObj := conflictStatuses[conflictIdx]
+		errMessage := conflictObj.GetErrMessage(order.OrderUUID)
+
+		return false, errMessage
+	}
+
+	return true, ""
 }
 
 type OrderUpdate struct {
@@ -368,13 +401,31 @@ func NewOrderRepositoryMap() *OrderRepositoryMap {
 	}
 }
 
+var ErrOrder = errors.New("order error")
+
+type ErrOrderNotFound struct {
+	OrderID string
+	Err     error
+}
+
+func (e *ErrOrderNotFound) Error() string {
+	return fmt.Sprintf("order %s not found. %v", e.OrderID, e.Err)
+}
+
+func (e *ErrOrderNotFound) Unwrap() error {
+	return e.Err
+}
+
 func (o *OrderRepositoryMap) GetOrder(ctx context.Context, orderID string) (order_v1.Order, error) {
 	o.mu.RLock()
 	defer o.mu.RUnlock()
 
 	order, ok := o.orders[orderID]
 	if !ok {
-		return order_v1.Order{}, errors.New("order not found")
+		return order_v1.Order{}, &ErrOrderNotFound{
+			OrderID: orderID,
+			Err:     ErrOrder,
+		}
 	}
 
 	return order, nil
