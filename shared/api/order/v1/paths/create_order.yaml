@@ -1,0 +1,32 @@
+post:
+  tags:
+    - Order
+  summary: Create a new order
+  operationId: createOrder
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/requests/create_order/create_order_request_body.yaml
+
+  responses:
+    '200':
+      description: Order successfully created
+      content:
+        application/json:
+          schema:
+            $ref: ../components/requests/create_order/create_order_response_body.yaml
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/bad_request_error.yaml
+    '500': 
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml

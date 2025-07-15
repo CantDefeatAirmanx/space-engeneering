@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Inventory Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/inventory/cmd/main.go",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug Order Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/order/cmd/main.go",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug Payment Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/payment/cmd/main.go",
+            "cwd": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug All Services (Compound)",
+            "configurations": [
+                "Debug Inventory Service",
+                "Debug Order Service",
+                "Debug Payment Service"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "microservices",
+                "order": 1
+            }
+        }
+    ]
+}

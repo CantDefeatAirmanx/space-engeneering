@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+// Package inventory.v1 содержит API для работы со складом деталей
+package inventory.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/inventory/v1;inventory_v1";
+
+import "google/protobuf/timestamp.proto";
+
+// InventoryService предоставляет API для работы со складом деталей
+service InventoryService {
+  // GetPart проверяет наличие детали на складе и возвращает её или ошибку NotFound
+  rpc GetPart(GetPartRequest) returns (GetPartResponse);
+  // GetParts проверяет наличие деталей на складе и возвращает их или ошибку NotFound
+  rpc ListParts(ListPartsRequest) returns (ListPartsResponse);
+}
+
+// GetPartRequest описывает запрос на получение детали
+message GetPartRequest {
+  // uuid идентификатор детали
+  string uuid = 1;
+}
+
+// GetPartResponse описывает ответ на запрос на получение детали
+message GetPartResponse {
+  // part деталь
+  Part part = 1;
+}
+
+// ListPartsRequest описывает запрос на получение деталей
+message ListPartsRequest {
+  // filter фильтр деталей
+  PartsFilter filter = 1;
+}
+
+// ListPartsResponse описывает ответ на запрос на получение деталей
+message ListPartsResponse {
+  // parts детали
+  repeated Part parts = 1;
+}
+
+// PartsFilter описывает фильтр деталей
+message PartsFilter {
+  // uuids идентификаторы деталей
+  repeated string uuids = 1;
+  // category категория детали
+  repeated Category categories = 2;
+  // manufacturer производитель детали
+  repeated string manufacturer_countries = 3;
+  // tags теги детали
+  repeated string tags = 4;
+  // names названия деталей
+  repeated string names = 5;
+}
+
+// Part описывает деталь
+message Part {
+  // uuid идентификатор детали
+  string uuid = 1;
+  // name название детали
+  string name = 2;
+  // description описание детали
+  string description = 3;
+  // price цена детали
+  double price = 4;
+  // quantity количество деталей
+  int64 stock_quantity = 5;
+  // category категория детали
+  Category category = 6;
+  // dimensions размеры детали
+  Dimensions dimensions = 7;
+  // manufacturer производитель детали
+  Manufacturer manufacturer = 8;
+  // tags теги детали
+  repeated string tags = 9;
+  // created_at дата создания детали
+  google.protobuf.Timestamp created_at = 10;
+  // updated_at дата обновления детали
+  google.protobuf.Timestamp updated_at = 11;
+  // metadata метаданные детали
+  oneof metadata {
+    // metadata_string метаданные детали в формате строки
+    StringMetadata metadata_string = 12;
+    // metadata_double метаданные детали в формате double
+    DoubleMetadata metadata_double = 13;
+    // metadata_int64 метаданные детали в формате int64
+    Int64Metadata metadata_int64 = 14;
+    // metadata_bool метаданные детали в формате bool
+    BoolMetadata metadata_bool = 15;
+  }
+}
+
+// Category описывает категорию детали
+enum Category {
+  // CATEGORY_UNKNOWN_UNSPECIFIED неизвестная категория
+  CATEGORY_UNKNOWN_UNSPECIFIED = 0;
+  // CATEGORY_ENGINE детали для двигателей
+  CATEGORY_ENGINE = 1;
+  // CATEGORY_FUEL детали для топлива
+  CATEGORY_FUEL = 2;
+  // CATEGORY_PORT_HOLE детали для отверстий
+  CATEGORY_PORT_HOLE = 3;
+  // CATEGORY_WING детали для крыльев
+  CATEGORY_WING = 4;
+}
+
+// Dimensions описывает размеры детали
+message Dimensions {
+  // length длина
+  double length = 1;
+  // width ширина
+  double width = 2;
+  // height высота
+  double height = 3;
+  // weight вес
+  double weight = 4;
+}
+
+// Manufacturer описывает производителя детали
+message Manufacturer {
+  // name название производителя
+  string name = 1;
+  // country страна производителя
+  string country = 2;
+  // website URL сайта производителя
+  string website = 3;
+}
+
+// StringMetadata описывает метаданные в формате строки
+message StringMetadata {
+  map<string, string> data = 1;
+}
+
+// DoubleMetadata описывает метаданные в формате double
+message DoubleMetadata {
+  map<string, double> data = 1;
+}
+
+// Int64Metadata описывает метаданные в формате int64
+message Int64Metadata {
+  map<string, int64> data = 1;
+}
+
+// BoolMetadata описывает метаданные в формате bool
+message BoolMetadata {
+  map<string, bool> data = 1;
+}

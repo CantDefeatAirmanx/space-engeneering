@@ -1,0 +1,15 @@
+type: string
+description: |
+  Способ оплаты заказа.
+enum:
+  - UNKNOWN
+  - CARD
+  - SBP
+  - CREDIT_CARD
+  - INVESTOR_MONEY
+x-enum-descriptions:
+  - Неизвестный способ
+  - Банковская карта
+  - Система быстрых платежей
+  - Кредитная карта
+  - Деньги инвестора

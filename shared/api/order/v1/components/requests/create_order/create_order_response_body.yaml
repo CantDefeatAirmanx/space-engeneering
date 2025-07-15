@@ -1,0 +1,11 @@
+type: object
+required:
+  - order_uuid
+  - total_price
+properties:
+  order_uuid:
+    type: string
+    description: UUID заказа
+  total_price:
+    type: number
+    description: Общая стоимость заказа

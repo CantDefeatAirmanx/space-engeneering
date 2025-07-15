@@ -1,0 +1,13 @@
+type: object
+required:
+  - user_uuid
+  - part_uuids
+properties:
+  user_uuid:
+    type: string
+    description: UUID пользователя, оформляющего заказ
+  part_uuids:
+    type: array
+    description: Список UUID деталей, включаемых в заказ
+    items:
+      type: string

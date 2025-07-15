@@ -1,0 +1,43 @@
+post:
+  tags:
+    - Order
+  summary: Pay an order by UUID
+  operationId: payOrder
+  parameters:
+    - name: order_uuid
+      in: path
+      required: true
+      schema:
+        type: string
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/requests/pay_order/pay_order_request_body.yaml
+  responses:
+    '200':
+      description: Order successfully paid
+      content:
+        application/json:
+          schema:
+            $ref: ../components/requests/pay_order/pay_order_response_body.yaml
+    '404':
+      description: Order not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/not_found_error.yaml
+    '409':
+      description: Order conflict
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/conflict_error.yaml
+    '500': 
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
