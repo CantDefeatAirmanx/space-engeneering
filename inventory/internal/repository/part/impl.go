@@ -1,9 +1,10 @@
 package repository_part
 
 import (
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/converter/part"
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	"sync"
+
+	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 
 	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/converter/part"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/model/part"

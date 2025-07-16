@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
-	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/converter/part"
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
+	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

@@ -1,27 +1,27 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"math"
-	"math/rand/v2"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	api_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/api/payment/v1"
+	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 	configs_payment "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/payment"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
 func main() {
-	paymentService := NewPaymentServiceServer()
+	paymentService := service_pay_order.NewPayOrderServiceImpl()
+	api := api_payment_v1.NewApi(api_payment_v1.NewApiParams{
+		PayOrderService: paymentService,
+	})
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", configs_payment.Port))
 	if err != nil {
@@ -37,7 +37,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
-	payment_v1.RegisterPaymentServiceServer(grpcServer, paymentService)
+	payment_v1.RegisterPaymentServiceServer(grpcServer, api)
 
 	go func() {
 		fmt.Println("Payment service started")
@@ -52,38 +52,4 @@ func main() {
 
 	grpcServer.GracefulStop()
 	log.Println("Payment service stopped")
-}
-
-type PaymentServiceServer struct {
-	payment_v1.UnimplementedPaymentServiceServer
-}
-
-func NewPaymentServiceServer() payment_v1.PaymentServiceServer {
-	return &PaymentServiceServer{}
-}
-
-const (
-	maxDelaySeconds = 3
-)
-
-func (s *PaymentServiceServer) PayOrder(
-	ctx context.Context,
-	req *payment_v1.PayOrderRequest,
-) (*payment_v1.PayOrderResponse, error) {
-	fmt.Printf("PayOrder: %+v\n", req.OrderUuid)
-
-	randomDelay := math.Ceil(rand.Float64() * maxDelaySeconds)
-	time.Sleep(time.Duration(randomDelay) * time.Second)
-
-	transactionUUID := uuid.New().String()
-	fmt.Printf("PayOrder: %s, User: %s, Method: %s, Transaction: %s\n",
-		req.OrderUuid,
-		req.UserUuid,
-		req.PaymentMethod,
-		transactionUUID,
-	)
-
-	return &payment_v1.PayOrderResponse{
-		TransactionUuid: transactionUUID,
-	}, nil
 }

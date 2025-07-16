@@ -1,4 +1,4 @@
-package model_converter_part
+package model_part_converter
 
 import (
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
