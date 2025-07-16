@@ -34,11 +34,11 @@ func main() {
 	ctx := context.Background()
 	orderRepo := NewOrderRepositoryMap()
 
-	paymentGrpcClient, pErr := grpc.NewClient(
+	paymentGrpcClient, pErr := grpc.Dial(
 		configs_order.PaymentServiceURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
-	inventoryGrpcClient, iErr := grpc.NewClient(
+	inventoryGrpcClient, iErr := grpc.Dial(
 		configs_order.InventoryServiceURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -111,7 +111,7 @@ func main() {
 	}
 
 	if err := inventoryGrpcClient.Close(); err != nil {
-		log.Printf("Ошибка при закрытии inventory gRPC клиента: %v", err)
+		log.Printf("Ошибка при закрытии part gRPC клиента: %v", err)
 	}
 
 	log.Println("Сервер остановлен")

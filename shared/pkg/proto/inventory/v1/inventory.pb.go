@@ -377,14 +377,7 @@ type Part struct {
 	// updated_at дата обновления детали
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// metadata метаданные детали
-	//
-	// Types that are valid to be assigned to Metadata:
-	//
-	//	*Part_MetadataString
-	//	*Part_MetadataDouble
-	//	*Part_MetadataInt64
-	//	*Part_MetadataBool
-	Metadata      isPart_Metadata `protobuf_oneof:"metadata"`
+	Metadata      map[string]*Value `protobuf:"bytes,12,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -496,80 +489,12 @@ func (x *Part) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Part) GetMetadata() isPart_Metadata {
+func (x *Part) GetMetadata() map[string]*Value {
 	if x != nil {
 		return x.Metadata
 	}
 	return nil
 }
-
-func (x *Part) GetMetadataString() *StringMetadata {
-	if x != nil {
-		if x, ok := x.Metadata.(*Part_MetadataString); ok {
-			return x.MetadataString
-		}
-	}
-	return nil
-}
-
-func (x *Part) GetMetadataDouble() *DoubleMetadata {
-	if x != nil {
-		if x, ok := x.Metadata.(*Part_MetadataDouble); ok {
-			return x.MetadataDouble
-		}
-	}
-	return nil
-}
-
-func (x *Part) GetMetadataInt64() *Int64Metadata {
-	if x != nil {
-		if x, ok := x.Metadata.(*Part_MetadataInt64); ok {
-			return x.MetadataInt64
-		}
-	}
-	return nil
-}
-
-func (x *Part) GetMetadataBool() *BoolMetadata {
-	if x != nil {
-		if x, ok := x.Metadata.(*Part_MetadataBool); ok {
-			return x.MetadataBool
-		}
-	}
-	return nil
-}
-
-type isPart_Metadata interface {
-	isPart_Metadata()
-}
-
-type Part_MetadataString struct {
-	// metadata_string метаданные детали в формате строки
-	MetadataString *StringMetadata `protobuf:"bytes,12,opt,name=metadata_string,json=metadataString,proto3,oneof"`
-}
-
-type Part_MetadataDouble struct {
-	// metadata_double метаданные детали в формате double
-	MetadataDouble *DoubleMetadata `protobuf:"bytes,13,opt,name=metadata_double,json=metadataDouble,proto3,oneof"`
-}
-
-type Part_MetadataInt64 struct {
-	// metadata_int64 метаданные детали в формате int64
-	MetadataInt64 *Int64Metadata `protobuf:"bytes,14,opt,name=metadata_int64,json=metadataInt64,proto3,oneof"`
-}
-
-type Part_MetadataBool struct {
-	// metadata_bool метаданные детали в формате bool
-	MetadataBool *BoolMetadata `protobuf:"bytes,15,opt,name=metadata_bool,json=metadataBool,proto3,oneof"`
-}
-
-func (*Part_MetadataString) isPart_Metadata() {}
-
-func (*Part_MetadataDouble) isPart_Metadata() {}
-
-func (*Part_MetadataInt64) isPart_Metadata() {}
-
-func (*Part_MetadataBool) isPart_Metadata() {}
 
 // Dimensions описывает размеры детали
 type Dimensions struct {
@@ -708,28 +633,34 @@ func (x *Manufacturer) GetWebsite() string {
 	return ""
 }
 
-// StringMetadata описывает метаданные в формате строки
-type StringMetadata struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          map[string]string      `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+// Value описывает значение в метаданных
+type Value struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Value:
+	//
+	//	*Value_StringValue
+	//	*Value_DoubleValue
+	//	*Value_Int64Value
+	//	*Value_BoolValue
+	Value         isValue_Value `protobuf_oneof:"value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *StringMetadata) Reset() {
-	*x = StringMetadata{}
+func (x *Value) Reset() {
+	*x = Value{}
 	mi := &file_inventory_v1_inventory_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *StringMetadata) String() string {
+func (x *Value) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StringMetadata) ProtoMessage() {}
+func (*Value) ProtoMessage() {}
 
-func (x *StringMetadata) ProtoReflect() protoreflect.Message {
+func (x *Value) ProtoReflect() protoreflect.Message {
 	mi := &file_inventory_v1_inventory_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -741,152 +672,85 @@ func (x *StringMetadata) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StringMetadata.ProtoReflect.Descriptor instead.
-func (*StringMetadata) Descriptor() ([]byte, []int) {
+// Deprecated: Use Value.ProtoReflect.Descriptor instead.
+func (*Value) Descriptor() ([]byte, []int) {
 	return file_inventory_v1_inventory_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *StringMetadata) GetData() map[string]string {
+func (x *Value) GetValue() isValue_Value {
 	if x != nil {
-		return x.Data
+		return x.Value
 	}
 	return nil
 }
 
-// DoubleMetadata описывает метаданные в формате double
-type DoubleMetadata struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          map[string]float64     `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DoubleMetadata) Reset() {
-	*x = DoubleMetadata{}
-	mi := &file_inventory_v1_inventory_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DoubleMetadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DoubleMetadata) ProtoMessage() {}
-
-func (x *DoubleMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_v1_inventory_proto_msgTypes[9]
+func (x *Value) GetStringValue() string {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
+		if x, ok := x.Value.(*Value_StringValue); ok {
+			return x.StringValue
 		}
-		return ms
 	}
-	return mi.MessageOf(x)
+	return ""
 }
 
-// Deprecated: Use DoubleMetadata.ProtoReflect.Descriptor instead.
-func (*DoubleMetadata) Descriptor() ([]byte, []int) {
-	return file_inventory_v1_inventory_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *DoubleMetadata) GetData() map[string]float64 {
+func (x *Value) GetDoubleValue() float64 {
 	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// Int64Metadata описывает метаданные в формате int64
-type Int64Metadata struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          map[string]int64       `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Int64Metadata) Reset() {
-	*x = Int64Metadata{}
-	mi := &file_inventory_v1_inventory_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Int64Metadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Int64Metadata) ProtoMessage() {}
-
-func (x *Int64Metadata) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_v1_inventory_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
+		if x, ok := x.Value.(*Value_DoubleValue); ok {
+			return x.DoubleValue
 		}
-		return ms
 	}
-	return mi.MessageOf(x)
+	return 0
 }
 
-// Deprecated: Use Int64Metadata.ProtoReflect.Descriptor instead.
-func (*Int64Metadata) Descriptor() ([]byte, []int) {
-	return file_inventory_v1_inventory_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *Int64Metadata) GetData() map[string]int64 {
+func (x *Value) GetInt64Value() int64 {
 	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// BoolMetadata описывает метаданные в формате bool
-type BoolMetadata struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          map[string]bool        `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BoolMetadata) Reset() {
-	*x = BoolMetadata{}
-	mi := &file_inventory_v1_inventory_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BoolMetadata) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BoolMetadata) ProtoMessage() {}
-
-func (x *BoolMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_v1_inventory_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
+		if x, ok := x.Value.(*Value_Int64Value); ok {
+			return x.Int64Value
 		}
-		return ms
 	}
-	return mi.MessageOf(x)
+	return 0
 }
 
-// Deprecated: Use BoolMetadata.ProtoReflect.Descriptor instead.
-func (*BoolMetadata) Descriptor() ([]byte, []int) {
-	return file_inventory_v1_inventory_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *BoolMetadata) GetData() map[string]bool {
+func (x *Value) GetBoolValue() bool {
 	if x != nil {
-		return x.Data
+		if x, ok := x.Value.(*Value_BoolValue); ok {
+			return x.BoolValue
+		}
 	}
-	return nil
+	return false
 }
+
+type isValue_Value interface {
+	isValue_Value()
+}
+
+type Value_StringValue struct {
+	// string_value строковое значение
+	StringValue string `protobuf:"bytes,1,opt,name=string_value,json=stringValue,proto3,oneof"`
+}
+
+type Value_DoubleValue struct {
+	// double_value значение с плавающей точкой
+	DoubleValue float64 `protobuf:"fixed64,2,opt,name=double_value,json=doubleValue,proto3,oneof"`
+}
+
+type Value_Int64Value struct {
+	// int64_value целочисленное значение
+	Int64Value int64 `protobuf:"varint,3,opt,name=int64_value,json=int64Value,proto3,oneof"`
+}
+
+type Value_BoolValue struct {
+	// bool_value булево значение
+	BoolValue bool `protobuf:"varint,4,opt,name=bool_value,json=boolValue,proto3,oneof"`
+}
+
+func (*Value_StringValue) isValue_Value() {}
+
+func (*Value_DoubleValue) isValue_Value() {}
+
+func (*Value_Int64Value) isValue_Value() {}
+
+func (*Value_BoolValue) isValue_Value() {}
 
 var File_inventory_v1_inventory_proto protoreflect.FileDescriptor
 
@@ -908,7 +772,7 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"categories\x125\n" +
 	"\x16manufacturer_countries\x18\x03 \x03(\tR\x15manufacturerCountries\x12\x12\n" +
 	"\x04tags\x18\x04 \x03(\tR\x04tags\x12\x14\n" +
-	"\x05names\x18\x05 \x03(\tR\x05names\"\xec\x05\n" +
+	"\x05names\x18\x05 \x03(\tR\x05names\"\xd5\x04\n" +
 	"\x04Part\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -925,13 +789,11 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12G\n" +
-	"\x0fmetadata_string\x18\f \x01(\v2\x1c.inventory.v1.StringMetadataH\x00R\x0emetadataString\x12G\n" +
-	"\x0fmetadata_double\x18\r \x01(\v2\x1c.inventory.v1.DoubleMetadataH\x00R\x0emetadataDouble\x12D\n" +
-	"\x0emetadata_int64\x18\x0e \x01(\v2\x1b.inventory.v1.Int64MetadataH\x00R\rmetadataInt64\x12A\n" +
-	"\rmetadata_bool\x18\x0f \x01(\v2\x1a.inventory.v1.BoolMetadataH\x00R\fmetadataBoolB\n" +
-	"\n" +
-	"\bmetadata\"j\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12<\n" +
+	"\bmetadata\x18\f \x03(\v2 .inventory.v1.Part.MetadataEntryR\bmetadata\x1aP\n" +
+	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12)\n" +
+	"\x05value\x18\x02 \x01(\v2\x13.inventory.v1.ValueR\x05value:\x028\x01\"j\n" +
 	"\n" +
 	"Dimensions\x12\x16\n" +
 	"\x06length\x18\x01 \x01(\x01R\x06length\x12\x14\n" +
@@ -941,27 +803,15 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"\fManufacturer\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\acountry\x18\x02 \x01(\tR\acountry\x12\x18\n" +
-	"\awebsite\x18\x03 \x01(\tR\awebsite\"\x85\x01\n" +
-	"\x0eStringMetadata\x12:\n" +
-	"\x04data\x18\x01 \x03(\v2&.inventory.v1.StringMetadata.DataEntryR\x04data\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x85\x01\n" +
-	"\x0eDoubleMetadata\x12:\n" +
-	"\x04data\x18\x01 \x03(\v2&.inventory.v1.DoubleMetadata.DataEntryR\x04data\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\"\x83\x01\n" +
-	"\rInt64Metadata\x129\n" +
-	"\x04data\x18\x01 \x03(\v2%.inventory.v1.Int64Metadata.DataEntryR\x04data\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\x81\x01\n" +
-	"\fBoolMetadata\x128\n" +
-	"\x04data\x18\x01 \x03(\v2$.inventory.v1.BoolMetadata.DataEntryR\x04data\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\bR\x05value:\x028\x01*\x7f\n" +
+	"\awebsite\x18\x03 \x01(\tR\awebsite\"\x9e\x01\n" +
+	"\x05Value\x12#\n" +
+	"\fstring_value\x18\x01 \x01(\tH\x00R\vstringValue\x12#\n" +
+	"\fdouble_value\x18\x02 \x01(\x01H\x00R\vdoubleValue\x12!\n" +
+	"\vint64_value\x18\x03 \x01(\x03H\x00R\n" +
+	"int64Value\x12\x1f\n" +
+	"\n" +
+	"bool_value\x18\x04 \x01(\bH\x00R\tboolValueB\a\n" +
+	"\x05value*\x7f\n" +
 	"\bCategory\x12 \n" +
 	"\x1cCATEGORY_UNKNOWN_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fCATEGORY_ENGINE\x10\x01\x12\x11\n" +
@@ -970,7 +820,7 @@ const file_inventory_v1_inventory_proto_rawDesc = "" +
 	"\rCATEGORY_WING\x10\x042\xa8\x01\n" +
 	"\x10InventoryService\x12F\n" +
 	"\aGetPart\x12\x1c.inventory.v1.GetPartRequest\x1a\x1d.inventory.v1.GetPartResponse\x12L\n" +
-	"\tListParts\x12\x1e.inventory.v1.ListPartsRequest\x1a\x1f.inventory.v1.ListPartsResponseBWZUgithub.com/CantDefeatAirmanx/space-engeneering/shared/proto/inventory/v1;inventory_v1b\x06proto3"
+	"\tListParts\x12\x1e.inventory.v1.ListPartsRequest\x1a\x1f.inventory.v1.ListPartsResponseBRZPgithub.com/CantDefeatAirmanx/space-engeneering/shared/proto/part/v1;inventory_v1b\x06proto3"
 
 var (
 	file_inventory_v1_inventory_proto_rawDescOnce sync.Once
@@ -985,7 +835,7 @@ func file_inventory_v1_inventory_proto_rawDescGZIP() []byte {
 }
 
 var file_inventory_v1_inventory_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_inventory_v1_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_inventory_v1_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_inventory_v1_inventory_proto_goTypes = []any{
 	(Category)(0),                 // 0: inventory.v1.Category
 	(*GetPartRequest)(nil),        // 1: inventory.v1.GetPartRequest
@@ -996,15 +846,9 @@ var file_inventory_v1_inventory_proto_goTypes = []any{
 	(*Part)(nil),                  // 6: inventory.v1.Part
 	(*Dimensions)(nil),            // 7: inventory.v1.Dimensions
 	(*Manufacturer)(nil),          // 8: inventory.v1.Manufacturer
-	(*StringMetadata)(nil),        // 9: inventory.v1.StringMetadata
-	(*DoubleMetadata)(nil),        // 10: inventory.v1.DoubleMetadata
-	(*Int64Metadata)(nil),         // 11: inventory.v1.Int64Metadata
-	(*BoolMetadata)(nil),          // 12: inventory.v1.BoolMetadata
-	nil,                           // 13: inventory.v1.StringMetadata.DataEntry
-	nil,                           // 14: inventory.v1.DoubleMetadata.DataEntry
-	nil,                           // 15: inventory.v1.Int64Metadata.DataEntry
-	nil,                           // 16: inventory.v1.BoolMetadata.DataEntry
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
+	(*Value)(nil),                 // 9: inventory.v1.Value
+	nil,                           // 10: inventory.v1.Part.MetadataEntry
+	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 }
 var file_inventory_v1_inventory_proto_depIdxs = []int32{
 	6,  // 0: inventory.v1.GetPartResponse.part:type_name -> inventory.v1.Part
@@ -1014,25 +858,19 @@ var file_inventory_v1_inventory_proto_depIdxs = []int32{
 	0,  // 4: inventory.v1.Part.category:type_name -> inventory.v1.Category
 	7,  // 5: inventory.v1.Part.dimensions:type_name -> inventory.v1.Dimensions
 	8,  // 6: inventory.v1.Part.manufacturer:type_name -> inventory.v1.Manufacturer
-	17, // 7: inventory.v1.Part.created_at:type_name -> google.protobuf.Timestamp
-	17, // 8: inventory.v1.Part.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 9: inventory.v1.Part.metadata_string:type_name -> inventory.v1.StringMetadata
-	10, // 10: inventory.v1.Part.metadata_double:type_name -> inventory.v1.DoubleMetadata
-	11, // 11: inventory.v1.Part.metadata_int64:type_name -> inventory.v1.Int64Metadata
-	12, // 12: inventory.v1.Part.metadata_bool:type_name -> inventory.v1.BoolMetadata
-	13, // 13: inventory.v1.StringMetadata.data:type_name -> inventory.v1.StringMetadata.DataEntry
-	14, // 14: inventory.v1.DoubleMetadata.data:type_name -> inventory.v1.DoubleMetadata.DataEntry
-	15, // 15: inventory.v1.Int64Metadata.data:type_name -> inventory.v1.Int64Metadata.DataEntry
-	16, // 16: inventory.v1.BoolMetadata.data:type_name -> inventory.v1.BoolMetadata.DataEntry
-	1,  // 17: inventory.v1.InventoryService.GetPart:input_type -> inventory.v1.GetPartRequest
-	3,  // 18: inventory.v1.InventoryService.ListParts:input_type -> inventory.v1.ListPartsRequest
-	2,  // 19: inventory.v1.InventoryService.GetPart:output_type -> inventory.v1.GetPartResponse
-	4,  // 20: inventory.v1.InventoryService.ListParts:output_type -> inventory.v1.ListPartsResponse
-	19, // [19:21] is the sub-list for method output_type
-	17, // [17:19] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	11, // 7: inventory.v1.Part.created_at:type_name -> google.protobuf.Timestamp
+	11, // 8: inventory.v1.Part.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 9: inventory.v1.Part.metadata:type_name -> inventory.v1.Part.MetadataEntry
+	9,  // 10: inventory.v1.Part.MetadataEntry.value:type_name -> inventory.v1.Value
+	1,  // 11: inventory.v1.InventoryService.GetPart:input_type -> inventory.v1.GetPartRequest
+	3,  // 12: inventory.v1.InventoryService.ListParts:input_type -> inventory.v1.ListPartsRequest
+	2,  // 13: inventory.v1.InventoryService.GetPart:output_type -> inventory.v1.GetPartResponse
+	4,  // 14: inventory.v1.InventoryService.ListParts:output_type -> inventory.v1.ListPartsResponse
+	13, // [13:15] is the sub-list for method output_type
+	11, // [11:13] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_inventory_v1_inventory_proto_init() }
@@ -1040,11 +878,11 @@ func file_inventory_v1_inventory_proto_init() {
 	if File_inventory_v1_inventory_proto != nil {
 		return
 	}
-	file_inventory_v1_inventory_proto_msgTypes[5].OneofWrappers = []any{
-		(*Part_MetadataString)(nil),
-		(*Part_MetadataDouble)(nil),
-		(*Part_MetadataInt64)(nil),
-		(*Part_MetadataBool)(nil),
+	file_inventory_v1_inventory_proto_msgTypes[8].OneofWrappers = []any{
+		(*Value_StringValue)(nil),
+		(*Value_DoubleValue)(nil),
+		(*Value_Int64Value)(nil),
+		(*Value_BoolValue)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1052,7 +890,7 @@ func file_inventory_v1_inventory_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_inventory_v1_inventory_proto_rawDesc), len(file_inventory_v1_inventory_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   16,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

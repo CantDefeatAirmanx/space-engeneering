@@ -3,7 +3,7 @@ syntax = "proto3";
 // Package inventory.v1 содержит API для работы со складом деталей
 package inventory.v1;
 
-option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/inventory/v1;inventory_v1";
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/part/v1;inventory_v1";
 
 import "google/protobuf/timestamp.proto";
 
@@ -78,16 +78,7 @@ message Part {
   // updated_at дата обновления детали
   google.protobuf.Timestamp updated_at = 11;
   // metadata метаданные детали
-  oneof metadata {
-    // metadata_string метаданные детали в формате строки
-    StringMetadata metadata_string = 12;
-    // metadata_double метаданные детали в формате double
-    DoubleMetadata metadata_double = 13;
-    // metadata_int64 метаданные детали в формате int64
-    Int64Metadata metadata_int64 = 14;
-    // metadata_bool метаданные детали в формате bool
-    BoolMetadata metadata_bool = 15;
-  }
+  map<string, Value> metadata = 12;
 }
 
 // Category описывает категорию детали
@@ -126,22 +117,16 @@ message Manufacturer {
   string website = 3;
 }
 
-// StringMetadata описывает метаданные в формате строки
-message StringMetadata {
-  map<string, string> data = 1;
-}
-
-// DoubleMetadata описывает метаданные в формате double
-message DoubleMetadata {
-  map<string, double> data = 1;
-}
-
-// Int64Metadata описывает метаданные в формате int64
-message Int64Metadata {
-  map<string, int64> data = 1;
-}
-
-// BoolMetadata описывает метаданные в формате bool
-message BoolMetadata {
-  map<string, bool> data = 1;
+// Value описывает значение в метаданных
+message Value {
+  oneof value {
+    // string_value строковое значение
+    string string_value = 1;
+    // double_value значение с плавающей точкой
+    double double_value = 2;
+    // int64_value целочисленное значение
+    int64 int64_value = 3;
+    // bool_value булево значение
+    bool bool_value = 4;
+  }
 }
