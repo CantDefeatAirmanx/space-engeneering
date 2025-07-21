@@ -3,13 +3,14 @@ package api_inventory_v1
 import (
 	"context"
 
+	"github.com/samber/lo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
 	service_inventory "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
-	"github.com/samber/lo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (api *api) ListParts(

@@ -1,16 +1,17 @@
-package repository_part
+package repository_part_map
 
 import (
 	"sync"
 
-	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/converter/part"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/model/part"
+	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 )
 
-var _ PartRepository = (*repositoryPartImpl)(nil)
+var _ repository_part.PartRepository = (*repositoryPartImpl)(nil)
 
 type repositoryPartImpl struct {
 	mu    sync.RWMutex

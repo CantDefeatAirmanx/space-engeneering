@@ -20,3 +20,8 @@ func (e ErrOrderTransactionInternal) Error() string {
 func (e ErrOrderTransactionInternal) Unwrap() error {
 	return e.Err
 }
+
+func (e ErrOrderTransactionInternal) Is(target error) bool {
+	_, ok := target.(*ErrOrderTransactionInternal)
+	return ok
+}

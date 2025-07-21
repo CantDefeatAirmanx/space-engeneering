@@ -8,13 +8,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
+	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
+	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	configs_inventory "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/inventory"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )

@@ -1,15 +1,16 @@
-package repository_part
+package repository_part_map
 
 import (
 	"context"
 	"slices"
 
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/model/part"
+	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
 type FilterFunc func(part *repository_model_part.Part) bool
 
-func (r *repositoryPartImpl) GetParts(ctx context.Context, filter Filter) ([]*repository_model_part.Part, error) {
+func (r *repositoryPartImpl) GetParts(ctx context.Context, filter repository_part.Filter) ([]*repository_model_part.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

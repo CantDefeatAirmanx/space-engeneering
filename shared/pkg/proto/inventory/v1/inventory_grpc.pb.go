@@ -31,9 +31,9 @@ const (
 //
 // InventoryService предоставляет API для работы со складом деталей
 type InventoryServiceClient interface {
-	// GetPart проверяет наличие детали на складе и возвращает её или ошибку NotFound
+	// GetPart проверяет наличие детали на складе и возвращает её или ошибку NotFound | Internal
 	GetPart(ctx context.Context, in *GetPartRequest, opts ...grpc.CallOption) (*GetPartResponse, error)
-	// GetParts проверяет наличие деталей на складе и возвращает их или ошибку NotFound
+	// ListParts проверяет наличие деталей на складе и возвращает их или ошибку Internal
 	ListParts(ctx context.Context, in *ListPartsRequest, opts ...grpc.CallOption) (*ListPartsResponse, error)
 }
 
@@ -71,9 +71,9 @@ func (c *inventoryServiceClient) ListParts(ctx context.Context, in *ListPartsReq
 //
 // InventoryService предоставляет API для работы со складом деталей
 type InventoryServiceServer interface {
-	// GetPart проверяет наличие детали на складе и возвращает её или ошибку NotFound
+	// GetPart проверяет наличие детали на складе и возвращает её или ошибку NotFound | Internal
 	GetPart(context.Context, *GetPartRequest) (*GetPartResponse, error)
-	// GetParts проверяет наличие деталей на складе и возвращает их или ошибку NotFound
+	// ListParts проверяет наличие деталей на складе и возвращает их или ошибку Internal
 	ListParts(context.Context, *ListPartsRequest) (*ListPartsResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }

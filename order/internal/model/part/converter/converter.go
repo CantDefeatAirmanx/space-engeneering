@@ -4,7 +4,7 @@ import (
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
+	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 

@@ -2,12 +2,14 @@ package service_part
 
 import (
 	"context"
+	"strings"
+
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	"github.com/samber/lo"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/converter/part"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/model/part"
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	"github.com/samber/lo"
 )
 
 func (s *partServiceImpl) GetParts(
@@ -27,9 +29,11 @@ func (s *partServiceImpl) GetParts(
 		),
 	}
 	repoParts, err := s.repository.GetParts(ctx, repositoryFilter)
-
 	if err != nil {
-		return nil, err
+		return nil, model_part.ErrPartInternal{
+			Err:  err,
+			UUID: strings.Join(filter.Uuids, ","),
+		}
 	}
 
 	modelParts := lo.Map(

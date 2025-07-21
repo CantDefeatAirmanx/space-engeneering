@@ -2,7 +2,7 @@ package repository_converter_part
 
 import (
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/model/part"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
 func ToModel(repo *repository_model_part.Part) model_part.Part {
