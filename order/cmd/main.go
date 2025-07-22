@@ -21,10 +21,6 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-const (
-	internalServerErrorMessage = "Internal server error"
-)
-
 func main() {
 	ctx := context.Background()
 

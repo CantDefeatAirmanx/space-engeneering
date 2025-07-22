@@ -3,6 +3,7 @@ package api_order_v1
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
@@ -25,7 +26,7 @@ func (api *api) GetOrder(
 		default:
 			return &order_v1.InternalServerError{
 				Code:    http.StatusInternalServerError,
-				Message: err.Error(),
+				Message: fmt.Sprintf("%s: %s", internalServerErrorMessage, err.Error()),
 			}, nil
 		}
 	}

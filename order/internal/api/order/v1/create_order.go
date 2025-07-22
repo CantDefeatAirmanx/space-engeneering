@@ -2,6 +2,7 @@ package api_order_v1
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
@@ -22,7 +23,7 @@ func (api *api) CreateOrder(
 	if err != nil {
 		return &order_v1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
+			Message: fmt.Sprintf("%s: %s", internalServerErrorMessage, err.Error()),
 		}, nil
 	}
 

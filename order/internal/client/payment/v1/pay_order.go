@@ -32,7 +32,7 @@ func (client *paymentV1GrpcClient) PayOrder(
 			}
 		}
 
-		return handleStatusError(statusErr, err, params)
+		return nil, getStatusError(statusErr, err, params)
 	}
 
 	return &PayOrderResult{
@@ -40,21 +40,21 @@ func (client *paymentV1GrpcClient) PayOrder(
 	}, nil
 }
 
-func handleStatusError(
+func getStatusError(
 	statusErr *status.Status,
 	err error,
 	params PayOrderParams,
-) (*PayOrderResult, error) {
+) error {
 	switch statusErr.Code() {
 	case codes.Internal:
-		return nil, ErrInternalServerError{
+		return ErrInternalServerError{
 			Err:            err,
 			PayOrderParams: params,
 		}
 	case codes.InvalidArgument:
-		return nil, fmt.Errorf("%w: %s", ErrInvalidArguments, statusErr.Message())
+		return fmt.Errorf("%w: %s", ErrInvalidArguments, statusErr.Message())
 	default:
-		return nil, ErrInternalServerError{
+		return ErrInternalServerError{
 			Err:            err,
 			PayOrderParams: params,
 		}

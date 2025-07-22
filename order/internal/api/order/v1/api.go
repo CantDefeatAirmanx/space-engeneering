@@ -1,8 +1,6 @@
 package api_order_v1
 
 import (
-	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
-	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
@@ -14,9 +12,7 @@ const (
 )
 
 type api struct {
-	orderService    service_order.OrderService
-	inventoryClient client_inventory_v1.InventoryV1Client
-	paymentClient   client_payment_v1.PaymentV1Client
+	orderService service_order.OrderService
 }
 
 type NewApiParams struct {

@@ -17,7 +17,6 @@ func (api *api) GetPart(
 	req *inventory_v1.GetPartRequest,
 ) (*inventory_v1.GetPartResponse, error) {
 	part, err := api.partService.GetPart(ctx, req.Uuid)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, &model_part.ErrPartNotFound{}):
@@ -30,6 +29,6 @@ func (api *api) GetPart(
 	protoPart := model_converter_part.ToProto(part)
 
 	return &inventory_v1.GetPartResponse{
-		Part: &protoPart,
+		Part: protoPart,
 	}, nil
 }

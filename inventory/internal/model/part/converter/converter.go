@@ -66,7 +66,7 @@ func ToModel(proto *inventory_v1.Part) model_part.Part {
 	return result
 }
 
-func ToProto(model *model_part.Part) inventory_v1.Part {
+func ToProto(model *model_part.Part) *inventory_v1.Part {
 	result := inventory_v1.Part{
 		Uuid:          model.UUID,
 		Name:          model.Name,
@@ -111,5 +111,5 @@ func ToProto(model *model_part.Part) inventory_v1.Part {
 		}
 	}
 
-	return result
+	return &result
 }

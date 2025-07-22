@@ -2,11 +2,11 @@ package service_part
 
 import (
 	"context"
-
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	"errors"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
+	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 )
 
 func (s *partServiceImpl) GetPart(
@@ -14,10 +14,9 @@ func (s *partServiceImpl) GetPart(
 	uuid string,
 ) (*model_part.Part, error) {
 	part, err := s.repository.GetPart(ctx, uuid)
-
 	if err != nil {
-		switch err {
-		case &repository_part.ErrPartNotFound{}:
+		switch {
+		case errors.Is(err, &repository_part.ErrPartNotFound{}):
 			return nil, model_part.ErrPartNotFound{
 				UUID: uuid,
 				Err:  err,

@@ -26,7 +26,7 @@ type ErrPartInternal struct {
 }
 
 func (e ErrPartInternal) Error() string {
-	return fmt.Sprintf("Part internal error")
+	return fmt.Sprintf("Part id: %s, internal error", e.UUID)
 }
 
 func (e ErrPartInternal) Unwrap() error {

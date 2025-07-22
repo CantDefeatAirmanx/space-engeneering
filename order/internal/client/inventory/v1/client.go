@@ -21,6 +21,7 @@ type inventoryV1GrpcClient struct {
 func NewInventoryClient(
 	ctx context.Context,
 ) (*inventoryV1GrpcClient, error) {
+	//nolint:staticcheck
 	conn, err := grpc.Dial(
 		configs_order.InventoryServiceURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

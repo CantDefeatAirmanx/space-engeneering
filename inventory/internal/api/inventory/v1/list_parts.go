@@ -31,7 +31,6 @@ func (api *api) ListParts(
 		Names:                 req.Filter.Names,
 		Categories:            categories,
 	})
-
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal server error. %v", err)
 	}
@@ -39,7 +38,7 @@ func (api *api) ListParts(
 	protoParts := lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {
 		protoPart := model_converter_part.ToProto(part)
 
-		return &protoPart
+		return protoPart
 	})
 
 	return &inventory_v1.ListPartsResponse{

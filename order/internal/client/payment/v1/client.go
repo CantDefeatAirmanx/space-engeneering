@@ -19,6 +19,7 @@ type paymentV1GrpcClient struct {
 }
 
 func NewPaymentClient(ctx context.Context) (*paymentV1GrpcClient, error) {
+	//nolint:staticcheck
 	conn, err := grpc.Dial(
 		configs_order.PaymentServiceURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

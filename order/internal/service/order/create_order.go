@@ -38,7 +38,6 @@ func (s *OrderServiceImpl) CreateOrder(
 			Uuids: params.PartUuids,
 		},
 	)
-
 	if err != nil {
 		if errors.Is(err, client_inventory_v1.ErrInvalidArguments) {
 			return nil, &model_order.ErrOrderInvalidArguments{

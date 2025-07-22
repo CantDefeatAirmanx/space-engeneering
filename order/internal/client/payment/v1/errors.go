@@ -16,9 +16,9 @@ func (e ErrInternalServerError) Error() string {
 	return fmt.Sprintf(
 		"payment error: %v, order_uuid: %s, user_uuid: %s, payment_method: %d",
 		e.Err,
-		e.PayOrderParams.OrderUUID,
-		e.PayOrderParams.UserUUID,
-		e.PayOrderParams.PaymentMethod,
+		e.OrderUUID,
+		e.UserUUID,
+		e.PaymentMethod,
 	)
 }
 
