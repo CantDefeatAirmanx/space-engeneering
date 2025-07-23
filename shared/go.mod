@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.3.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
