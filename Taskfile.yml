@@ -19,20 +19,25 @@ vars:
   OGEN_VERSION: 'v1.12.0'
   YQ_VERSION: 'v4.45.2'
   GRPCURL_VERSION: 'v1.9.3'
+  MOCKERY_VERSION: 'v3.5.1'
 
   # Directories
   BUILD_DIR: '{{.ROOT_DIR}}/build'
   BIN_DIR: '{{.ROOT_DIR}}/bin'
+
   COVERAGE_DIR: '{{.ROOT_DIR}}/coverage'
   COVERAGE_FILE: total.out
  
   GOLANGCI_LINT: '{{.BIN_DIR}}/golangci-lint'
   GCI: '{{.BIN_DIR}}/gci'
   GOFUMPT: '{{.BIN_DIR}}/gofumpt'
+
+  GRPCURL: '{{.BIN_DIR}}/grpcurl'
   BUF: '{{.BIN_DIR}}/buf'
   OGEN: '{{.BIN_DIR}}/ogen'
   YQ: '{{.BIN_DIR}}/yq'
-  GRPCURL: '{{.BIN_DIR}}/grpcurl'
+
+  MOCKERY: "{{.BIN_DIR}}/mockery"
 
   PROTOC_GEN_GO: '{{.BIN_DIR}}/protoc-gen-go'
   PROTOC_GEN_GO_GRPC: '{{.BIN_DIR}}/protoc-gen-go-grpc'
@@ -170,6 +175,23 @@ tasks:
           echo "📂 Отчёт сохранён в $OUTPUT (открой вручную)"
         fi
 
+  mockery:install:
+    desc: "Устанавливает mockery в ./bin"
+    cmds:
+    - |
+        [ -f {{.MOCKERY}} ] || {
+          echo '📦 Installing mockery...'
+          GOBIN={{.BIN_DIR}} go install github.com/vektra/mockery/v3@{{.MOCKERY_VERSION}}
+        }
+
+  mockery:gen:
+    desc: "Генерирует моки интерфейсов с помощью mockery"
+    deps: [ mockery:install ]
+    cmds:
+      - |
+        echo '🧪 Генерация моков...'
+        cd {{.ROOT_DIR}} && {{.MOCKERY}}
+        
   install-formatters:
     desc: "Устанавливает форматтеры gci и gofumpt в ./bin"
     summary: |
