@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 	"github.com/stretchr/testify/suite"
+
+	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 )
 
 type TestingSuite struct {

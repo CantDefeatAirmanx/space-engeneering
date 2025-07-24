@@ -10,7 +10,7 @@ import (
 
 type FilterFunc func(part *repository_model_part.Part) bool
 
-func (r *repositoryPartImpl) GetParts(ctx context.Context, filter repository_part.Filter) ([]*repository_model_part.Part, error) {
+func (r *RepositoryPartImpl) GetParts(ctx context.Context, filter repository_part.Filter) ([]*repository_model_part.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

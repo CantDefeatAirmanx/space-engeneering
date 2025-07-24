@@ -14,12 +14,17 @@ import (
 	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl"
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	configs_inventory "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/inventory"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
 func main() {
-	partRepo := repository_part.NewRepositoryPart()
+	partRepo := repository_part.NewRepositoryPart(
+		repository_part.NewRepositoryPartParams{
+			InitialParts: test_data.GetRepoInitialParts(),
+		},
+	)
 	partService := service_part.NewPartService(
 		service_part.NewPartServiceParams{
 			Repository: partRepo,

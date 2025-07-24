@@ -1,8 +1,9 @@
 package service_pay_order_tests
 
 import (
-	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 	"github.com/google/uuid"
+
+	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 )
 
 func (s *TestingSuite) TestPayOrder() {

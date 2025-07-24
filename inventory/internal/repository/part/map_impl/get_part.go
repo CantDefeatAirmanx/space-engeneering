@@ -7,7 +7,7 @@ import (
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
-func (r *repositoryPartImpl) GetPart(ctx context.Context, uuid string) (*repository_model_part.Part, error) {
+func (r *RepositoryPartImpl) GetPart(ctx context.Context, uuid string) (*repository_model_part.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

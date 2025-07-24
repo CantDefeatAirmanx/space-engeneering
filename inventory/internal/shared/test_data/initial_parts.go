@@ -5,8 +5,20 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	model_part_converter "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
+
+func GetRepoInitialParts() []repository_model_part.Part {
+	parts := []repository_model_part.Part{}
+	for idx := range InitialParts {
+		modelPart := model_part_converter.ToModel(&InitialParts[idx])
+		parts = append(parts, repository_converter_part.ToRepository(&modelPart))
+	}
+	return parts
+}
 
 var InitialParts = []inventory_v1.Part{
 	// CATEGORY_ENGINE - Детали для двигателей

@@ -22,6 +22,13 @@ type PartRepository interface {
 	//
 	// - ([repository_part.ErrPartInternal]): if the parts failed to get.
 	GetParts(ctx context.Context, filter Filter) ([]*repository_model_part.Part, error)
+
+	// SetPart sets a part by its UUID.
+	//
+	// Errors:
+	//
+	// - ([repository_part.ErrPartInternal]): if the part failed to set.
+	SetPart(ctx context.Context, part *repository_model_part.Part) error
 }
 
 type Filter struct {
