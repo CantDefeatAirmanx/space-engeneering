@@ -4,13 +4,21 @@ import (
 	"slices"
 	"strings"
 
+	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 
 func (s *TestingSuite) TestGetParts() {
 	parts := initParts(s)
-	partsValues := getPartsValues(parts)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
 
 	tcases := []struct {
 		name     string
@@ -205,41 +213,47 @@ var (
 	part5Tags = []string{tag4, tag5}
 )
 
-func initParts(s *TestingSuite) []*repository_model_part.Part {
-	parts := []*repository_model_part.Part{
-		generateRandomPart(
-			WithUUID(part1UUID),
-			WithTags(part1Tags),
-			WithCategory(repository_model_part.CategoryEngine),
-			WithName(part1Name),
+func initParts(s *TestingSuite) []*model_part.Part {
+	parts := []*model_part.Part{
+		helpers_test_data.GenerateRandomPart(
+			helpers_test_data.WithUUID(part1UUID),
+			helpers_test_data.WithTags(part1Tags),
+			helpers_test_data.WithCategory(model_part.CategoryEngine),
+			helpers_test_data.WithName(part1Name),
 		),
-		generateRandomPart(
-			WithUUID(part2UUID),
-			WithTags(part2Tags),
-			WithCategory(repository_model_part.CategoryFuel),
-			WithName(part2Name),
+		helpers_test_data.GenerateRandomPart(
+			helpers_test_data.WithUUID(part2UUID),
+			helpers_test_data.WithTags(part2Tags),
+			helpers_test_data.WithCategory(model_part.CategoryFuel),
+			helpers_test_data.WithName(part2Name),
 		),
-		generateRandomPart(
-			WithUUID(part3UUID),
-			WithTags(part3Tags),
-			WithCategory(repository_model_part.CategoryEngine),
-			WithName(part3Name),
+		helpers_test_data.GenerateRandomPart(
+			helpers_test_data.WithUUID(part3UUID),
+			helpers_test_data.WithTags(part3Tags),
+			helpers_test_data.WithCategory(model_part.CategoryEngine),
+			helpers_test_data.WithName(part3Name),
 		),
-		generateRandomPart(
-			WithUUID(part4UUID),
-			WithTags(part4Tags),
-			WithCategory(repository_model_part.CategoryWing),
-			WithName(part4Name),
+		helpers_test_data.GenerateRandomPart(
+			helpers_test_data.WithUUID(part4UUID),
+			helpers_test_data.WithTags(part4Tags),
+			helpers_test_data.WithCategory(model_part.CategoryWing),
+			helpers_test_data.WithName(part4Name),
 		),
-		generateRandomPart(
-			WithUUID(part5UUID),
-			WithTags(part5Tags),
-			WithCategory(repository_model_part.CategoryPortHole),
-			WithName(part5Name),
+		helpers_test_data.GenerateRandomPart(
+			helpers_test_data.WithUUID(part5UUID),
+			helpers_test_data.WithTags(part5Tags),
+			helpers_test_data.WithCategory(model_part.CategoryPortHole),
+			helpers_test_data.WithName(part5Name),
 		),
 	}
 
+	repoParts := []*repository_model_part.Part{}
 	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+
+	for _, part := range repoParts {
 		s.repo.SetPart(s.ctx, part)
 	}
 

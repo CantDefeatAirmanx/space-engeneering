@@ -21,13 +21,17 @@ func (s *partServiceImpl) GetParts(
 		ManufacturerCountries: filter.ManufacturerCountries,
 		Tags:                  filter.Tags,
 		Names:                 filter.Names,
-		Categories: lo.Map(
+	}
+
+	if len(filter.Categories) > 0 {
+		repositoryFilter.Categories = lo.Map(
 			filter.Categories,
 			func(category model_part.Category, _ int) repository_model_part.Category {
 				return repository_model_part.Category(category)
 			},
-		),
+		)
 	}
+
 	repoParts, err := s.repository.GetParts(ctx, repositoryFilter)
 	if err != nil {
 		return nil, model_part.ErrPartInternal{

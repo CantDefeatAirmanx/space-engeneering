@@ -25,7 +25,10 @@ func NewRepositoryPart(params NewRepositoryPartParams) *RepositoryPartImpl {
 	}
 
 	for _, part := range params.InitialParts {
-		repo.SetPart(context.Background(), &part)
+		err := repo.SetPart(context.Background(), &part)
+		if err != nil {
+			panic("failed to initialize repository part")
+		}
 	}
 
 	return repo

@@ -2,10 +2,10 @@ template: testify
 template-data:
   boilerplate-file: ".mockery_boilerplate_text.txt"
 
-dir: "{{.InterfaceDir}}/mocks"
+dir: "{{.InterfaceDir}}/test_data"
 filename: "mock_{{.InterfaceName | lower}}.go"
 structname: "{{.Mock}}{{.InterfaceName}}"
-pkgname: "mocks"
+pkgname: "test_data"
 force-file-write: false
 formatter: goimports
 log-level: info
@@ -15,16 +15,16 @@ packages:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository).*"
+      include-interface-regex: ".*(Service|Repository|Client).*"
   
   github.com/CantDefeatAirmanx/space-engeneering/inventory:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository).*"
+      include-interface-regex: ".*(Service|Repository|Client).*"
   
   github.com/CantDefeatAirmanx/space-engeneering/payment:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository).*"
+      include-interface-regex: ".*(Service|Repository|Client).*"

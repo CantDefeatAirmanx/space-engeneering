@@ -6,20 +6,28 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	helpers_mocks "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 
 func (s *TestingSuite) TestGetPart() {
 	randomParts := []*repository_model_part.Part{}
 	for range 10 {
-		randomParts = append(randomParts, generateRandomPart())
+		modelPart := helpers_mocks.GenerateRandomPart()
+		repoPart := repository_converter_part.ToRepository(modelPart)
+		randomParts = append(randomParts, &repoPart)
 	}
 	rndIdx := rand.Intn(len(randomParts))
 	randomPartId := randomParts[rndIdx].UUID
 
 	partsWithSameId := []*repository_model_part.Part{}
 	for range 10 {
-		partsWithSameId = append(partsWithSameId, generateRandomPart(WithUUID("dummy_uuid")))
+		modelPart := helpers_mocks.GenerateRandomPart(
+			helpers_mocks.WithUUID("dummy_uuid"),
+		)
+		repoPart := repository_converter_part.ToRepository(modelPart)
+		partsWithSameId = append(partsWithSameId, &repoPart)
 	}
 
 	tcases := []struct {
