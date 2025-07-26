@@ -2,13 +2,11 @@ package service_order
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
 	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
@@ -27,17 +25,7 @@ var paymentMethodMap = map[model_order.PaymentMethod]client_payment_v1.PaymentMe
 func (s *OrderServiceImpl) PayOrder(ctx context.Context, params PayOrderParams) (*PayOrderResult, error) {
 	order, err := s.orderRepository.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
-		if errors.Is(err, &repository_order.ErrOrderNotFound{}) {
-			return nil, &model_order.ErrOrderNotFound{
-				OrderUUID: params.OrderUUID,
-				Err:       err,
-			}
-		}
-
-		return nil, &model_order.ErrOrderInternal{
-			OrderUUID: params.OrderUUID,
-			Err:       err,
-		}
+		return nil, err
 	}
 
 	orderModel := repository_order_converter.ToModel(order)

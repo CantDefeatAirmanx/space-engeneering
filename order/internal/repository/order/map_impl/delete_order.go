@@ -3,7 +3,7 @@ package repository_order_map
 import (
 	"context"
 
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
+	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 )
 
 func (repo *OrderRepositoryMap) DeleteOrder(
@@ -15,9 +15,8 @@ func (repo *OrderRepositoryMap) DeleteOrder(
 
 	_, ok := repo.orders[orderUUID]
 	if !ok {
-		return &repository_order.ErrOrderNotFound{
-			OrderID: orderUUID,
-			Err:     repository_order.ErrOrder,
+		return &model_order.ErrOrderNotFound{
+			OrderUUID: orderUUID,
 		}
 	}
 

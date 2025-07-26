@@ -2,7 +2,6 @@ package service_order
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"slices"
 
@@ -15,21 +14,12 @@ import (
 func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) error {
 	order, err := s.orderRepository.GetOrder(ctx, orderUUID)
 	if err != nil {
-		if errors.Is(err, &repository_order.ErrOrderNotFound{}) {
-			return &model_order.ErrOrderNotFound{
-				OrderUUID: orderUUID,
-				Err:       err,
-			}
-		}
-
-		return &model_order.ErrOrderInternal{
-			OrderUUID: orderUUID,
-			Err:       err,
-		}
+		return err
 	}
-	orderModel := repository_order_converter.ToModel(order)
 
+	orderModel := repository_order_converter.ToModel(order)
 	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(orderModel)
+
 	if !isOrderAvailableForCancel {
 		return &model_order.ErrOrderConflict{
 			OrderUUID:  orderUUID,

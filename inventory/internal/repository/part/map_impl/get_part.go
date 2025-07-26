@@ -3,7 +3,7 @@ package repository_part_map
 import (
 	"context"
 
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
@@ -13,7 +13,7 @@ func (r *RepositoryPartImpl) GetPart(ctx context.Context, uuid string) (*reposit
 
 	part, ok := r.parts[uuid]
 	if !ok {
-		return nil, &repository_part.ErrPartNotFound{
+		return nil, &model_part.ErrPartNotFound{
 			UUID: part.UUID,
 		}
 	}

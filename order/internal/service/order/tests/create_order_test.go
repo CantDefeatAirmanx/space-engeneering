@@ -57,10 +57,13 @@ func (s *TestingSuite) TestCreateOrderSuccess() {
 		}),
 	).Return(nil)
 
-	result, err := s.service.CreateOrder(s.ctx, service_order.CreateOrderParams{
-		UserUUID:  userUUID,
-		PartUuids: partUuids,
-	})
+	result, err := s.service.CreateOrder(
+		s.ctx,
+		service_order.CreateOrderParams{
+			UserUUID:  userUUID,
+			PartUuids: partUuids,
+		},
+	)
 
 	s.NoError(err)
 	s.NotEmpty(result.OrderUUID)
@@ -102,10 +105,13 @@ func (s *TestingSuite) TestCreateOrderClientInventoryUnknownError() {
 		},
 	).Return(nil, errors.New("unknown error"))
 
-	result, err := s.service.CreateOrder(s.ctx, service_order.CreateOrderParams{
-		UserUUID:  gofakeit.UUID(),
-		PartUuids: []string{},
-	})
+	result, err := s.service.CreateOrder(
+		s.ctx,
+		service_order.CreateOrderParams{
+			UserUUID:  gofakeit.UUID(),
+			PartUuids: []string{},
+		},
+	)
 
 	s.Error(err)
 	s.ErrorIs(err, &model_order.ErrOrderInternal{})
@@ -169,7 +175,11 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
 			return true
 		}),
-	).Return(errors.New("unknown error"))
+	).Return(
+		&model_order.ErrOrderInternal{
+			OrderUUID: gofakeit.UUID(),
+		},
+	)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,

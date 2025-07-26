@@ -1,7 +1,7 @@
 package repository_order_map_tests
 
 import (
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
+	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 	helpers_test_data "github.com/CantDefeatAirmanx/space-engeneering/order/internal/shared/lib/helpers/test_data"
 )
@@ -27,5 +27,5 @@ func (s *TestingSuite) TestGetOrderNotFound() {
 	_, err := s.repo.GetOrder(s.ctx, "random-uuid")
 
 	s.Error(err)
-	s.ErrorIs(err, &repository_order.ErrOrderNotFound{})
+	s.ErrorIs(err, &model_order.ErrOrderNotFound{})
 }

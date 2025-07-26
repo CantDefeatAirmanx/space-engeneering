@@ -3,6 +3,7 @@ package repository_order_map
 import (
 	"context"
 
+	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
 )
 
@@ -16,9 +17,8 @@ func (repo *OrderRepositoryMap) UpdateOrderFields(
 
 	order, ok := repo.orders[orderUUID]
 	if !ok {
-		return &repository_order.ErrOrderNotFound{
-			OrderID: orderUUID,
-			Err:     repository_order.ErrOrder,
+		return &model_order.ErrOrderNotFound{
+			OrderUUID: orderUUID,
 		}
 	}
 

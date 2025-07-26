@@ -8,178 +8,8 @@ import (
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
 	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
+	helpers_test_data "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
-
-func (s *TestingSuite) TestGetParts() {
-	parts := initParts(s)
-	repoParts := []*repository_model_part.Part{}
-	for _, part := range parts {
-		repoPart := repository_converter_part.ToRepository(part)
-		repoParts = append(repoParts, &repoPart)
-	}
-	partsValues := getPartsValues(repoParts)
-
-	tcases := []struct {
-		name     string
-		expected []repository_model_part.Part
-		err      error
-		filter   repository_part.Filter
-	}{
-		{
-			name:     "success get parts without filters",
-			expected: partsValues,
-			err:      nil,
-			filter:   repository_part.Filter{},
-		},
-
-		// Uuids filter tests
-		{
-			name: "success get parts with uuids filter",
-			expected: []repository_model_part.Part{
-				partsValues[1],
-				partsValues[2],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Uuids: []string{part2UUID, part3UUID},
-			},
-		},
-		{
-			name:     "not found parts with uuids filter",
-			expected: []repository_model_part.Part{},
-			err:      nil,
-			filter: repository_part.Filter{
-				Uuids: []string{"random_uuid1", "random_uuid2"},
-			},
-		},
-
-		// Tags filter tests
-		{
-			name: "success get parts with single tag filter",
-			expected: []repository_model_part.Part{
-				partsValues[4],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Tags: []string{tag5},
-			},
-		},
-		{
-			name: "success get parts with multiple tags filter",
-			expected: []repository_model_part.Part{
-				partsValues[0],
-				partsValues[1],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Tags: []string{tag1, tag2},
-			},
-		},
-		{
-			name:     "not found parts with tag filter",
-			expected: []repository_model_part.Part{},
-			err:      nil,
-			filter: repository_part.Filter{
-				Tags: []string{"random_tag"},
-			},
-		},
-		{
-			name:     "not found parts with multiple tags filter",
-			expected: []repository_model_part.Part{},
-			err:      nil,
-			filter: repository_part.Filter{
-				Tags: []string{"random_tag", "random_tag2"},
-			},
-		},
-
-		// Categories filter tests
-		{
-			name: "success get parts with category filter",
-			expected: []repository_model_part.Part{
-				partsValues[0],
-				partsValues[2],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Categories: []repository_model_part.Category{repository_model_part.CategoryEngine},
-			},
-		},
-		{
-			name: "success get parts with multiple categories filter",
-			expected: []repository_model_part.Part{
-				partsValues[0],
-				partsValues[1],
-				partsValues[2],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Categories: []repository_model_part.Category{
-					repository_model_part.CategoryEngine,
-					repository_model_part.CategoryFuel,
-				},
-			},
-		},
-		{
-			name:     "not found parts with category filter",
-			expected: []repository_model_part.Part{},
-			err:      nil,
-			filter: repository_part.Filter{
-				Categories: []repository_model_part.Category{
-					repository_model_part.CategoryUnknown,
-				},
-			},
-		},
-
-		// Names filter tests
-		{
-			name: "success get parts with name filter",
-			expected: []repository_model_part.Part{
-				partsValues[0],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Names: []string{part1Name},
-			},
-		},
-		{
-			name: "success get parts with multiple names filter",
-			expected: []repository_model_part.Part{
-				partsValues[0],
-				partsValues[2],
-			},
-			err: nil,
-			filter: repository_part.Filter{
-				Names: []string{part1Name, part3Name},
-			},
-		},
-		{
-			name:     "not found parts with name filter",
-			expected: []repository_model_part.Part{},
-			err:      nil,
-			filter: repository_part.Filter{
-				Names: []string{"random_name"},
-			},
-		},
-	}
-
-	for _, tcase := range tcases {
-		s.Run(tcase.name, func() {
-			parts, err := s.repo.GetParts(
-				s.ctx,
-				tcase.filter,
-			)
-
-			partsValues := getPartsValues(parts)
-
-			sortParts(partsValues)
-			sortParts(tcase.expected)
-
-			s.NoError(err)
-			s.Equal(tcase.expected, partsValues)
-		})
-	}
-}
 
 const (
 	part1Name = "part1"
@@ -212,6 +42,276 @@ var (
 	part4Tags = []string{tag3, tag4}
 	part5Tags = []string{tag4, tag5}
 )
+
+func (s *TestingSuite) TestGetPartsWithoutFilters() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	expected := getPartsValues(repoParts)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithUuidsFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[1],
+		partsValues[2],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Uuids: []string{part2UUID, part3UUID},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithUuidsFilterNotFound() {
+	initParts(s)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Uuids: []string{"random_uuid1", "random_uuid2"},
+	})
+
+	resultValues := getPartsValues(result)
+
+	s.NoError(err)
+	s.Empty(resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithSingleTagFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[4],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Tags: []string{tag5},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithMultipleTagsFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[0],
+		partsValues[1],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Tags: []string{tag1, tag2},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithTagFilterNotFound() {
+	initParts(s)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Tags: []string{"random_tag"},
+	})
+
+	resultValues := getPartsValues(result)
+
+	s.NoError(err)
+	s.Empty(resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithMultipleTagsFilterNotFound() {
+	initParts(s)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Tags: []string{"random_tag", "random_tag2"},
+	})
+
+	resultValues := getPartsValues(result)
+
+	s.NoError(err)
+	s.Empty(resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithCategoryFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[0],
+		partsValues[2],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Categories: []repository_model_part.Category{repository_model_part.CategoryEngine},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithMultipleCategoriesFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[0],
+		partsValues[1],
+		partsValues[2],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Categories: []repository_model_part.Category{
+			repository_model_part.CategoryEngine,
+			repository_model_part.CategoryFuel,
+		},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithCategoryFilterNotFound() {
+	initParts(s)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Categories: []repository_model_part.Category{
+			repository_model_part.CategoryUnknown,
+		},
+	})
+
+	resultValues := getPartsValues(result)
+
+	s.NoError(err)
+	s.Empty(resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithNameFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[0],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Names: []string{part1Name},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithMultipleNamesFilter() {
+	parts := initParts(s)
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	partsValues := getPartsValues(repoParts)
+
+	expected := []repository_model_part.Part{
+		partsValues[0],
+		partsValues[2],
+	}
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Names: []string{part1Name, part3Name},
+	})
+
+	resultValues := getPartsValues(result)
+	sortParts(resultValues)
+	sortParts(expected)
+
+	s.NoError(err)
+	s.Equal(expected, resultValues)
+}
+
+func (s *TestingSuite) TestGetPartsWithNameFilterNotFound() {
+	initParts(s)
+
+	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+		Names: []string{"random_name"},
+	})
+
+	resultValues := getPartsValues(result)
+
+	s.NoError(err)
+	s.Empty(resultValues)
+}
 
 func initParts(s *TestingSuite) []*model_part.Part {
 	parts := []*model_part.Part{

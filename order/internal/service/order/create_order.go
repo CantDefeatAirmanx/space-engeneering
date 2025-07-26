@@ -77,10 +77,7 @@ func (s *OrderServiceImpl) CreateOrder(
 
 	err = s.orderRepository.CreateOrder(orderCtx, repository_order_converter.ToRepository(&order))
 	if err != nil {
-		return nil, &model_order.ErrOrderInternal{
-			OrderUUID: order.OrderUUID,
-			Err:       err,
-		}
+		return nil, err
 	}
 
 	return &CreateOrderResult{
