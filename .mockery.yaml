@@ -2,10 +2,10 @@ template: testify
 template-data:
   boilerplate-file: ".mockery_boilerplate_text.txt"
 
-dir: "{{.InterfaceDir}}/test_data"
+dir: "{{.InterfaceDir}}/mocks"
 filename: "mock_{{.InterfaceName | lower}}.go"
 structname: "{{.Mock}}{{.InterfaceName}}"
-pkgname: "test_data"
+pkgname: "mocks"
 force-file-write: false
 formatter: goimports
 log-level: info

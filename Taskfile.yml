@@ -188,9 +188,15 @@ tasks:
           GOBIN={{.BIN_DIR}} go install github.com/vektra/mockery/v3@{{.MOCKERY_VERSION}}
         }
 
+  mockery:clean:
+    desc: "Удаляет все моки"
+    cmds:
+      - |
+        find . -name "mocks" -type d -exec rm -rf {} + 2>/dev/null;
+
   mockery:gen:
     desc: "Генерирует моки интерфейсов с помощью mockery"
-    deps: [ mockery:install ]
+    deps: [ mockery:install, mockery:clean ]
     cmds:
       - |
         echo '🧪 Генерация моков...'
@@ -402,10 +408,11 @@ tasks:
         done
 
   gen:
-    desc: "Генерация всех proto и OpenAPI деклараций"
+    desc: "Генерация всех proto, OpenAPI деклараций и моков"
     cmds:
       - task: proto:gen
       - task: ogen:gen
+      - task: mockery:gen
 
   deps:update:
     desc: "Обновление зависимостей в go.mod во всех модулях"

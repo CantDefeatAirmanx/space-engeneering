@@ -15,7 +15,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-// NewMockInventoryV1Client creates a new instance of MockInventoryV1Client. It also registers a testing interface on the mock and a cleanup function to assert the test_data expectations.
+// NewMockInventoryV1Client creates a new instance of MockInventoryV1Client. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockInventoryV1Client(t interface {
 	mock.TestingT

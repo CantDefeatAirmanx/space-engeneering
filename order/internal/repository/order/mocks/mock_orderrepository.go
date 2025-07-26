@@ -14,7 +14,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-// NewMockOrderRepository creates a new instance of MockOrderRepository. It also registers a testing interface on the mock and a cleanup function to assert the test_data expectations.
+// NewMockOrderRepository creates a new instance of MockOrderRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockOrderRepository(t interface {
 	mock.TestingT

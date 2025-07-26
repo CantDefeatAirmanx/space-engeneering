@@ -14,7 +14,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-// NewMockPartRepository creates a new instance of MockPartRepository. It also registers a testing interface on the mock and a cleanup function to assert the test_data expectations.
+// NewMockPartRepository creates a new instance of MockPartRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockPartRepository(t interface {
 	mock.TestingT

@@ -14,7 +14,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-// NewMockPartService creates a new instance of MockPartService. It also registers a testing interface on the mock and a cleanup function to assert the test_data expectations.
+// NewMockPartService creates a new instance of MockPartService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockPartService(t interface {
 	mock.TestingT

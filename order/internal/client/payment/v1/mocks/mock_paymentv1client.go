@@ -13,7 +13,7 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-// NewMockPaymentV1Client creates a new instance of MockPaymentV1Client. It also registers a testing interface on the mock and a cleanup function to assert the test_data expectations.
+// NewMockPaymentV1Client creates a new instance of MockPaymentV1Client. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockPaymentV1Client(t interface {
 	mock.TestingT
