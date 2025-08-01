@@ -60,8 +60,23 @@ tasks:
     desc: "Сборка проекта"
     cmds:
       - 'mkdir -p {{.BUILD_DIR}}'
+      - task build:order
+      - task build:inventory
+      - task build:payment
+
+  build:order:
+    desc: "Сборка order"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/order ./order/cmd/main.go'
+
+  build:inventory:
+    desc: "Сборка inventory"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/inventory ./inventory/cmd/main.go'
+
+  build:payment:
+    desc: "Сборка payment"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/payment ./payment/cmd/main.go'
 
   run-order:

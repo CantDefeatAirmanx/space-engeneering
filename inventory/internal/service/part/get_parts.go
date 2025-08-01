@@ -7,7 +7,6 @@ import (
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
@@ -31,19 +30,10 @@ func (s *partServiceImpl) GetParts(
 		)
 	}
 
-	repoParts, err := s.repository.GetParts(ctx, repositoryFilter)
+	parts, err := s.repository.GetParts(ctx, repositoryFilter)
 	if err != nil {
 		return nil, model_part.ErrPartInternal
 	}
 
-	modelParts := lo.Map(
-		repoParts,
-		func(part *repository_model_part.Part, _ int) *model_part.Part {
-			modelPart := repository_converter_part.ToModel(part)
-
-			return &modelPart
-		},
-	)
-
-	return modelParts, nil
+	return parts, nil
 }

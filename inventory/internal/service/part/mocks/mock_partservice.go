@@ -19,8 +19,7 @@ import (
 func NewMockPartService(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockPartService {
+}) *MockPartService {
 	mock := &MockPartService{}
 	mock.Mock.Test(t)
 
@@ -78,7 +77,7 @@ type MockPartService_GetPart_Call struct {
 // GetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockPartService_Expecter) GetPart(ctx, uuid interface{}) *MockPartService_GetPart_Call {
+func (_e *MockPartService_Expecter) GetPart(ctx interface{}, uuid interface{}) *MockPartService_GetPart_Call {
 	return &MockPartService_GetPart_Call{Call: _e.mock.On("GetPart", ctx, uuid)}
 }
 
@@ -146,7 +145,7 @@ type MockPartService_GetParts_Call struct {
 // GetParts is a helper method to define mock.On call
 //   - ctx context.Context
 //   - filter service_part.Filter
-func (_e *MockPartService_Expecter) GetParts(ctx, filter interface{}) *MockPartService_GetParts_Call {
+func (_e *MockPartService_Expecter) GetParts(ctx interface{}, filter interface{}) *MockPartService_GetParts_Call {
 	return &MockPartService_GetParts_Call{Call: _e.mock.On("GetParts", ctx, filter)}
 }
 

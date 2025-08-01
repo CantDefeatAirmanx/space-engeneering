@@ -4,13 +4,19 @@ import (
 	"context"
 	"slices"
 
+	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	"github.com/samber/lo"
 )
 
 type FilterFunc func(part *repository_model_part.Part) bool
 
-func (r *RepositoryPartImpl) GetParts(ctx context.Context, filter repository_part.Filter) ([]*repository_model_part.Part, error) {
+func (r *RepositoryPartImpl) GetParts(
+	ctx context.Context,
+	filter repository_part.Filter,
+) ([]*model_part.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -35,7 +41,20 @@ outer:
 		parts = append(parts, &part)
 	}
 
-	return parts, nil
+	modelParts := convertPartsToModel(parts)
+
+	return modelParts, nil
+}
+
+func convertPartsToModel(parts []*repository_model_part.Part) []*model_part.Part {
+	return lo.Map(
+		parts,
+		func(part *repository_model_part.Part, _ int) *model_part.Part {
+			modelPart := repository_converter_part.ToModel(part)
+
+			return &modelPart
+		},
+	)
 }
 
 func createFilterByCategories(categories []repository_model_part.Category) FilterFunc {

@@ -54,7 +54,7 @@ func (s *TestingSuite) TestGetPartsWithoutFilters() {
 
 	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -80,7 +80,7 @@ func (s *TestingSuite) TestGetPartsWithUuidsFilter() {
 		Uuids: []string{part2UUID, part3UUID},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -95,7 +95,7 @@ func (s *TestingSuite) TestGetPartsWithUuidsFilterNotFound() {
 		Uuids: []string{"random_uuid1", "random_uuid2"},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 
 	s.NoError(err)
 	s.Empty(resultValues)
@@ -118,7 +118,7 @@ func (s *TestingSuite) TestGetPartsWithSingleTagFilter() {
 		Tags: []string{tag5},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -144,7 +144,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleTagsFilter() {
 		Tags: []string{tag1, tag2},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -159,7 +159,7 @@ func (s *TestingSuite) TestGetPartsWithTagFilterNotFound() {
 		Tags: []string{"random_tag"},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 
 	s.NoError(err)
 	s.Empty(resultValues)
@@ -172,7 +172,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleTagsFilterNotFound() {
 		Tags: []string{"random_tag", "random_tag2"},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 
 	s.NoError(err)
 	s.Empty(resultValues)
@@ -196,7 +196,7 @@ func (s *TestingSuite) TestGetPartsWithCategoryFilter() {
 		Categories: []repository_model_part.Category{repository_model_part.CategoryEngine},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -226,7 +226,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleCategoriesFilter() {
 		},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -243,7 +243,7 @@ func (s *TestingSuite) TestGetPartsWithCategoryFilterNotFound() {
 		},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 
 	s.NoError(err)
 	s.Empty(resultValues)
@@ -266,7 +266,7 @@ func (s *TestingSuite) TestGetPartsWithNameFilter() {
 		Names: []string{part1Name},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -292,7 +292,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleNamesFilter() {
 		Names: []string{part1Name, part3Name},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
 	sortParts(expected)
 
@@ -307,10 +307,19 @@ func (s *TestingSuite) TestGetPartsWithNameFilterNotFound() {
 		Names: []string{"random_name"},
 	})
 
-	resultValues := getPartsValues(result)
+	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 
 	s.NoError(err)
 	s.Empty(resultValues)
+}
+
+func modelPartsToRepositoryParts(parts []*model_part.Part) []*repository_model_part.Part {
+	repoParts := []*repository_model_part.Part{}
+	for _, part := range parts {
+		repoPart := repository_converter_part.ToRepository(part)
+		repoParts = append(repoParts, &repoPart)
+	}
+	return repoParts
 }
 
 func initParts(s *TestingSuite) []*model_part.Part {
@@ -354,7 +363,8 @@ func initParts(s *TestingSuite) []*model_part.Part {
 	}
 
 	for _, part := range repoParts {
-		s.repo.SetPart(s.ctx, part)
+		modelPart := repository_converter_part.ToModel(part)
+		s.repo.SetPart(s.ctx, &modelPart)
 	}
 
 	return parts

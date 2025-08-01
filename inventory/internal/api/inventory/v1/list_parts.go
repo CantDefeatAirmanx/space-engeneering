@@ -15,12 +15,7 @@ func (api *api) ListParts(
 	ctx context.Context,
 	req *inventory_v1.ListPartsRequest,
 ) (*inventory_v1.ListPartsResponse, error) {
-	categories := lo.Map(
-		req.Filter.Categories,
-		func(category inventory_v1.Category, _ int) model_part.Category {
-			return model_part.Category(category)
-		},
-	)
+	categories := categoriesToModel(req.Filter.Categories)
 
 	parts, err := api.partService.GetParts(ctx, service_inventory.Filter{
 		Uuids:                 req.Filter.Uuids,
@@ -42,4 +37,13 @@ func (api *api) ListParts(
 	return &inventory_v1.ListPartsResponse{
 		Parts: protoParts,
 	}, nil
+}
+
+func categoriesToModel(categories []inventory_v1.Category) []model_part.Category {
+	return lo.Map(
+		categories,
+		func(category inventory_v1.Category, _ int) model_part.Category {
+			return model_part.Category(category)
+		},
+	)
 }

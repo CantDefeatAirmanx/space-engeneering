@@ -20,8 +20,7 @@ import (
 func NewMockInventoryV1Client(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockInventoryV1Client {
+}) *MockInventoryV1Client {
 	mock := &MockInventoryV1Client{}
 	mock.Mock.Test(t)
 
@@ -79,7 +78,7 @@ type MockInventoryV1Client_GetPart_Call struct {
 // GetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *inventory_v1.GetPartRequest
-func (_e *MockInventoryV1Client_Expecter) GetPart(ctx, params interface{}) *MockInventoryV1Client_GetPart_Call {
+func (_e *MockInventoryV1Client_Expecter) GetPart(ctx interface{}, params interface{}) *MockInventoryV1Client_GetPart_Call {
 	return &MockInventoryV1Client_GetPart_Call{Call: _e.mock.On("GetPart", ctx, params)}
 }
 
@@ -147,7 +146,7 @@ type MockInventoryV1Client_ListParts_Call struct {
 // ListParts is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params client_inventory_v1.ListPartsParams
-func (_e *MockInventoryV1Client_Expecter) ListParts(ctx, params interface{}) *MockInventoryV1Client_ListParts_Call {
+func (_e *MockInventoryV1Client_Expecter) ListParts(ctx interface{}, params interface{}) *MockInventoryV1Client_ListParts_Call {
 	return &MockInventoryV1Client_ListParts_Call{Call: _e.mock.On("ListParts", ctx, params)}
 }
 
