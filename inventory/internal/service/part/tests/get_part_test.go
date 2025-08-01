@@ -24,20 +24,20 @@ func (s *TestingSuite) TestGetPartSuccess() {
 
 func (s *TestingSuite) TestGetPartNotFound() {
 	partUUID := gofakeit.UUID()
-	s.mockRepo.EXPECT().GetPart(s.ctx, partUUID).Return(nil, &model_part.ErrPartNotFound{})
+	s.mockRepo.EXPECT().GetPart(s.ctx, partUUID).Return(nil, model_part.ErrPartNotFound)
 
 	part, err := s.service.GetPart(s.ctx, partUUID)
 
-	s.ErrorIs(err, &model_part.ErrPartNotFound{})
+	s.ErrorIs(err, model_part.ErrPartNotFound)
 	s.Nil(part)
 }
 
 func (s *TestingSuite) TestGetPartInternalError() {
 	partUUID := gofakeit.UUID()
-	s.mockRepo.EXPECT().GetPart(s.ctx, partUUID).Return(nil, &model_part.ErrPartInternal{})
+	s.mockRepo.EXPECT().GetPart(s.ctx, partUUID).Return(nil, model_part.ErrPartInternal)
 
 	part, err := s.service.GetPart(s.ctx, partUUID)
 
-	s.ErrorIs(err, &model_part.ErrPartInternal{})
+	s.ErrorIs(err, model_part.ErrPartInternal)
 	s.Nil(part)
 }

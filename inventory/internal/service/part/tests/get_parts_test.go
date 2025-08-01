@@ -43,12 +43,12 @@ func (s *TestingSuite) TestGetPartsInternalError() {
 
 	s.mockRepo.EXPECT().GetParts(s.ctx, repository_part.Filter{
 		Uuids: partsUUID,
-	}).Return(nil, &model_part.ErrPartInternal{})
+	}).Return(nil, model_part.ErrPartInternal)
 
 	parts, err := s.service.GetParts(s.ctx, service_part.Filter{
 		Uuids: partsUUID,
 	})
 
-	s.ErrorIs(err, &model_part.ErrPartInternal{})
+	s.ErrorIs(err, model_part.ErrPartInternal)
 	s.Nil(parts)
 }

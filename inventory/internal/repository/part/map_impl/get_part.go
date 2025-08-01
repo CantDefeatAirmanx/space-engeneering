@@ -13,9 +13,7 @@ func (r *RepositoryPartImpl) GetPart(ctx context.Context, uuid string) (*reposit
 
 	part, ok := r.parts[uuid]
 	if !ok {
-		return nil, &model_part.ErrPartNotFound{
-			UUID: part.UUID,
-		}
+		return nil, model_part.ErrPartNotFound
 	}
 
 	return &part, nil

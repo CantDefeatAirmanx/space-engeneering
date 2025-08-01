@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"github.com/samber/lo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
@@ -32,7 +30,7 @@ func (api *api) ListParts(
 		Categories:            categories,
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Internal server error. %v", err)
+		return nil, err
 	}
 
 	protoParts := lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {

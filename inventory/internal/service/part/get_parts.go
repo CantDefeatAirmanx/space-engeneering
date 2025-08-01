@@ -2,7 +2,6 @@ package service_part
 
 import (
 	"context"
-	"strings"
 
 	"github.com/samber/lo"
 
@@ -34,10 +33,7 @@ func (s *partServiceImpl) GetParts(
 
 	repoParts, err := s.repository.GetParts(ctx, repositoryFilter)
 	if err != nil {
-		return nil, model_part.ErrPartInternal{
-			Err:  err,
-			UUID: strings.Join(filter.Uuids, ","),
-		}
+		return nil, model_part.ErrPartInternal
 	}
 
 	modelParts := lo.Map(

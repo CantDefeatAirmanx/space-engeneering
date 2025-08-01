@@ -38,7 +38,7 @@ func (s *TestingSuite) TestGetPartNotFound() {
 	result, err := s.repo.GetPart(s.ctx, randomUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_part.ErrPartNotFound{})
+	s.ErrorIs(err, model_part.ErrPartNotFound)
 	s.Nil(result)
 }
 
