@@ -16,6 +16,7 @@ import (
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	configs_inventory "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/inventory"
+	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -47,7 +48,12 @@ func main() {
 		}
 	}()
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptor.UnaryErrorInterceptor(),
+			interceptor.ValidateInterceptor(),
+		),
+	)
 	reflection.Register(grpcServer)
 
 	inventory_v1.RegisterInventoryServiceServer(grpcServer, inventoryAPI)

@@ -53,7 +53,9 @@ func main() {
 		},
 	)
 
-	orderServer, pErr := order_v1.NewServer(orderHandler)
+	orderServer, pErr := order_v1.NewServer(
+		orderHandler,
+	)
 	if pErr != nil {
 		log.Fatalf("Ошибка при создании сервера заказов: %v", pErr)
 	}

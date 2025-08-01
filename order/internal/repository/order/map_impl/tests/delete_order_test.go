@@ -16,5 +16,5 @@ func (s *TestingSuite) TestDeleteOrderSuccess() {
 	_, err := s.repo.GetOrder(s.ctx, repoOrder.OrderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderNotFound{})
+	s.ErrorIs(err, model_order.ErrOrderNotFound)
 }

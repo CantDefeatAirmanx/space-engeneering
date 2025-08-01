@@ -3,12 +3,14 @@ package service_order
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
+	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
 	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
@@ -23,10 +25,7 @@ func (s *OrderServiceImpl) CreateOrder(
 ) (*CreateOrderResult, error) {
 	orderUUID, err := uuid.NewV7()
 	if err != nil {
-		return nil, &model_order.ErrOrderInternal{
-			OrderUUID: "",
-			Err:       err,
-		}
+		return nil, model_order.ErrOrderInternal
 	}
 
 	partsCtx, partsCancel := context.WithTimeout(ctx, partsTimeout)
@@ -39,24 +38,15 @@ func (s *OrderServiceImpl) CreateOrder(
 		},
 	)
 	if err != nil {
-		if errors.Is(err, client_inventory_v1.ErrInvalidArguments) {
-			return nil, &model_order.ErrOrderInvalidArguments{
-				OrderUUID: orderUUID.String(),
-				Err:       err,
-			}
+		if errors.Is(err, model_part.ErrPartInvalidArguments) {
+			return nil, fmt.Errorf("%w: %s", model_order.ErrOrderInvalidArguments, "some parts not found")
 		}
 
-		return nil, &model_order.ErrOrderInternal{
-			OrderUUID: orderUUID.String(),
-			Err:       err,
-		}
+		return nil, model_order.ErrOrderInternal
 	}
 
 	if len(parts) != len(params.PartUuids) {
-		return nil, &model_order.ErrOrderInvalidArguments{
-			OrderUUID: orderUUID.String(),
-			Err:       errors.New("some parts not found"),
-		}
+		return nil, fmt.Errorf("%w: %s", model_order.ErrOrderInvalidArguments, "some parts not found")
 	}
 
 	totalPrice := 0.0

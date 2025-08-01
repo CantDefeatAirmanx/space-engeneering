@@ -21,10 +21,7 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(orderModel)
 
 	if !isOrderAvailableForCancel {
-		return &model_order.ErrOrderConflict{
-			OrderUUID:  orderUUID,
-			ErrMessage: errMessage,
-		}
+		return fmt.Errorf("%w: %s", model_order.ErrOrderConflict, errMessage)
 	}
 
 	repoStatus := repository_order_model.OrderStatus(
@@ -34,10 +31,7 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 		Status: &repoStatus,
 	})
 	if err != nil {
-		return &model_order.ErrOrderInternal{
-			OrderUUID: orderUUID,
-			Err:       err,
-		}
+		return model_order.ErrOrderInternal
 	}
 
 	return nil

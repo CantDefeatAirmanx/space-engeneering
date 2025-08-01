@@ -16,9 +16,7 @@ func (repo *OrderRepositoryMap) GetOrder(
 
 	order, ok := repo.orders[orderUUID]
 	if !ok {
-		return nil, &model_order.ErrOrderNotFound{
-			OrderUUID: orderUUID,
-		}
+		return nil, model_order.ErrOrderNotFound
 	}
 
 	return &order, nil

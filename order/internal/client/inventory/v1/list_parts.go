@@ -35,16 +35,16 @@ func (client *inventoryV1GrpcClient) ListParts(
 		statusErr, ok := status.FromError(err)
 
 		if !ok {
-			return nil, ErrInternalServerError
+			return nil, model_part.ErrPartInternal
 		}
 
 		switch statusErr.Code() {
 		case codes.InvalidArgument:
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArguments, statusErr.Message())
+			return nil, fmt.Errorf("%w: %s", model_part.ErrPartInvalidArguments, statusErr.Message())
 		case codes.Internal:
-			return nil, fmt.Errorf("%w: %s", ErrInternalServerError, statusErr.Message())
+			return nil, fmt.Errorf("%w: %s", model_part.ErrPartInternal, statusErr.Message())
 		default:
-			return nil, fmt.Errorf("%w: %s", ErrInternalServerError, statusErr.Message())
+			return nil, fmt.Errorf("%w: %s", model_part.ErrPartInternal, statusErr.Message())
 		}
 	}
 

@@ -15,9 +15,7 @@ func (repo *OrderRepositoryMap) DeleteOrder(
 
 	_, ok := repo.orders[orderUUID]
 	if !ok {
-		return &model_order.ErrOrderNotFound{
-			OrderUUID: orderUUID,
-		}
+		return model_order.ErrOrderNotFound
 	}
 
 	delete(repo.orders, orderUUID)

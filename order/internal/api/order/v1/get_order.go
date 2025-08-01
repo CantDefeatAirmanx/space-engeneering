@@ -18,7 +18,7 @@ func (api *api) GetOrder(
 	order, err := api.orderService.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
 		switch {
-		case errors.Is(err, &model_order.ErrOrderNotFound{}):
+		case errors.Is(err, model_order.ErrOrderNotFound):
 			return &order_v1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: err.Error(),

@@ -27,5 +27,5 @@ func (s *TestingSuite) TestGetOrderNotFound() {
 	_, err := s.repo.GetOrder(s.ctx, "random-uuid")
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderNotFound{})
+	s.ErrorIs(err, model_order.ErrOrderNotFound)
 }

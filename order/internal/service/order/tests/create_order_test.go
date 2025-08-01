@@ -79,7 +79,7 @@ func (s *TestingSuite) TestCreateOrderInvalidArgumentsClientInventory() {
 		client_inventory_v1.ListPartsParams{
 			Uuids: []string{},
 		},
-	).Return(nil, client_inventory_v1.ErrInvalidArguments)
+	).Return(nil, model_part.ErrPartInvalidArguments)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -90,7 +90,7 @@ func (s *TestingSuite) TestCreateOrderInvalidArgumentsClientInventory() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInvalidArguments{})
+	s.ErrorIs(err, model_order.ErrOrderInvalidArguments)
 	s.Nil(result)
 }
 
@@ -114,7 +114,7 @@ func (s *TestingSuite) TestCreateOrderClientInventoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }
 
@@ -152,7 +152,7 @@ func (s *TestingSuite) TestCreateOrderInvalidPartUuids() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInvalidArguments{})
+	s.ErrorIs(err, model_order.ErrOrderInvalidArguments)
 	s.Nil(result)
 }
 
@@ -175,11 +175,7 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
 			return true
 		}),
-	).Return(
-		&model_order.ErrOrderInternal{
-			OrderUUID: gofakeit.UUID(),
-		},
-	)
+	).Return(model_order.ErrOrderInternal)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -190,6 +186,6 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }

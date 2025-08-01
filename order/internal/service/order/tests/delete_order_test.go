@@ -18,25 +18,23 @@ func (s *TestingSuite) TestDeleteOrderSuccess() {
 func (s *TestingSuite) TestDeleteOrderNotFound() {
 	orderUUID := gofakeit.UUID()
 	s.repoMock.EXPECT().DeleteOrder(s.ctx, orderUUID).Return(
-		&model_order.ErrOrderNotFound{OrderUUID: orderUUID},
+		model_order.ErrOrderNotFound,
 	)
 
 	err := s.service.DeleteOrder(s.ctx, orderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderNotFound{})
+	s.ErrorIs(err, model_order.ErrOrderNotFound)
 }
 
 func (s *TestingSuite) TestDeleteOrderRepositoryUnknownError() {
 	orderUUID := gofakeit.UUID()
 	s.repoMock.EXPECT().DeleteOrder(s.ctx, orderUUID).Return(
-		&model_order.ErrOrderInternal{
-			OrderUUID: orderUUID,
-		},
+		model_order.ErrOrderInternal,
 	)
 
 	err := s.service.DeleteOrder(s.ctx, orderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 }

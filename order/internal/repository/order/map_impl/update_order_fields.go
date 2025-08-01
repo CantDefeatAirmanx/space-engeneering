@@ -17,9 +17,7 @@ func (repo *OrderRepositoryMap) UpdateOrderFields(
 
 	order, ok := repo.orders[orderUUID]
 	if !ok {
-		return &model_order.ErrOrderNotFound{
-			OrderUUID: orderUUID,
-		}
+		return model_order.ErrOrderNotFound
 	}
 
 	if update.Status != nil {

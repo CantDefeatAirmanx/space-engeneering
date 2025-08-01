@@ -1,8 +1,6 @@
 package service_order_tests
 
 import (
-	"errors"
-
 	"github.com/brianvoe/gofakeit/v7"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
@@ -32,13 +30,13 @@ func (s *TestingSuite) TestGetOrderNotFound() {
 	orderUUID := gofakeit.UUID()
 	s.repoMock.EXPECT().GetOrder(s.ctx, orderUUID).Return(
 		nil,
-		&model_order.ErrOrderNotFound{OrderUUID: orderUUID},
+		model_order.ErrOrderNotFound,
 	)
 
 	result, err := s.service.GetOrder(s.ctx, orderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderNotFound{})
+	s.ErrorIs(err, model_order.ErrOrderNotFound)
 	s.Nil(result)
 }
 
@@ -46,15 +44,12 @@ func (s *TestingSuite) TestGetOrderRepositoryUnknownError() {
 	orderUUID := gofakeit.UUID()
 	s.repoMock.EXPECT().GetOrder(s.ctx, orderUUID).Return(
 		nil,
-		&model_order.ErrOrderInternal{
-			OrderUUID: orderUUID,
-			Err:       errors.New("unknown error"),
-		},
+		model_order.ErrOrderInternal,
 	)
 
 	result, err := s.service.GetOrder(s.ctx, orderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }

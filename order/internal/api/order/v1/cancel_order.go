@@ -17,12 +17,12 @@ func (api *api) CancelOrder(
 	err := api.orderService.CancelOrder(ctx, params.OrderUUID)
 	if err != nil {
 		switch {
-		case errors.Is(err, &model_order.ErrOrderNotFound{}):
+		case errors.Is(err, model_order.ErrOrderNotFound):
 			return &order_v1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: err.Error(),
 			}, nil
-		case errors.Is(err, &model_order.ErrOrderConflict{}):
+		case errors.Is(err, model_order.ErrOrderConflict):
 			return &order_v1.ConflictError{
 				Code:    http.StatusConflict,
 				Message: err.Error(),
