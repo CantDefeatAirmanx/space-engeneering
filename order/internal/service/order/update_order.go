@@ -3,40 +3,19 @@ package service_order
 import (
 	"context"
 
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
+	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 )
 
-func (s *OrderServiceImpl) UpdateOrder(ctx context.Context, orderUUID string, update UpdateOrderFields) error {
-	repositoryUpdate := toRepositoryUpdate(update)
-
+func (s *OrderServiceImpl) UpdateOrder(
+	ctx context.Context,
+	orderUUID string,
+	update UpdateOrderFields,
+) error {
 	err := s.orderRepository.UpdateOrderFields(
 		ctx,
 		orderUUID,
-		repositoryUpdate,
+		model_order.UpdateOrderFields(update),
 	)
 
 	return err
-}
-
-func toRepositoryUpdate(modelUpdate UpdateOrderFields) repository_order.UpdateOrderFields {
-	result := repository_order.UpdateOrderFields{
-		TransactionUUID: modelUpdate.TransactionUUID,
-	}
-
-	if modelUpdate.Status != nil {
-		repoStatus := repository_order_model.OrderStatus(
-			*modelUpdate.Status,
-		)
-		result.Status = &repoStatus
-	}
-
-	if modelUpdate.PaymentMethod != nil {
-		repoPaymentMethod := repository_order_model.PaymentMethod(
-			*modelUpdate.PaymentMethod,
-		)
-		result.PaymentMethod = &repoPaymentMethod
-	}
-
-	return result
 }

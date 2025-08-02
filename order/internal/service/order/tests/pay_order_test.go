@@ -8,8 +8,6 @@ import (
 
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 )
 
@@ -17,13 +15,13 @@ func (s *TestingSuite) TestPayOrderSuccess() {
 	orderUUID := gofakeit.UUID()
 	transactionUUID := gofakeit.UUID()
 
-	repoOrder := repository_order_model.Order{
+	modelOrder := model_order.Order{
 		OrderUUID: orderUUID,
-		Status:    repository_order_model.OrderStatusPendingPayment,
+		Status:    model_order.OrderStatusPendingPayment,
 	}
 
 	s.repoMock.EXPECT().GetOrder(s.ctx, orderUUID).Return(
-		&repoOrder,
+		&modelOrder,
 		nil,
 	)
 
@@ -49,7 +47,7 @@ func (s *TestingSuite) TestPayOrderSuccess() {
 			return true
 		}),
 		orderUUID,
-		mock.MatchedBy(func(update repository_order.UpdateOrderFields) bool {
+		mock.MatchedBy(func(update model_order.UpdateOrderFields) bool {
 			return true
 		}),
 	).Return(nil)

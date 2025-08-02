@@ -19,7 +19,8 @@ import (
 func NewMockOrderService(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockOrderService {
+},
+) *MockOrderService {
 	mock := &MockOrderService{}
 	mock.Mock.Test(t)
 
@@ -66,7 +67,7 @@ type MockOrderService_CancelOrder_Call struct {
 // CancelOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-func (_e *MockOrderService_Expecter) CancelOrder(ctx interface{}, orderUUID interface{}) *MockOrderService_CancelOrder_Call {
+func (_e *MockOrderService_Expecter) CancelOrder(ctx, orderUUID interface{}) *MockOrderService_CancelOrder_Call {
 	return &MockOrderService_CancelOrder_Call{Call: _e.mock.On("CancelOrder", ctx, orderUUID)}
 }
 
@@ -134,7 +135,7 @@ type MockOrderService_CreateOrder_Call struct {
 // CreateOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params service_order.CreateOrderParams
-func (_e *MockOrderService_Expecter) CreateOrder(ctx interface{}, params interface{}) *MockOrderService_CreateOrder_Call {
+func (_e *MockOrderService_Expecter) CreateOrder(ctx, params interface{}) *MockOrderService_CreateOrder_Call {
 	return &MockOrderService_CreateOrder_Call{Call: _e.mock.On("CreateOrder", ctx, params)}
 }
 
@@ -191,7 +192,7 @@ type MockOrderService_DeleteOrder_Call struct {
 // DeleteOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-func (_e *MockOrderService_Expecter) DeleteOrder(ctx interface{}, orderUUID interface{}) *MockOrderService_DeleteOrder_Call {
+func (_e *MockOrderService_Expecter) DeleteOrder(ctx, orderUUID interface{}) *MockOrderService_DeleteOrder_Call {
 	return &MockOrderService_DeleteOrder_Call{Call: _e.mock.On("DeleteOrder", ctx, orderUUID)}
 }
 
@@ -259,7 +260,7 @@ type MockOrderService_GetOrder_Call struct {
 // GetOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-func (_e *MockOrderService_Expecter) GetOrder(ctx interface{}, orderUUID interface{}) *MockOrderService_GetOrder_Call {
+func (_e *MockOrderService_Expecter) GetOrder(ctx, orderUUID interface{}) *MockOrderService_GetOrder_Call {
 	return &MockOrderService_GetOrder_Call{Call: _e.mock.On("GetOrder", ctx, orderUUID)}
 }
 
@@ -327,7 +328,7 @@ type MockOrderService_PayOrder_Call struct {
 // PayOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params service_order.PayOrderParams
-func (_e *MockOrderService_Expecter) PayOrder(ctx interface{}, params interface{}) *MockOrderService_PayOrder_Call {
+func (_e *MockOrderService_Expecter) PayOrder(ctx, params interface{}) *MockOrderService_PayOrder_Call {
 	return &MockOrderService_PayOrder_Call{Call: _e.mock.On("PayOrder", ctx, params)}
 }
 
@@ -385,7 +386,7 @@ type MockOrderService_UpdateOrder_Call struct {
 //   - ctx context.Context
 //   - orderUUID string
 //   - update service_order.UpdateOrderFields
-func (_e *MockOrderService_Expecter) UpdateOrder(ctx interface{}, orderUUID interface{}, update interface{}) *MockOrderService_UpdateOrder_Call {
+func (_e *MockOrderService_Expecter) UpdateOrder(ctx, orderUUID, update interface{}) *MockOrderService_UpdateOrder_Call {
 	return &MockOrderService_UpdateOrder_Call{Call: _e.mock.On("UpdateOrder", ctx, orderUUID, update)}
 }
 

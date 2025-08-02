@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
 	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 	helpers_test_data "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
@@ -52,7 +51,7 @@ func (s *TestingSuite) TestGetPartsWithoutFilters() {
 	}
 	expected := getPartsValues(repoParts)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{})
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{})
 
 	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
 	sortParts(resultValues)
@@ -76,7 +75,7 @@ func (s *TestingSuite) TestGetPartsWithUuidsFilter() {
 		partsValues[2],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Uuids: []string{part2UUID, part3UUID},
 	})
 
@@ -91,7 +90,7 @@ func (s *TestingSuite) TestGetPartsWithUuidsFilter() {
 func (s *TestingSuite) TestGetPartsWithUuidsFilterNotFound() {
 	initParts(s)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Uuids: []string{"random_uuid1", "random_uuid2"},
 	})
 
@@ -114,7 +113,7 @@ func (s *TestingSuite) TestGetPartsWithSingleTagFilter() {
 		partsValues[4],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Tags: []string{tag5},
 	})
 
@@ -140,7 +139,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleTagsFilter() {
 		partsValues[1],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Tags: []string{tag1, tag2},
 	})
 
@@ -155,7 +154,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleTagsFilter() {
 func (s *TestingSuite) TestGetPartsWithTagFilterNotFound() {
 	initParts(s)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Tags: []string{"random_tag"},
 	})
 
@@ -168,7 +167,7 @@ func (s *TestingSuite) TestGetPartsWithTagFilterNotFound() {
 func (s *TestingSuite) TestGetPartsWithMultipleTagsFilterNotFound() {
 	initParts(s)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Tags: []string{"random_tag", "random_tag2"},
 	})
 
@@ -192,8 +191,8 @@ func (s *TestingSuite) TestGetPartsWithCategoryFilter() {
 		partsValues[2],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
-		Categories: []repository_model_part.Category{repository_model_part.CategoryEngine},
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
+		Categories: []model_part.Category{model_part.CategoryEngine},
 	})
 
 	resultValues := getPartsValues(modelPartsToRepositoryParts(result))
@@ -219,10 +218,10 @@ func (s *TestingSuite) TestGetPartsWithMultipleCategoriesFilter() {
 		partsValues[2],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
-		Categories: []repository_model_part.Category{
-			repository_model_part.CategoryEngine,
-			repository_model_part.CategoryFuel,
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
+		Categories: []model_part.Category{
+			model_part.CategoryEngine,
+			model_part.CategoryFuel,
 		},
 	})
 
@@ -237,9 +236,9 @@ func (s *TestingSuite) TestGetPartsWithMultipleCategoriesFilter() {
 func (s *TestingSuite) TestGetPartsWithCategoryFilterNotFound() {
 	initParts(s)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
-		Categories: []repository_model_part.Category{
-			repository_model_part.CategoryUnknown,
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
+		Categories: []model_part.Category{
+			model_part.CategoryUnknown,
 		},
 	})
 
@@ -262,7 +261,7 @@ func (s *TestingSuite) TestGetPartsWithNameFilter() {
 		partsValues[0],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Names: []string{part1Name},
 	})
 
@@ -288,7 +287,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleNamesFilter() {
 		partsValues[2],
 	}
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Names: []string{part1Name, part3Name},
 	})
 
@@ -303,7 +302,7 @@ func (s *TestingSuite) TestGetPartsWithMultipleNamesFilter() {
 func (s *TestingSuite) TestGetPartsWithNameFilterNotFound() {
 	initParts(s)
 
-	result, err := s.repo.GetParts(s.ctx, repository_part.Filter{
+	result, err := s.repo.GetParts(s.ctx, model_part.Filter{
 		Names: []string{"random_name"},
 	})
 

@@ -1,6 +1,8 @@
 package repository_converter_part
 
 import (
+	"github.com/samber/lo"
+
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
@@ -80,5 +82,20 @@ func ToRepository(model *model_part.Part) repository_model_part.Part {
 		CreatedAt: model.CreatedAt,
 		UpdatedAt: model.UpdatedAt,
 		Metadata:  metadata,
+	}
+}
+
+func ToRepositoryFilter(model model_part.Filter) repository_model_part.Filter {
+	return repository_model_part.Filter{
+		Uuids: model.Uuids,
+		Categories: lo.Map(
+			model.Categories,
+			func(category model_part.Category, _ int) repository_model_part.Category {
+				return repository_model_part.Category(category)
+			},
+		),
+		ManufacturerCountries: model.ManufacturerCountries,
+		Tags:                  model.Tags,
+		Names:                 model.Names,
 	}
 }

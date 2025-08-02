@@ -7,7 +7,6 @@ import (
 
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
 const (
@@ -28,9 +27,7 @@ func (s *OrderServiceImpl) PayOrder(ctx context.Context, params PayOrderParams) 
 		return nil, err
 	}
 
-	orderModel := repository_order_converter.ToModel(order)
-
-	if orderModel.Status != model_order.OrderStatusPendingPayment {
+	if order.Status != model_order.OrderStatusPendingPayment {
 		return nil, fmt.Errorf("%w: %s", model_order.ErrOrderConflict, fmt.Sprintf("Order %s is not in pending payment status", params.OrderUUID))
 	}
 

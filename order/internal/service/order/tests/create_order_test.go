@@ -11,7 +11,6 @@ import (
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 )
 
@@ -52,7 +51,7 @@ func (s *TestingSuite) TestCreateOrderSuccess() {
 			_, ok := ctx.Deadline()
 			return ok
 		}),
-		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
+		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
 	).Return(nil)
@@ -172,7 +171,7 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 			_, ok := ctx.Deadline()
 			return ok
 		}),
-		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
+		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
 	).Return(model_order.ErrOrderInternal)

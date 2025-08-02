@@ -4,26 +4,23 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
 func (s *TestingSuite) TestGetOrderSuccess() {
 	orderUUID := gofakeit.UUID()
-	repoOrder := repository_order_model.Order{
+	modelOrder := &model_order.Order{
 		OrderUUID: orderUUID,
 	}
-	modelOrder := repository_order_converter.ToModel(&repoOrder)
 
 	s.repoMock.EXPECT().GetOrder(s.ctx, orderUUID).Return(
-		&repoOrder,
+		modelOrder,
 		nil,
 	)
 
 	result, err := s.service.GetOrder(s.ctx, orderUUID)
 
 	s.NoError(err)
-	s.Equal(modelOrder, *result)
+	s.Equal(modelOrder, result)
 }
 
 func (s *TestingSuite) TestGetOrderNotFound() {

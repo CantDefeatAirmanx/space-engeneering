@@ -7,7 +7,6 @@ import (
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
-	service_inventory "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -17,7 +16,7 @@ func (api *api) ListParts(
 ) (*inventory_v1.ListPartsResponse, error) {
 	categories := categoriesToModel(req.Filter.Categories)
 
-	parts, err := api.partService.GetParts(ctx, service_inventory.Filter{
+	parts, err := api.partService.GetParts(ctx, model_part.Filter{
 		Uuids:                 req.Filter.Uuids,
 		ManufacturerCountries: req.Filter.ManufacturerCountries,
 		Tags:                  req.Filter.Tags,

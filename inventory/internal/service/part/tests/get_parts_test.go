@@ -4,8 +4,6 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	helpers_mocks "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 
@@ -18,11 +16,11 @@ func (s *TestingSuite) TestGetPartsSuccess() {
 		helpers_mocks.GenerateRandomPart(helpers_mocks.WithUUID(partsUUID[2])),
 	}
 
-	s.mockRepo.EXPECT().GetParts(s.ctx, repository_part.Filter{
+	s.mockRepo.EXPECT().GetParts(s.ctx, model_part.Filter{
 		Uuids: partsUUID,
 	}).Return(modelGeneratedParts, nil)
 
-	parts, err := s.service.GetParts(s.ctx, service_part.Filter{
+	parts, err := s.service.GetParts(s.ctx, model_part.Filter{
 		Uuids: partsUUID,
 	})
 
@@ -33,11 +31,11 @@ func (s *TestingSuite) TestGetPartsSuccess() {
 func (s *TestingSuite) TestGetPartsInternalError() {
 	partsUUID := []string{gofakeit.UUID(), gofakeit.UUID(), gofakeit.UUID()}
 
-	s.mockRepo.EXPECT().GetParts(s.ctx, repository_part.Filter{
+	s.mockRepo.EXPECT().GetParts(s.ctx, model_part.Filter{
 		Uuids: partsUUID,
 	}).Return(nil, model_part.ErrPartInternal)
 
-	parts, err := s.service.GetParts(s.ctx, service_part.Filter{
+	parts, err := s.service.GetParts(s.ctx, model_part.Filter{
 		Uuids: partsUUID,
 	})
 

@@ -11,7 +11,6 @@ import (
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
 const (
@@ -65,7 +64,7 @@ func (s *OrderServiceImpl) CreateOrder(
 	orderCtx, orderCancel := context.WithTimeout(ctx, orderTimeout)
 	defer orderCancel()
 
-	err = s.orderRepository.CreateOrder(orderCtx, repository_order_converter.ToRepository(&order))
+	err = s.orderRepository.CreateOrder(orderCtx, order)
 	if err != nil {
 		return nil, err
 	}

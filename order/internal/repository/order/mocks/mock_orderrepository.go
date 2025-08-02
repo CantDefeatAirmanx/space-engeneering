@@ -9,8 +9,7 @@ package mocks
 import (
 	"context"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
-	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
+	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -19,7 +18,8 @@ import (
 func NewMockOrderRepository(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockOrderRepository {
+},
+) *MockOrderRepository {
 	mock := &MockOrderRepository{}
 	mock.Mock.Test(t)
 
@@ -42,7 +42,7 @@ func (_m *MockOrderRepository) EXPECT() *MockOrderRepository_Expecter {
 }
 
 // CreateOrder provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) CreateOrder(ctx context.Context, order repository_order_model.Order) error {
+func (_mock *MockOrderRepository) CreateOrder(ctx context.Context, order model_order.Order) error {
 	ret := _mock.Called(ctx, order)
 
 	if len(ret) == 0 {
@@ -50,7 +50,7 @@ func (_mock *MockOrderRepository) CreateOrder(ctx context.Context, order reposit
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, repository_order_model.Order) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_order.Order) error); ok {
 		r0 = returnFunc(ctx, order)
 	} else {
 		r0 = ret.Error(0)
@@ -65,20 +65,20 @@ type MockOrderRepository_CreateOrder_Call struct {
 
 // CreateOrder is a helper method to define mock.On call
 //   - ctx context.Context
-//   - order repository_order_model.Order
-func (_e *MockOrderRepository_Expecter) CreateOrder(ctx interface{}, order interface{}) *MockOrderRepository_CreateOrder_Call {
+//   - order model_order.Order
+func (_e *MockOrderRepository_Expecter) CreateOrder(ctx, order interface{}) *MockOrderRepository_CreateOrder_Call {
 	return &MockOrderRepository_CreateOrder_Call{Call: _e.mock.On("CreateOrder", ctx, order)}
 }
 
-func (_c *MockOrderRepository_CreateOrder_Call) Run(run func(ctx context.Context, order repository_order_model.Order)) *MockOrderRepository_CreateOrder_Call {
+func (_c *MockOrderRepository_CreateOrder_Call) Run(run func(ctx context.Context, order model_order.Order)) *MockOrderRepository_CreateOrder_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 repository_order_model.Order
+		var arg1 model_order.Order
 		if args[1] != nil {
-			arg1 = args[1].(repository_order_model.Order)
+			arg1 = args[1].(model_order.Order)
 		}
 		run(
 			arg0,
@@ -93,7 +93,7 @@ func (_c *MockOrderRepository_CreateOrder_Call) Return(err error) *MockOrderRepo
 	return _c
 }
 
-func (_c *MockOrderRepository_CreateOrder_Call) RunAndReturn(run func(ctx context.Context, order repository_order_model.Order) error) *MockOrderRepository_CreateOrder_Call {
+func (_c *MockOrderRepository_CreateOrder_Call) RunAndReturn(run func(ctx context.Context, order model_order.Order) error) *MockOrderRepository_CreateOrder_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -123,7 +123,7 @@ type MockOrderRepository_DeleteOrder_Call struct {
 // DeleteOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-func (_e *MockOrderRepository_Expecter) DeleteOrder(ctx interface{}, orderUUID interface{}) *MockOrderRepository_DeleteOrder_Call {
+func (_e *MockOrderRepository_Expecter) DeleteOrder(ctx, orderUUID interface{}) *MockOrderRepository_DeleteOrder_Call {
 	return &MockOrderRepository_DeleteOrder_Call{Call: _e.mock.On("DeleteOrder", ctx, orderUUID)}
 }
 
@@ -156,23 +156,23 @@ func (_c *MockOrderRepository_DeleteOrder_Call) RunAndReturn(run func(ctx contex
 }
 
 // GetOrder provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) GetOrder(ctx context.Context, orderUUID string) (*repository_order_model.Order, error) {
+func (_mock *MockOrderRepository) GetOrder(ctx context.Context, orderUUID string) (*model_order.Order, error) {
 	ret := _mock.Called(ctx, orderUUID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetOrder")
 	}
 
-	var r0 *repository_order_model.Order
+	var r0 *model_order.Order
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*repository_order_model.Order, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*model_order.Order, error)); ok {
 		return returnFunc(ctx, orderUUID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *repository_order_model.Order); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *model_order.Order); ok {
 		r0 = returnFunc(ctx, orderUUID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*repository_order_model.Order)
+			r0 = ret.Get(0).(*model_order.Order)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -191,7 +191,7 @@ type MockOrderRepository_GetOrder_Call struct {
 // GetOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-func (_e *MockOrderRepository_Expecter) GetOrder(ctx interface{}, orderUUID interface{}) *MockOrderRepository_GetOrder_Call {
+func (_e *MockOrderRepository_Expecter) GetOrder(ctx, orderUUID interface{}) *MockOrderRepository_GetOrder_Call {
 	return &MockOrderRepository_GetOrder_Call{Call: _e.mock.On("GetOrder", ctx, orderUUID)}
 }
 
@@ -213,18 +213,18 @@ func (_c *MockOrderRepository_GetOrder_Call) Run(run func(ctx context.Context, o
 	return _c
 }
 
-func (_c *MockOrderRepository_GetOrder_Call) Return(order *repository_order_model.Order, err error) *MockOrderRepository_GetOrder_Call {
+func (_c *MockOrderRepository_GetOrder_Call) Return(order *model_order.Order, err error) *MockOrderRepository_GetOrder_Call {
 	_c.Call.Return(order, err)
 	return _c
 }
 
-func (_c *MockOrderRepository_GetOrder_Call) RunAndReturn(run func(ctx context.Context, orderUUID string) (*repository_order_model.Order, error)) *MockOrderRepository_GetOrder_Call {
+func (_c *MockOrderRepository_GetOrder_Call) RunAndReturn(run func(ctx context.Context, orderUUID string) (*model_order.Order, error)) *MockOrderRepository_GetOrder_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateOrderFields provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) UpdateOrderFields(ctx context.Context, orderUUID string, update repository_order.UpdateOrderFields) error {
+func (_mock *MockOrderRepository) UpdateOrderFields(ctx context.Context, orderUUID string, update model_order.UpdateOrderFields) error {
 	ret := _mock.Called(ctx, orderUUID, update)
 
 	if len(ret) == 0 {
@@ -232,7 +232,7 @@ func (_mock *MockOrderRepository) UpdateOrderFields(ctx context.Context, orderUU
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, repository_order.UpdateOrderFields) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, model_order.UpdateOrderFields) error); ok {
 		r0 = returnFunc(ctx, orderUUID, update)
 	} else {
 		r0 = ret.Error(0)
@@ -248,12 +248,12 @@ type MockOrderRepository_UpdateOrderFields_Call struct {
 // UpdateOrderFields is a helper method to define mock.On call
 //   - ctx context.Context
 //   - orderUUID string
-//   - update repository_order.UpdateOrderFields
-func (_e *MockOrderRepository_Expecter) UpdateOrderFields(ctx interface{}, orderUUID interface{}, update interface{}) *MockOrderRepository_UpdateOrderFields_Call {
+//   - update model_order.UpdateOrderFields
+func (_e *MockOrderRepository_Expecter) UpdateOrderFields(ctx, orderUUID, update interface{}) *MockOrderRepository_UpdateOrderFields_Call {
 	return &MockOrderRepository_UpdateOrderFields_Call{Call: _e.mock.On("UpdateOrderFields", ctx, orderUUID, update)}
 }
 
-func (_c *MockOrderRepository_UpdateOrderFields_Call) Run(run func(ctx context.Context, orderUUID string, update repository_order.UpdateOrderFields)) *MockOrderRepository_UpdateOrderFields_Call {
+func (_c *MockOrderRepository_UpdateOrderFields_Call) Run(run func(ctx context.Context, orderUUID string, update model_order.UpdateOrderFields)) *MockOrderRepository_UpdateOrderFields_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -263,9 +263,9 @@ func (_c *MockOrderRepository_UpdateOrderFields_Call) Run(run func(ctx context.C
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
-		var arg2 repository_order.UpdateOrderFields
+		var arg2 model_order.UpdateOrderFields
 		if args[2] != nil {
-			arg2 = args[2].(repository_order.UpdateOrderFields)
+			arg2 = args[2].(model_order.UpdateOrderFields)
 		}
 		run(
 			arg0,
@@ -281,7 +281,7 @@ func (_c *MockOrderRepository_UpdateOrderFields_Call) Return(err error) *MockOrd
 	return _c
 }
 
-func (_c *MockOrderRepository_UpdateOrderFields_Call) RunAndReturn(run func(ctx context.Context, orderUUID string, update repository_order.UpdateOrderFields) error) *MockOrderRepository_UpdateOrderFields_Call {
+func (_c *MockOrderRepository_UpdateOrderFields_Call) RunAndReturn(run func(ctx context.Context, orderUUID string, update model_order.UpdateOrderFields) error) *MockOrderRepository_UpdateOrderFields_Call {
 	_c.Call.Return(run)
 	return _c
 }

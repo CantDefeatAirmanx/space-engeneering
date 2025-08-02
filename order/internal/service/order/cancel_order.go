@@ -6,9 +6,6 @@ import (
 	"slices"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
 func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) error {
@@ -17,18 +14,15 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 		return err
 	}
 
-	orderModel := repository_order_converter.ToModel(order)
-	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(orderModel)
+	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(order)
 
 	if !isOrderAvailableForCancel {
 		return fmt.Errorf("%w: %s", model_order.ErrOrderConflict, errMessage)
 	}
 
-	repoStatus := repository_order_model.OrderStatus(
-		model_order.OrderStatusCancelled,
-	)
-	err = s.orderRepository.UpdateOrderFields(ctx, orderUUID, repository_order.UpdateOrderFields{
-		Status: &repoStatus,
+	canceledStatus := model_order.OrderStatusCancelled
+	err = s.orderRepository.UpdateOrderFields(ctx, orderUUID, model_order.UpdateOrderFields{
+		Status: &canceledStatus,
 	})
 	if err != nil {
 		return model_order.ErrOrderInternal
@@ -57,7 +51,7 @@ var conflictStatuses = []conflictStatus{
 	},
 }
 
-func getIsOrderAvailableForCancel(order model_order.Order) (isAvailable bool, errMessage string) {
+func getIsOrderAvailableForCancel(order *model_order.Order) (isAvailable bool, errMessage string) {
 	conflictIdx := slices.IndexFunc(conflictStatuses, func(c conflictStatus) bool {
 		return c.Value == order.Status
 	})

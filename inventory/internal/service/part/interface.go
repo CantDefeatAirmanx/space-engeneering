@@ -21,13 +21,5 @@ type PartService interface {
 	// Errors:
 	//
 	// - ([model_part.ErrPartInternal]): if the part failed to get.
-	GetParts(ctx context.Context, filter Filter) ([]*model_part.Part, error)
-}
-
-type Filter struct {
-	Uuids                 []string
-	Categories            []model_part.Category
-	ManufacturerCountries []string
-	Tags                  []string
-	Names                 []string
+	GetParts(ctx context.Context, filter model_part.Filter) ([]*model_part.Part, error)
 }

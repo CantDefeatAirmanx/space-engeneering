@@ -10,7 +10,6 @@ import (
 	"context"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -19,7 +18,8 @@ import (
 func NewMockPartRepository(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockPartRepository {
+},
+) *MockPartRepository {
 	mock := &MockPartRepository{}
 	mock.Mock.Test(t)
 
@@ -77,7 +77,7 @@ type MockPartRepository_GetPart_Call struct {
 // GetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockPartRepository_Expecter) GetPart(ctx interface{}, uuid interface{}) *MockPartRepository_GetPart_Call {
+func (_e *MockPartRepository_Expecter) GetPart(ctx, uuid interface{}) *MockPartRepository_GetPart_Call {
 	return &MockPartRepository_GetPart_Call{Call: _e.mock.On("GetPart", ctx, uuid)}
 }
 
@@ -110,7 +110,7 @@ func (_c *MockPartRepository_GetPart_Call) RunAndReturn(run func(ctx context.Con
 }
 
 // GetParts provides a mock function for the type MockPartRepository
-func (_mock *MockPartRepository) GetParts(ctx context.Context, filter repository_part.Filter) ([]*model_part.Part, error) {
+func (_mock *MockPartRepository) GetParts(ctx context.Context, filter model_part.Filter) ([]*model_part.Part, error) {
 	ret := _mock.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -119,17 +119,17 @@ func (_mock *MockPartRepository) GetParts(ctx context.Context, filter repository
 
 	var r0 []*model_part.Part
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, repository_part.Filter) ([]*model_part.Part, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_part.Filter) ([]*model_part.Part, error)); ok {
 		return returnFunc(ctx, filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, repository_part.Filter) []*model_part.Part); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_part.Filter) []*model_part.Part); ok {
 		r0 = returnFunc(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model_part.Part)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, repository_part.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, model_part.Filter) error); ok {
 		r1 = returnFunc(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
@@ -144,20 +144,20 @@ type MockPartRepository_GetParts_Call struct {
 
 // GetParts is a helper method to define mock.On call
 //   - ctx context.Context
-//   - filter repository_part.Filter
-func (_e *MockPartRepository_Expecter) GetParts(ctx interface{}, filter interface{}) *MockPartRepository_GetParts_Call {
+//   - filter model_part.Filter
+func (_e *MockPartRepository_Expecter) GetParts(ctx, filter interface{}) *MockPartRepository_GetParts_Call {
 	return &MockPartRepository_GetParts_Call{Call: _e.mock.On("GetParts", ctx, filter)}
 }
 
-func (_c *MockPartRepository_GetParts_Call) Run(run func(ctx context.Context, filter repository_part.Filter)) *MockPartRepository_GetParts_Call {
+func (_c *MockPartRepository_GetParts_Call) Run(run func(ctx context.Context, filter model_part.Filter)) *MockPartRepository_GetParts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 repository_part.Filter
+		var arg1 model_part.Filter
 		if args[1] != nil {
-			arg1 = args[1].(repository_part.Filter)
+			arg1 = args[1].(model_part.Filter)
 		}
 		run(
 			arg0,
@@ -172,7 +172,7 @@ func (_c *MockPartRepository_GetParts_Call) Return(parts []*model_part.Part, err
 	return _c
 }
 
-func (_c *MockPartRepository_GetParts_Call) RunAndReturn(run func(ctx context.Context, filter repository_part.Filter) ([]*model_part.Part, error)) *MockPartRepository_GetParts_Call {
+func (_c *MockPartRepository_GetParts_Call) RunAndReturn(run func(ctx context.Context, filter model_part.Filter) ([]*model_part.Part, error)) *MockPartRepository_GetParts_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -202,7 +202,7 @@ type MockPartRepository_SetPart_Call struct {
 // SetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - part *model_part.Part
-func (_e *MockPartRepository_Expecter) SetPart(ctx interface{}, part interface{}) *MockPartRepository_SetPart_Call {
+func (_e *MockPartRepository_Expecter) SetPart(ctx, part interface{}) *MockPartRepository_SetPart_Call {
 	return &MockPartRepository_SetPart_Call{Call: _e.mock.On("SetPart", ctx, part)}
 }
 
