@@ -3,19 +3,18 @@ package service_order
 import (
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
 )
 
 var _ OrderService = (*OrderServiceImpl)(nil)
 
 type OrderServiceImpl struct {
-	orderRepository repository_order.OrderRepository
+	orderRepository OrderRepository
 	inventoryClient client_inventory_v1.InventoryV1Client
 	paymentClient   client_payment_v1.PaymentV1Client
 }
 
 type NewOrderServiceParams struct {
-	OrderRepository repository_order.OrderRepository
+	OrderRepository OrderRepository
 	InventoryClient client_inventory_v1.InventoryV1Client
 	PaymentClient   client_payment_v1.PaymentV1Client
 }

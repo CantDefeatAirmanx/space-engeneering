@@ -3,7 +3,6 @@ package service_order
 import (
 	"context"
 	"fmt"
-	"slices"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 )
@@ -31,37 +30,13 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 	return nil
 }
 
-type conflictStatus struct {
-	Value         model_order.OrderStatus
-	GetErrMessage func(orderUUID string) string
-}
-
-var conflictStatuses = []conflictStatus{
-	{
-		Value: model_order.OrderStatusPaid,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already paid", orderUUID)
-		},
-	},
-	{
-		Value: model_order.OrderStatusCancelled,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already cancelled", orderUUID)
-		},
-	},
-}
-
 func getIsOrderAvailableForCancel(order *model_order.Order) (isAvailable bool, errMessage string) {
-	conflictIdx := slices.IndexFunc(conflictStatuses, func(c conflictStatus) bool {
-		return c.Value == order.Status
-	})
-
-	if conflictIdx != -1 {
-		conflictObj := conflictStatuses[conflictIdx]
-		errMessage := conflictObj.GetErrMessage(order.OrderUUID)
-
-		return false, errMessage
+	switch order.Status {
+	case model_order.OrderStatusPaid:
+		return false, "Order already paid"
+	case model_order.OrderStatusCancelled:
+		return false, "Order already cancelled"
+	default:
+		return true, ""
 	}
-
-	return true, ""
 }

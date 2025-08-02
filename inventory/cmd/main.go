@@ -32,9 +32,7 @@ func main() {
 		},
 	)
 	inventoryAPI := api_inventory_v1.NewApi(
-		api_inventory_v1.NewApiParams{
-			PartService: partService,
-		},
+		partService,
 	)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", configs_inventory.Port))

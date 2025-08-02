@@ -100,11 +100,11 @@ func main() {
 	}
 
 	// Закрываем gRPC соединения
-	if err := paymentClient.Conn.Close(); err != nil {
+	if err := paymentClient.Close(); err != nil {
 		log.Printf("Ошибка при закрытии payment gRPC клиента: %v", err)
 	}
 
-	if err := inventoryClient.Conn.Close(); err != nil {
+	if err := inventoryClient.Close(); err != nil {
 		log.Printf("Ошибка при закрытии part gRPC клиента: %v", err)
 	}
 

@@ -27,11 +27,7 @@ func (api *api) ListParts(
 		return nil, err
 	}
 
-	protoParts := lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {
-		protoPart := model_converter_part.ToProto(part)
-
-		return protoPart
-	})
+	protoParts := partsToProtoParts(parts)
 
 	return &inventory_v1.ListPartsResponse{
 		Parts: protoParts,
@@ -45,4 +41,12 @@ func categoriesToModel(categories []inventory_v1.Category) []model_part.Category
 			return model_part.Category(category)
 		},
 	)
+}
+
+func partsToProtoParts(parts []*model_part.Part) []*inventory_v1.Part {
+	return lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {
+		protoPart := model_converter_part.ToProto(part)
+
+		return protoPart
+	})
 }
