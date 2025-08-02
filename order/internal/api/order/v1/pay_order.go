@@ -30,17 +30,17 @@ func (api *api) PayOrder(
 	})
 	if err != nil {
 		switch {
-		case errors.Is(err, &model_order.ErrOrderNotFound{}):
+		case errors.Is(err, model_order.ErrOrderNotFound):
 			return &order_v1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: err.Error(),
 			}, nil
-		case errors.Is(err, &model_order.ErrOrderConflict{}):
+		case errors.Is(err, model_order.ErrOrderConflict):
 			return &order_v1.ConflictError{
 				Code:    http.StatusConflict,
 				Message: err.Error(),
 			}, nil
-		case errors.Is(err, &model_order.ErrOrderInternal{}):
+		case errors.Is(err, model_order.ErrOrderInternal):
 			return &order_v1.InternalServerError{
 				Code:    http.StatusInternalServerError,
 				Message: err.Error(),

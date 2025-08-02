@@ -12,12 +12,10 @@ type api struct {
 	partService service_inventory.PartService
 }
 
-type NewApiParams struct {
-	PartService service_inventory.PartService
-}
-
-func NewApi(params NewApiParams) *api {
+func NewApi(
+	partService service_inventory.PartService,
+) *api {
 	return &api{
-		partService: params.PartService,
+		partService: partService,
 	}
 }

@@ -3,12 +3,8 @@ package service_order
 import (
 	"context"
 	"fmt"
-	"slices"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
 func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) error {
@@ -17,63 +13,30 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 		return err
 	}
 
-	orderModel := repository_order_converter.ToModel(order)
-	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(orderModel)
+	isOrderAvailableForCancel, errMessage := getIsOrderAvailableForCancel(order)
 
 	if !isOrderAvailableForCancel {
-		return &model_order.ErrOrderConflict{
-			OrderUUID:  orderUUID,
-			ErrMessage: errMessage,
-		}
+		return fmt.Errorf("%w: %s", model_order.ErrOrderConflict, errMessage)
 	}
 
-	repoStatus := repository_order_model.OrderStatus(
-		model_order.OrderStatusCancelled,
-	)
-	err = s.orderRepository.UpdateOrderFields(ctx, orderUUID, repository_order.UpdateOrderFields{
-		Status: &repoStatus,
+	canceledStatus := model_order.OrderStatusCancelled
+	err = s.orderRepository.UpdateOrderFields(ctx, orderUUID, model_order.UpdateOrderFields{
+		Status: &canceledStatus,
 	})
 	if err != nil {
-		return &model_order.ErrOrderInternal{
-			OrderUUID: orderUUID,
-			Err:       err,
-		}
+		return model_order.ErrOrderInternal
 	}
 
 	return nil
 }
 
-type conflictStatus struct {
-	Value         model_order.OrderStatus
-	GetErrMessage func(orderUUID string) string
-}
-
-var conflictStatuses = []conflictStatus{
-	{
-		Value: model_order.OrderStatusPaid,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already paid", orderUUID)
-		},
-	},
-	{
-		Value: model_order.OrderStatusCancelled,
-		GetErrMessage: func(orderUUID string) string {
-			return fmt.Sprintf("Order %s already cancelled", orderUUID)
-		},
-	},
-}
-
-func getIsOrderAvailableForCancel(order model_order.Order) (isAvailable bool, errMessage string) {
-	conflictIdx := slices.IndexFunc(conflictStatuses, func(c conflictStatus) bool {
-		return c.Value == order.Status
-	})
-
-	if conflictIdx != -1 {
-		conflictObj := conflictStatuses[conflictIdx]
-		errMessage := conflictObj.GetErrMessage(order.OrderUUID)
-
-		return false, errMessage
+func getIsOrderAvailableForCancel(order *model_order.Order) (isAvailable bool, errMessage string) {
+	switch order.Status {
+	case model_order.OrderStatusPaid:
+		return false, "Order already paid"
+	case model_order.OrderStatusCancelled:
+		return false, "Order already cancelled"
+	default:
+		return true, ""
 	}
-
-	return true, ""
 }

@@ -4,12 +4,9 @@ import (
 	"context"
 
 	"github.com/samber/lo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
-	service_inventory "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -17,14 +14,9 @@ func (api *api) ListParts(
 	ctx context.Context,
 	req *inventory_v1.ListPartsRequest,
 ) (*inventory_v1.ListPartsResponse, error) {
-	categories := lo.Map(
-		req.Filter.Categories,
-		func(category inventory_v1.Category, _ int) model_part.Category {
-			return model_part.Category(category)
-		},
-	)
+	categories := categoriesToModel(req.Filter.Categories)
 
-	parts, err := api.partService.GetParts(ctx, service_inventory.Filter{
+	parts, err := api.partService.GetParts(ctx, model_part.Filter{
 		Uuids:                 req.Filter.Uuids,
 		ManufacturerCountries: req.Filter.ManufacturerCountries,
 		Tags:                  req.Filter.Tags,
@@ -32,16 +24,29 @@ func (api *api) ListParts(
 		Categories:            categories,
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Internal server error. %v", err)
+		return nil, err
 	}
 
-	protoParts := lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {
-		protoPart := model_converter_part.ToProto(part)
-
-		return protoPart
-	})
+	protoParts := partsToProtoParts(parts)
 
 	return &inventory_v1.ListPartsResponse{
 		Parts: protoParts,
 	}, nil
+}
+
+func categoriesToModel(categories []inventory_v1.Category) []model_part.Category {
+	return lo.Map(
+		categories,
+		func(category inventory_v1.Category, _ int) model_part.Category {
+			return model_part.Category(category)
+		},
+	)
+}
+
+func partsToProtoParts(parts []*model_part.Part) []*inventory_v1.Part {
+	return lo.Map(parts, func(part *model_part.Part, _ int) *inventory_v1.Part {
+		protoPart := model_converter_part.ToProto(part)
+
+		return protoPart
+	})
 }

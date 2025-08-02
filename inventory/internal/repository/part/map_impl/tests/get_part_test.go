@@ -6,17 +6,14 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 	helpers_mocks "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 
 func (s *TestingSuite) TestGetPartSuccess() {
-	randomParts := []*repository_model_part.Part{}
+	randomParts := []*model_part.Part{}
 	for range 10 {
 		modelPart := helpers_mocks.GenerateRandomPart()
-		repoPart := repository_converter_part.ToRepository(modelPart)
-		randomParts = append(randomParts, &repoPart)
+		randomParts = append(randomParts, modelPart)
 	}
 	rndIdx := rand.Intn(len(randomParts))
 	randomPartId := randomParts[rndIdx].UUID
@@ -38,18 +35,17 @@ func (s *TestingSuite) TestGetPartNotFound() {
 	result, err := s.repo.GetPart(s.ctx, randomUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_part.ErrPartNotFound{})
+	s.ErrorIs(err, model_part.ErrPartNotFound)
 	s.Nil(result)
 }
 
 func (s *TestingSuite) TestGetPartSuccessWithSameIdSet() {
-	partsWithSameId := []*repository_model_part.Part{}
+	partsWithSameId := []*model_part.Part{}
 	for range 10 {
 		modelPart := helpers_mocks.GenerateRandomPart(
 			helpers_mocks.WithUUID("dummy_uuid"),
 		)
-		repoPart := repository_converter_part.ToRepository(modelPart)
-		partsWithSameId = append(partsWithSameId, &repoPart)
+		partsWithSameId = append(partsWithSameId, modelPart)
 	}
 
 	for _, part := range partsWithSameId {

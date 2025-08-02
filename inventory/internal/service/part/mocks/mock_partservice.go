@@ -10,7 +10,6 @@ import (
 	"context"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -111,7 +110,7 @@ func (_c *MockPartService_GetPart_Call) RunAndReturn(run func(ctx context.Contex
 }
 
 // GetParts provides a mock function for the type MockPartService
-func (_mock *MockPartService) GetParts(ctx context.Context, filter service_part.Filter) ([]*model_part.Part, error) {
+func (_mock *MockPartService) GetParts(ctx context.Context, filter model_part.Filter) ([]*model_part.Part, error) {
 	ret := _mock.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -120,17 +119,17 @@ func (_mock *MockPartService) GetParts(ctx context.Context, filter service_part.
 
 	var r0 []*model_part.Part
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, service_part.Filter) ([]*model_part.Part, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_part.Filter) ([]*model_part.Part, error)); ok {
 		return returnFunc(ctx, filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, service_part.Filter) []*model_part.Part); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_part.Filter) []*model_part.Part); ok {
 		r0 = returnFunc(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model_part.Part)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, service_part.Filter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, model_part.Filter) error); ok {
 		r1 = returnFunc(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
@@ -145,20 +144,20 @@ type MockPartService_GetParts_Call struct {
 
 // GetParts is a helper method to define mock.On call
 //   - ctx context.Context
-//   - filter service_part.Filter
+//   - filter model_part.Filter
 func (_e *MockPartService_Expecter) GetParts(ctx, filter interface{}) *MockPartService_GetParts_Call {
 	return &MockPartService_GetParts_Call{Call: _e.mock.On("GetParts", ctx, filter)}
 }
 
-func (_c *MockPartService_GetParts_Call) Run(run func(ctx context.Context, filter service_part.Filter)) *MockPartService_GetParts_Call {
+func (_c *MockPartService_GetParts_Call) Run(run func(ctx context.Context, filter model_part.Filter)) *MockPartService_GetParts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 service_part.Filter
+		var arg1 model_part.Filter
 		if args[1] != nil {
-			arg1 = args[1].(service_part.Filter)
+			arg1 = args[1].(model_part.Filter)
 		}
 		run(
 			arg0,
@@ -173,7 +172,7 @@ func (_c *MockPartService_GetParts_Call) Return(parts []*model_part.Part, err er
 	return _c
 }
 
-func (_c *MockPartService_GetParts_Call) RunAndReturn(run func(ctx context.Context, filter service_part.Filter) ([]*model_part.Part, error)) *MockPartService_GetParts_Call {
+func (_c *MockPartService_GetParts_Call) RunAndReturn(run func(ctx context.Context, filter model_part.Filter) ([]*model_part.Part, error)) *MockPartService_GetParts_Call {
 	_c.Call.Return(run)
 	return _c
 }

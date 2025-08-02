@@ -11,7 +11,6 @@ import (
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 )
 
@@ -52,7 +51,7 @@ func (s *TestingSuite) TestCreateOrderSuccess() {
 			_, ok := ctx.Deadline()
 			return ok
 		}),
-		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
+		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
 	).Return(nil)
@@ -79,7 +78,7 @@ func (s *TestingSuite) TestCreateOrderInvalidArgumentsClientInventory() {
 		client_inventory_v1.ListPartsParams{
 			Uuids: []string{},
 		},
-	).Return(nil, client_inventory_v1.ErrInvalidArguments)
+	).Return(nil, model_part.ErrPartInvalidArguments)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -90,7 +89,7 @@ func (s *TestingSuite) TestCreateOrderInvalidArgumentsClientInventory() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInvalidArguments{})
+	s.ErrorIs(err, model_order.ErrOrderInvalidArguments)
 	s.Nil(result)
 }
 
@@ -114,7 +113,7 @@ func (s *TestingSuite) TestCreateOrderClientInventoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }
 
@@ -152,7 +151,7 @@ func (s *TestingSuite) TestCreateOrderInvalidPartUuids() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInvalidArguments{})
+	s.ErrorIs(err, model_order.ErrOrderInvalidArguments)
 	s.Nil(result)
 }
 
@@ -172,14 +171,10 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 			_, ok := ctx.Deadline()
 			return ok
 		}),
-		mock.MatchedBy(func(repoOrder repository_order_model.Order) bool {
+		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
-	).Return(
-		&model_order.ErrOrderInternal{
-			OrderUUID: gofakeit.UUID(),
-		},
-	)
+	).Return(model_order.ErrOrderInternal)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -190,6 +185,6 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, &model_order.ErrOrderInternal{})
+	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }

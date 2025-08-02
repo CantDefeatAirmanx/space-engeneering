@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 )
 
@@ -25,7 +26,8 @@ func NewRepositoryPart(params NewRepositoryPartParams) *RepositoryPartImpl {
 	}
 
 	for _, part := range params.InitialParts {
-		err := repo.SetPart(context.Background(), &part)
+		modelPart := repository_converter_part.ToModel(&part)
+		err := repo.SetPart(context.Background(), &modelPart)
 		if err != nil {
 			panic("failed to initialize repository part")
 		}

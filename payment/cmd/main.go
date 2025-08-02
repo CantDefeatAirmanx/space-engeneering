@@ -14,6 +14,7 @@ import (
 	api_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/api/payment/v1"
 	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
 	configs_payment "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/payment"
+	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
@@ -34,7 +35,12 @@ func main() {
 		}
 	}()
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptor.UnaryErrorInterceptor(),
+			interceptor.ValidateInterceptor(),
+		),
+	)
 	reflection.Register(grpcServer)
 
 	payment_v1.RegisterPaymentServiceServer(grpcServer, api)

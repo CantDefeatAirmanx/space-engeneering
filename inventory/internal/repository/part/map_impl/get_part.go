@@ -4,19 +4,22 @@ import (
 	"context"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 )
 
-func (r *RepositoryPartImpl) GetPart(ctx context.Context, uuid string) (*repository_model_part.Part, error) {
+func (r *RepositoryPartImpl) GetPart(
+	ctx context.Context,
+	uuid string,
+) (*model_part.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
 	part, ok := r.parts[uuid]
 	if !ok {
-		return nil, &model_part.ErrPartNotFound{
-			UUID: part.UUID,
-		}
+		return nil, model_part.ErrPartNotFound
 	}
 
-	return &part, nil
+	modelPart := repository_converter_part.ToModel(&part)
+
+	return &modelPart, nil
 }

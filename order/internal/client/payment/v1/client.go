@@ -8,14 +8,18 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interfaces"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
-var _ PaymentV1Client = (*paymentV1GrpcClient)(nil)
+var (
+	_ PaymentV1Client   = (*paymentV1GrpcClient)(nil)
+	_ interfaces.Closer = (*paymentV1GrpcClient)(nil)
+)
 
 type paymentV1GrpcClient struct {
 	grpcClient payment_v1.PaymentServiceClient
-	Conn       *grpc.ClientConn
+	conn       *grpc.ClientConn
 }
 
 func NewPaymentClient(ctx context.Context) (*paymentV1GrpcClient, error) {
@@ -35,6 +39,6 @@ func NewPaymentClient(ctx context.Context) (*paymentV1GrpcClient, error) {
 
 	return &paymentV1GrpcClient{
 		grpcClient: grpcClient,
-		Conn:       conn,
+		conn:       conn,
 	}, nil
 }

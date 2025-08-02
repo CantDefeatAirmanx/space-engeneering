@@ -4,26 +4,27 @@ import (
 	"context"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order"
+	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
 func (repo *OrderRepositoryMap) UpdateOrderFields(
 	ctx context.Context,
 	orderUUID string,
-	update repository_order.UpdateOrderFields,
+	update model_order.UpdateOrderFields,
 ) error {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
 	order, ok := repo.orders[orderUUID]
 	if !ok {
-		return &model_order.ErrOrderNotFound{
-			OrderUUID: orderUUID,
-		}
+		return model_order.ErrOrderNotFound
 	}
 
 	if update.Status != nil {
-		order.Status = *update.Status
+		repoStatus := repository_order_model.OrderStatus(
+			*update.Status,
+		)
+		order.Status = repoStatus
 	}
 
 	if update.TransactionUUID != nil {
@@ -31,7 +32,10 @@ func (repo *OrderRepositoryMap) UpdateOrderFields(
 	}
 
 	if update.PaymentMethod != nil {
-		order.PaymentMethod = update.PaymentMethod
+		repoPaymentMethod := repository_order_model.PaymentMethod(
+			*update.PaymentMethod,
+		)
+		order.PaymentMethod = &repoPaymentMethod
 	}
 
 	repo.orders[orderUUID] = order

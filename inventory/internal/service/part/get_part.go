@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
 )
 
 func (s *partServiceImpl) GetPart(
@@ -16,7 +15,5 @@ func (s *partServiceImpl) GetPart(
 		return nil, err
 	}
 
-	modelPart := repository_converter_part.ToModel(part)
-
-	return &modelPart, nil
+	return part, nil
 }

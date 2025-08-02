@@ -1,4 +1,4 @@
-package repository_order
+package service_order
 
 import (
 	"context"

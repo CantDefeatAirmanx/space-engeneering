@@ -21,20 +21,34 @@ func (client *inventoryV1GrpcClient) GetPart(
 		statusErr, ok := status.FromError(err)
 
 		if !ok {
-			return nil, ErrInternalServerError
+			return nil, model_part.ErrPartInternal
 		}
 
+		partUuid := params.Uuid
 		switch statusErr.Code() {
 		case codes.NotFound:
-			return nil, ErrPartNotFound{
-				UUID: params.Uuid,
-			}
+			return nil, model_part.ErrPartNotFound
 		case codes.InvalidArgument:
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArguments, statusErr.Message())
+			return nil, fmt.Errorf(
+				"%w: %s, partUuid: %s",
+				model_part.ErrPartInvalidArguments,
+				statusErr.Message(),
+				partUuid,
+			)
 		case codes.Internal:
-			return nil, fmt.Errorf("%w: %s", ErrInternalServerError, statusErr.Message())
+			return nil, fmt.Errorf(
+				"%w: %s, partUuid: %s",
+				model_part.ErrPartInternal,
+				statusErr.Message(),
+				partUuid,
+			)
 		default:
-			return nil, fmt.Errorf("%w: %s", ErrInternalServerError, statusErr.Message())
+			return nil, fmt.Errorf(
+				"%w: %s, partUuid: %s",
+				model_part.ErrPartInternal,
+				statusErr.Message(),
+				partUuid,
+			)
 		}
 	}
 

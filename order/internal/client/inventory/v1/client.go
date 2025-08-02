@@ -8,14 +8,18 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interfaces"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
-var _ InventoryV1Client = (*inventoryV1GrpcClient)(nil)
+var (
+	_ InventoryV1Client = (*inventoryV1GrpcClient)(nil)
+	_ interfaces.Closer = (*inventoryV1GrpcClient)(nil)
+)
 
 type inventoryV1GrpcClient struct {
 	grpcClient inventory_v1.InventoryServiceClient
-	Conn       *grpc.ClientConn
+	conn       *grpc.ClientConn
 }
 
 func NewInventoryClient(
@@ -37,6 +41,6 @@ func NewInventoryClient(
 
 	return &inventoryV1GrpcClient{
 		grpcClient: grpcClient,
-		Conn:       conn,
+		conn:       conn,
 	}, nil
 }
