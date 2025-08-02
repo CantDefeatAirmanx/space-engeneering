@@ -7,10 +7,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
 
 	api_order_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/api/order/v1"
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
@@ -19,10 +23,36 @@ import (
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/utils/migrator"
 )
 
 func main() {
 	ctx := context.Background()
+
+	// ToDo: Add working with .env abstactions (4 module)
+	workingDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting working directory: %v", err)
+	}
+	envPath := filepath.Join(workingDir, "order", ".env")
+	err = godotenv.Load(envPath)
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	connStr := os.Getenv(configs_order.EnvPostgresDbURI)
+	pool, err := pgxpool.New(ctx, connStr)
+	if err != nil {
+		log.Fatalf("Error connecting to database: %v", err)
+	}
+	defer pool.Close()
+
+	db := stdlib.OpenDB(*pool.Config().ConnConfig)
+	migrator := migrator.NewMigrator(
+		db,
+		os.Getenv(configs_order.EnvMigrationsDir),
+	)
+	migrator.Up()
 
 	inventoryClient, inventoryErr := client_inventory_v1.NewInventoryClient(
 		ctx,

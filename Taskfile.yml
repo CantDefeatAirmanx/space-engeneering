@@ -59,7 +59,11 @@ tasks:
     deps: [ gen ]
     desc: "Сборка проекта"
     cmds:
-      - 'mkdir -p {{.BUILD_DIR}}'
+      - task build:services
+
+  build:services:
+    desc: "Сборка всех сервисов"
+    cmds:
       - task build:order
       - task build:inventory
       - task build:payment
@@ -94,6 +98,42 @@ tasks:
     cmds:
       - '{{.BUILD_DIR}}/payment'
   
+  up-all: 
+    desc: "Запуск всех зависимостей docker-compose"
+    cmds:
+      - task up-core
+      - task up-order
+
+  down-all:
+    desc: "Остановка всех зависимостей docker-compose"
+    cmds:
+      - task down-core
+      - task down-order
+
+  up-core:
+    desc: "Запуск общих зависимостей docker-compose"
+    cmds:
+      - echo "🚀 Запускаем общие зависимости..."
+      - 'docker compose -f deploy/core/docker-compose.yaml up --build --detach'
+  
+  up-order: 
+    desc: "Запуск зависимостей order docker-compose"
+    cmds:
+      - echo "🚀 Запускаем зависимости order..."
+      - 'docker compose -f deploy/order/docker-compose.yaml up --build --detach'
+  
+  down-core:
+    desc: "Остановка общих зависимостей docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем общие зависимости..."
+      - 'docker compose -f deploy/core/docker-compose.yaml down'
+  
+  down-order:
+    desc: "Остановка зависимостей order docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем зависимости order..."
+      - 'docker compose -f deploy/order/docker-compose.yaml down'
+
   run-checks:
     desc: "Запуск всех проверок"
     cmds:

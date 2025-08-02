@@ -18,8 +18,7 @@ import (
 func NewMockPaymentV1Client(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *MockPaymentV1Client {
+}) *MockPaymentV1Client {
 	mock := &MockPaymentV1Client{}
 	mock.Mock.Test(t)
 
@@ -77,7 +76,7 @@ type MockPaymentV1Client_PayOrder_Call struct {
 // PayOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params client_payment_v1.PayOrderParams
-func (_e *MockPaymentV1Client_Expecter) PayOrder(ctx, params interface{}) *MockPaymentV1Client_PayOrder_Call {
+func (_e *MockPaymentV1Client_Expecter) PayOrder(ctx interface{}, params interface{}) *MockPaymentV1Client_PayOrder_Call {
 	return &MockPaymentV1Client_PayOrder_Call{Call: _e.mock.On("PayOrder", ctx, params)}
 }
 
