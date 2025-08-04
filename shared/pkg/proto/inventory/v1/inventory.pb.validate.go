@@ -779,173 +779,50 @@ func (m *Part) validate(all bool) error {
 		}
 	}
 
-	switch v := m.Metadata.(type) {
-	case *Part_MetadataString:
-		if v == nil {
-			err := PartValidationError{
-				field:  "Metadata",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+	{
+		sorted_keys := make([]string, len(m.GetMetadata()))
+		i := 0
+		for key := range m.GetMetadata() {
+			sorted_keys[i] = key
+			i++
 		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetMetadata()[key]
+			_ = val
 
-		if all {
-			switch v := interface{}(m.GetMetadataString()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataString",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
+			// no validation rules for Metadata[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, PartValidationError{
+							field:  fmt.Sprintf("Metadata[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, PartValidationError{
+							field:  fmt.Sprintf("Metadata[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
 				}
-			case interface{ Validate() error }:
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
 				if err := v.Validate(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataString",
+					return PartValidationError{
+						field:  fmt.Sprintf("Metadata[%v]", key),
 						reason: "embedded message failed validation",
 						cause:  err,
-					})
+					}
 				}
 			}
-		} else if v, ok := interface{}(m.GetMetadataString()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PartValidationError{
-					field:  "MetadataString",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
 
-	case *Part_MetadataDouble:
-		if v == nil {
-			err := PartValidationError{
-				field:  "Metadata",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
-
-		if all {
-			switch v := interface{}(m.GetMetadataDouble()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataDouble",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataDouble",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMetadataDouble()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PartValidationError{
-					field:  "MetadataDouble",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *Part_MetadataInt64:
-		if v == nil {
-			err := PartValidationError{
-				field:  "Metadata",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetMetadataInt64()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataInt64",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataInt64",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMetadataInt64()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PartValidationError{
-					field:  "MetadataInt64",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *Part_MetadataBool:
-		if v == nil {
-			err := PartValidationError{
-				field:  "Metadata",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetMetadataBool()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataBool",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PartValidationError{
-						field:  "MetadataBool",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMetadataBool()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PartValidationError{
-					field:  "MetadataBool",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	default:
-		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -1237,44 +1114,93 @@ var _ interface {
 	ErrorName() string
 } = ManufacturerValidationError{}
 
-// Validate checks the field values on StringMetadata with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on Value with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *StringMetadata) Validate() error {
+func (m *Value) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on StringMetadata with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in StringMetadataMultiError,
-// or nil if none found.
-func (m *StringMetadata) ValidateAll() error {
+// ValidateAll checks the field values on Value with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ValueMultiError, or nil if none found.
+func (m *Value) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *StringMetadata) validate(all bool) error {
+func (m *Value) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Data
+	switch v := m.Value.(type) {
+	case *Value_StringValue:
+		if v == nil {
+			err := ValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for StringValue
+	case *Value_DoubleValue:
+		if v == nil {
+			err := ValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for DoubleValue
+	case *Value_Int64Value:
+		if v == nil {
+			err := ValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Int64Value
+	case *Value_BoolValue:
+		if v == nil {
+			err := ValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for BoolValue
+	default:
+		_ = v // ensures v is used
+	}
 
 	if len(errors) > 0 {
-		return StringMetadataMultiError(errors)
+		return ValueMultiError(errors)
 	}
 
 	return nil
 }
 
-// StringMetadataMultiError is an error wrapping multiple validation errors
-// returned by StringMetadata.ValidateAll() if the designated constraints
-// aren't met.
-type StringMetadataMultiError []error
+// ValueMultiError is an error wrapping multiple validation errors returned by
+// Value.ValidateAll() if the designated constraints aren't met.
+type ValueMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m StringMetadataMultiError) Error() string {
+func (m ValueMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1283,11 +1209,11 @@ func (m StringMetadataMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m StringMetadataMultiError) AllErrors() []error { return m }
+func (m ValueMultiError) AllErrors() []error { return m }
 
-// StringMetadataValidationError is the validation error returned by
-// StringMetadata.Validate if the designated constraints aren't met.
-type StringMetadataValidationError struct {
+// ValueValidationError is the validation error returned by Value.Validate if
+// the designated constraints aren't met.
+type ValueValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1295,22 +1221,22 @@ type StringMetadataValidationError struct {
 }
 
 // Field function returns field value.
-func (e StringMetadataValidationError) Field() string { return e.field }
+func (e ValueValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e StringMetadataValidationError) Reason() string { return e.reason }
+func (e ValueValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e StringMetadataValidationError) Cause() error { return e.cause }
+func (e ValueValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e StringMetadataValidationError) Key() bool { return e.key }
+func (e ValueValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e StringMetadataValidationError) ErrorName() string { return "StringMetadataValidationError" }
+func (e ValueValidationError) ErrorName() string { return "ValueValidationError" }
 
 // Error satisfies the builtin error interface
-func (e StringMetadataValidationError) Error() string {
+func (e ValueValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1322,14 +1248,14 @@ func (e StringMetadataValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sStringMetadata.%s: %s%s",
+		"invalid %sValue.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = StringMetadataValidationError{}
+var _ error = ValueValidationError{}
 
 var _ interface {
 	Field() string
@@ -1337,309 +1263,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = StringMetadataValidationError{}
-
-// Validate checks the field values on DoubleMetadata with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *DoubleMetadata) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DoubleMetadata with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in DoubleMetadataMultiError,
-// or nil if none found.
-func (m *DoubleMetadata) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DoubleMetadata) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Data
-
-	if len(errors) > 0 {
-		return DoubleMetadataMultiError(errors)
-	}
-
-	return nil
-}
-
-// DoubleMetadataMultiError is an error wrapping multiple validation errors
-// returned by DoubleMetadata.ValidateAll() if the designated constraints
-// aren't met.
-type DoubleMetadataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DoubleMetadataMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DoubleMetadataMultiError) AllErrors() []error { return m }
-
-// DoubleMetadataValidationError is the validation error returned by
-// DoubleMetadata.Validate if the designated constraints aren't met.
-type DoubleMetadataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DoubleMetadataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DoubleMetadataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DoubleMetadataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DoubleMetadataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DoubleMetadataValidationError) ErrorName() string { return "DoubleMetadataValidationError" }
-
-// Error satisfies the builtin error interface
-func (e DoubleMetadataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDoubleMetadata.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DoubleMetadataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DoubleMetadataValidationError{}
-
-// Validate checks the field values on Int64Metadata with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Int64Metadata) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Int64Metadata with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in Int64MetadataMultiError, or
-// nil if none found.
-func (m *Int64Metadata) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Int64Metadata) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Data
-
-	if len(errors) > 0 {
-		return Int64MetadataMultiError(errors)
-	}
-
-	return nil
-}
-
-// Int64MetadataMultiError is an error wrapping multiple validation errors
-// returned by Int64Metadata.ValidateAll() if the designated constraints
-// aren't met.
-type Int64MetadataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m Int64MetadataMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m Int64MetadataMultiError) AllErrors() []error { return m }
-
-// Int64MetadataValidationError is the validation error returned by
-// Int64Metadata.Validate if the designated constraints aren't met.
-type Int64MetadataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e Int64MetadataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e Int64MetadataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e Int64MetadataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e Int64MetadataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e Int64MetadataValidationError) ErrorName() string { return "Int64MetadataValidationError" }
-
-// Error satisfies the builtin error interface
-func (e Int64MetadataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sInt64Metadata.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = Int64MetadataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = Int64MetadataValidationError{}
-
-// Validate checks the field values on BoolMetadata with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BoolMetadata) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BoolMetadata with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BoolMetadataMultiError, or
-// nil if none found.
-func (m *BoolMetadata) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BoolMetadata) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Data
-
-	if len(errors) > 0 {
-		return BoolMetadataMultiError(errors)
-	}
-
-	return nil
-}
-
-// BoolMetadataMultiError is an error wrapping multiple validation errors
-// returned by BoolMetadata.ValidateAll() if the designated constraints aren't met.
-type BoolMetadataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BoolMetadataMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BoolMetadataMultiError) AllErrors() []error { return m }
-
-// BoolMetadataValidationError is the validation error returned by
-// BoolMetadata.Validate if the designated constraints aren't met.
-type BoolMetadataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BoolMetadataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BoolMetadataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BoolMetadataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BoolMetadataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BoolMetadataValidationError) ErrorName() string { return "BoolMetadataValidationError" }
-
-// Error satisfies the builtin error interface
-func (e BoolMetadataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBoolMetadata.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BoolMetadataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BoolMetadataValidationError{}
+} = ValueValidationError{}

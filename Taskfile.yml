@@ -2,6 +2,7 @@ version: '3'
 
 # Глобальные переменные проекта
 vars:
+  # Versions
   GO_VERSION: '1.24'
 
   GOLANGCI_LINT_VERSION: 'v2.1.5'
@@ -18,16 +19,25 @@ vars:
   OGEN_VERSION: 'v1.12.0'
   YQ_VERSION: 'v4.45.2'
   GRPCURL_VERSION: 'v1.9.3'
+  MOCKERY_VERSION: 'v3.5.1'
 
+  # Directories
   BUILD_DIR: '{{.ROOT_DIR}}/build'
   BIN_DIR: '{{.ROOT_DIR}}/bin'
+
+  COVERAGE_DIR: '{{.ROOT_DIR}}/coverage'
+  COVERAGE_FILE: total.out
+ 
   GOLANGCI_LINT: '{{.BIN_DIR}}/golangci-lint'
   GCI: '{{.BIN_DIR}}/gci'
   GOFUMPT: '{{.BIN_DIR}}/gofumpt'
+
+  GRPCURL: '{{.BIN_DIR}}/grpcurl'
   BUF: '{{.BIN_DIR}}/buf'
   OGEN: '{{.BIN_DIR}}/ogen'
   YQ: '{{.BIN_DIR}}/yq'
-  GRPCURL: '{{.BIN_DIR}}/grpcurl'
+
+  MOCKERY: "{{.BIN_DIR}}/mockery"
 
   PROTOC_GEN_GO: '{{.BIN_DIR}}/protoc-gen-go'
   PROTOC_GEN_GO_GRPC: '{{.BIN_DIR}}/protoc-gen-go-grpc'
@@ -40,7 +50,6 @@ vars:
 
   OPEN_API_ORDER_V1_BASE: '{{.ROOT_DIR}}/shared/api/order/v1/order.openapi.yaml'
   OPEN_API_ORDER_V1_BUNDLE: '{{.ROOT_DIR}}/shared/api/bundles/order.openapi.v1.bundle.yaml'
-
   OPEN_API_FILES: '{{.ROOT_DIR}}/shared/api/bundles'
 
   MODULES: assembly inventory order payment platform iam notification
@@ -51,8 +60,23 @@ tasks:
     desc: "Сборка проекта"
     cmds:
       - 'mkdir -p {{.BUILD_DIR}}'
+      - task build:order
+      - task build:inventory
+      - task build:payment
+
+  build:order:
+    desc: "Сборка order"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/order ./order/cmd/main.go'
+
+  build:inventory:
+    desc: "Сборка inventory"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/inventory ./inventory/cmd/main.go'
+
+  build:payment:
+    desc: "Сборка payment"
+    cmds:
       - 'go build -o {{.BUILD_DIR}}/payment ./payment/cmd/main.go'
 
   run-order:
@@ -69,7 +93,131 @@ tasks:
     desc: "Запуск payment"
     cmds:
       - '{{.BUILD_DIR}}/payment'
+  
+  run-checks:
+    desc: "Запуск всех проверок"
+    cmds:
+      - task format
+      - task lint
+      - task test
 
+  test:
+    desc: "Запускает юнит-тесты для всех модулей"
+    summary: |
+      Запускает юнит-тесты для указанных модулей проекта.
+      Можно указать конкретные модули через переменную MODULES.
+    cmds:
+      - |
+        ERR=0
+        for mod in {{.MODULES}}; do
+          if [ -d "$mod" ]; then
+            echo "🧪 Тестируем модуль $mod"
+            go test -v ./$mod/... || ERR=1
+
+            if [ $ERR -eq 0 ]; then
+              echo "✅ Тесты прошли успешно"
+            fi
+          fi
+        done
+        exit $ERR
+
+  test:coverage:
+    desc: "Тесты с покрытием бизнес-логики (service/repository), отчёт по каждому модулю + общий"
+    cmds:
+      - |
+        echo "🧪 Запускаем расчёт покрытия..."
+        rm -rf {{.COVERAGE_DIR}}
+        mkdir -p {{.COVERAGE_DIR}}
+        
+        ERR=0
+        for mod in {{.MODULES}}; do
+          echo "📦 Обрабатываем модуль: $mod"
+        
+          TARGET_PKGS=$(go list ./$mod/... \
+            | grep -E '/(internal/(service|repository))' \
+            | grep -vE '/(mocks|testdata|pkg|api|proto|pb|cmd|converter|model|errors)' \
+            | paste -sd "," -)
+        
+          if [ -z "$TARGET_PKGS" ]; then
+            echo "⚠️  Нет подходящих пакетов в $mod"
+            continue
+          fi
+        
+          go test -coverpkg="$TARGET_PKGS" \
+            -coverprofile={{.COVERAGE_DIR}}/$mod.out \
+            -covermode=atomic \
+            $(echo "$TARGET_PKGS" | tr "," " ") || ERR=1
+        done
+
+        if [ $ERR -ne 0 ]; then
+          echo "❌ Ошибки во время тестов"
+          exit $ERR
+        fi
+        
+        echo
+        echo "📊 Покрытие по каждому модулю:"
+        for mod in {{.MODULES}}; do
+          OUTFILE="{{.COVERAGE_DIR}}/$mod.out"
+          if [ -f "$OUTFILE" ]; then
+            printf " • %s: " "$mod"
+            go tool cover -func="$OUTFILE" | tail -n1
+          fi
+        done
+        
+        echo
+        echo "📦 Склеиваем все покрытия..."
+        {
+          echo "mode: atomic"
+          find {{.COVERAGE_DIR}} -type f -name '*.out' ! -name '{{.COVERAGE_FILE}}' \
+            -exec grep -h -v "^mode:" {} +
+        } > {{.COVERAGE_DIR}}/{{.COVERAGE_FILE}}
+        
+        echo
+        echo "🧾 Общее покрытие по всем модулям:"
+        go tool cover -func={{.COVERAGE_DIR}}/{{.COVERAGE_FILE}} | tail -n1
+
+  coverage:html:
+    desc: "Генерирует HTML-отчёт покрытия и открывает его в браузере"
+    deps: [ test:coverage ]
+    cmds:
+      - |
+        OUTPUT={{.COVERAGE_DIR}}/coverage.html
+        echo "🌐 Генерируем HTML-отчёт..."
+        go tool cover -html={{.COVERAGE_DIR}}/{{.COVERAGE_FILE}} -o $OUTPUT
+
+        echo "🚀 Открываем $OUTPUT"
+        if command -v open &> /dev/null; then
+          open $OUTPUT  # macOS
+        elif command -v xdg-open &> /dev/null; then
+          xdg-open $OUTPUT  # Linux
+        else
+          echo "📂 Отчёт сохранён в $OUTPUT (открой вручную)"
+        fi
+
+  mockery:install:
+    desc: "Устанавливает mockery в ./bin"
+    cmds:
+    - |
+        [ -f {{.MOCKERY}} ] || {
+          echo '📦 Installing mockery...'
+          GOBIN={{.BIN_DIR}} go install github.com/vektra/mockery/v3@{{.MOCKERY_VERSION}}
+        }
+
+  mockery:clean:
+    desc: "Удаляет все моки"
+    cmds:
+      - |
+        find . -name "mocks" -type d -exec rm -rf {} + 2>/dev/null;
+
+  mockery:gen:
+    desc: "Генерирует моки интерфейсов с помощью mockery"
+    deps: [ mockery:install, mockery:clean ]
+    cmds:
+      - |
+        echo '🧪 Генерация моков...'
+        find . -name "mocks" -type d -exec rm -rf {} + 2>/dev/null;
+        cd {{.ROOT_DIR}} && {{.MOCKERY}}
+        
   install-formatters:
     desc: "Устанавливает форматтеры gci и gofumpt в ./bin"
     summary: |
@@ -94,7 +242,7 @@ tasks:
       - test -x {{.GCI}}
 
   format:
-    desc: "Форматирует весь проект gofumpt + gci, исключая mocks"
+    desc: "Форматирует весь проект gofumpt + gci, исключая test_data"
     summary: |
       Форматирует все Go-файлы проекта с использованием gofumpt для стандартизации кода
       и gci для сортировки импортов, исключая файлы в директориях mocks.
@@ -110,7 +258,7 @@ tasks:
         for module in {{.MODULES}}; do
           if [ -d "$module" ]; then
             echo "🧼 Форматируем $module"
-            find $module -type f -name '*.go' ! -path '*/mocks/*' -exec {{.GOFUMPT}} -extra -w {} +
+            find $module -type f -name '*.go' -exec {{.GOFUMPT}} -extra -w {} +
           fi
         done
       - |
@@ -162,7 +310,7 @@ tasks:
         for mod in {{.MODULES}}; do
           if [ -d "$mod" ]; then
             echo "🔍 Линтим $mod module"
-            {{.GOLANGCI_LINT}} run $mod/... --config=.golangci.yml || ERR=1
+            (cd $mod && {{.GOLANGCI_LINT}} run ./... --config=../.golangci.yml) || ERR=1
           fi
         done
         exit $ERR
@@ -275,10 +423,11 @@ tasks:
         done
 
   gen:
-    desc: "Генерация всех proto и OpenAPI деклараций"
+    desc: "Генерация всех proto, OpenAPI деклараций и моков"
     cmds:
       - task: proto:gen
       - task: ogen:gen
+      - task: mockery:gen
 
   deps:update:
     desc: "Обновление зависимостей в go.mod во всех модулях"

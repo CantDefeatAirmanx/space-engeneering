@@ -5,8 +5,20 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	model_part_converter "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
+
+func GetRepoInitialParts() []repository_model_part.Part {
+	parts := []repository_model_part.Part{}
+	for idx := range InitialParts {
+		modelPart := model_part_converter.ToModel(&InitialParts[idx])
+		parts = append(parts, repository_converter_part.ToRepository(&modelPart))
+	}
+	return parts
+}
 
 var InitialParts = []inventory_v1.Part{
 	// CATEGORY_ENGINE - Детали для двигателей
@@ -31,12 +43,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"турбонасос", "высокое давление", "критический компонент"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 15, 10, 30, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 15, 10, 30, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"максимальное_давление": 300.0,
-					"обороты_в_минуту":      15000.0,
-					"мощность_квт":          500.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"максимальное_давление": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 300.0,
+				},
+			},
+			"обороты_в_минуту": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 15000.0,
+				},
+			},
+			"мощность_квт": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 500.0,
 				},
 			},
 		},
@@ -62,12 +82,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"камера сгорания", "жаропрочные сплавы", "высокая температура"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 20, 14, 15, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 20, 14, 15, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"температура_сгорания": 3500.0,
-					"давление_в_камере":    250.0,
-					"толщина_стенки_мм":    5.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"температура_сгорания": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 3500.0,
+				},
+			},
+			"давление_в_камере": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 250.0,
+				},
+			},
+			"толщина_стенки_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 5.0,
 				},
 			},
 		},
@@ -93,12 +121,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"сопло", "вакуум", "оптимизация тяги"},
 		CreatedAt: timestamppb.New(time.Date(2024, 2, 5, 9, 45, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 2, 5, 9, 45, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"коэффициент_расширения": 16.0,
-					"угол_раскрытия_градусы": 15.0,
-					"длина_сопла_мм":         1800.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"коэффициент_расширения": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 16.0,
+				},
+			},
+			"угол_раскрытия_градусы": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 15.0,
+				},
+			},
+			"длина_сопла_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 1800.0,
 				},
 			},
 		},
@@ -126,12 +162,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"топливный бак", "керосин", "алюминиевый сплав"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 10, 11, 20, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 10, 11, 20, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"объем_литры":              5000.0,
-					"рабочее_давление_бар":     3.0,
-					"температура_эксплуатации": -40.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"объем_литры": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 5000.0,
+				},
+			},
+			"рабочее_давление_бар": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 3.0,
+				},
+			},
+			"температура_эксплуатации": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: -40.0,
 				},
 			},
 		},
@@ -157,12 +201,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"кислородный бак", "криогенный", "теплоизоляция"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 25, 16, 30, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 25, 16, 30, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"объем_литры":          4000.0,
-					"температура_хранения": -183.0,
-					"толщина_изоляции_мм":  50.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"объем_литры": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 4000.0,
+				},
+			},
+			"температура_хранения": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: -183.0,
+				},
+			},
+			"толщина_изоляции_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 50.0,
 				},
 			},
 		},
@@ -188,12 +240,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"топливопровод", "титан", "высокое давление"},
 		CreatedAt: timestamppb.New(time.Date(2024, 2, 1, 13, 45, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 2, 1, 13, 45, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"диаметр_мм":           50.0,
-					"рабочее_давление_бар": 300.0,
-					"толщина_стенки_мм":    3.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"диаметр_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 50.0,
+				},
+			},
+			"рабочее_давление_бар": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 300.0,
+				},
+			},
+			"толщина_стенки_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 3.0,
 				},
 			},
 		},
@@ -221,12 +281,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"стыковка", "МКС", "андрогинный"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 12, 8, 15, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 12, 8, 15, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"диаметр_люка_мм":       800.0,
-					"максимальная_нагрузка": 10000.0,
-					"герметичность_торр":    1e-6,
+		Metadata: map[string]*inventory_v1.Value{
+			"диаметр_люка_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 800.0,
+				},
+			},
+			"максимальная_нагрузка": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 10000.0,
+				},
+			},
+			"герметичность_торр": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 1e-6,
 				},
 			},
 		},
@@ -252,12 +320,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"люк", "выход в космос", "герметичность"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 18, 15, 20, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 18, 15, 20, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"диаметр_проема_мм":    650.0,
-					"толщина_люка_мм":      25.0,
-					"рабочее_давление_бар": 1.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"диаметр_проема_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 650.0,
+				},
+			},
+			"толщина_люка_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 25.0,
+				},
+			},
+			"рабочее_давление_бар": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 1.0,
 				},
 			},
 		},
@@ -283,12 +359,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"вентиляция", "воздуховод", "жизнеобеспечение"},
 		CreatedAt: timestamppb.New(time.Date(2024, 2, 8, 12, 10, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 2, 8, 12, 10, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"диаметр_мм":          300.0,
-					"скорость_воздуха_мс": 2.0,
-					"шум_дб":              45.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"диаметр_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 300.0,
+				},
+			},
+			"скорость_воздуха_мс": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 2.0,
+				},
+			},
+			"шум_дб": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 45.0,
 				},
 			},
 		},
@@ -316,12 +400,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"солнечная панель", "энергетика", "фотоэлементы"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 5, 9, 30, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 5, 9, 30, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"мощность_квт":          32.0,
-					"эффективность_процент": 28.5,
-					"площадь_кв_м":          240.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"мощность_квт": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 32.0,
+				},
+			},
+			"эффективность_процент": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 28.5,
+				},
+			},
+			"площадь_кв_м": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 240.0,
 				},
 			},
 		},
@@ -347,12 +439,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"стабилизатор", "аэродинамика", "спуск"},
 		CreatedAt: timestamppb.New(time.Date(2024, 1, 22, 11, 45, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 1, 22, 11, 45, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"площадь_поверхности":   12.0,
-					"угол_атаки_градусы":    15.0,
-					"максимальная_нагрузка": 5000.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"площадь_поверхности": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 12.0,
+				},
+			},
+			"угол_атаки_градусы": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 15.0,
+				},
+			},
+			"максимальная_нагрузка": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 5000.0,
 				},
 			},
 		},
@@ -378,12 +478,20 @@ var InitialParts = []inventory_v1.Part{
 		Tags:      []string{"теплозащита", "углерод-углерод", "высокие температуры"},
 		CreatedAt: timestamppb.New(time.Date(2024, 2, 12, 14, 20, 0, 0, time.UTC)),
 		UpdatedAt: timestamppb.New(time.Date(2024, 2, 12, 14, 20, 0, 0, time.UTC)),
-		Metadata: &inventory_v1.Part_MetadataDouble{
-			MetadataDouble: &inventory_v1.DoubleMetadata{
-				Data: map[string]float64{
-					"максимальная_температура": 1650.0,
-					"толщина_мм":               30.0,
-					"плотность_кг_куб_м":       1600.0,
+		Metadata: map[string]*inventory_v1.Value{
+			"максимальная_температура": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 1650.0,
+				},
+			},
+			"толщина_мм": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 30.0,
+				},
+			},
+			"плотность_кг_куб_м": {
+				Value: &inventory_v1.Value_DoubleValue{
+					DoubleValue: 1600.0,
 				},
 			},
 		},

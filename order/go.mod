@@ -3,9 +3,11 @@ module github.com/CantDefeatAirmanx/space-engeneering/order
 go 1.24.4
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.3.0 // indirect
 	github.com/go-chi/chi v1.5.5 // indirect
 	github.com/go-chi/chi/v5 v5.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
