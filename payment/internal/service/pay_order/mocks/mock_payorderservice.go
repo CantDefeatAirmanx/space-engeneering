@@ -18,7 +18,8 @@ import (
 func NewMockPayOrderService(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockPayOrderService {
+},
+) *MockPayOrderService {
 	mock := &MockPayOrderService{}
 	mock.Mock.Test(t)
 
@@ -76,7 +77,7 @@ type MockPayOrderService_PayOrder_Call struct {
 // PayOrder is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params service_pay_order.PayOrderMethodParams
-func (_e *MockPayOrderService_Expecter) PayOrder(ctx interface{}, params interface{}) *MockPayOrderService_PayOrder_Call {
+func (_e *MockPayOrderService_Expecter) PayOrder(ctx, params interface{}) *MockPayOrderService_PayOrder_Call {
 	return &MockPayOrderService_PayOrder_Call{Call: _e.mock.On("PayOrder", ctx, params)}
 }
 

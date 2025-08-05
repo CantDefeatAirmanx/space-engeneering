@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
 func (repo *OrderRepositoryMap) UpdateOrderFields(
@@ -21,7 +20,7 @@ func (repo *OrderRepositoryMap) UpdateOrderFields(
 	}
 
 	if update.Status != nil {
-		repoStatus := repository_order_model.OrderStatus(
+		repoStatus := OrderStatus(
 			*update.Status,
 		)
 		order.Status = repoStatus
@@ -32,7 +31,7 @@ func (repo *OrderRepositoryMap) UpdateOrderFields(
 	}
 
 	if update.PaymentMethod != nil {
-		repoPaymentMethod := repository_order_model.PaymentMethod(
+		repoPaymentMethod := PaymentMethod(
 			*update.PaymentMethod,
 		)
 		order.PaymentMethod = &repoPaymentMethod

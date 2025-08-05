@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
 func (repo *OrderRepositoryMap) GetOrder(
@@ -19,7 +18,7 @@ func (repo *OrderRepositoryMap) GetOrder(
 		return nil, model_order.ErrOrderNotFound
 	}
 
-	modelOrder := repository_order_converter.ToModel(&order)
+	modelOrder := ToModel(&order)
 
 	return &modelOrder, nil
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/converter"
 )
 
 func (repo *OrderRepositoryMap) CreateOrder(
@@ -14,7 +13,7 @@ func (repo *OrderRepositoryMap) CreateOrder(
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
-	repoOrder := repository_order_converter.ToRepository(
+	repoOrder := ToRepository(
 		&order,
 	)
 	repo.orders[order.OrderUUID] = repoOrder

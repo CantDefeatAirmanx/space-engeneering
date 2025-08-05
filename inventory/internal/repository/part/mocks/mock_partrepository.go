@@ -18,7 +18,8 @@ import (
 func NewMockPartRepository(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *MockPartRepository {
+},
+) *MockPartRepository {
 	mock := &MockPartRepository{}
 	mock.Mock.Test(t)
 
@@ -76,7 +77,7 @@ type MockPartRepository_GetPart_Call struct {
 // GetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockPartRepository_Expecter) GetPart(ctx interface{}, uuid interface{}) *MockPartRepository_GetPart_Call {
+func (_e *MockPartRepository_Expecter) GetPart(ctx, uuid interface{}) *MockPartRepository_GetPart_Call {
 	return &MockPartRepository_GetPart_Call{Call: _e.mock.On("GetPart", ctx, uuid)}
 }
 
@@ -144,7 +145,7 @@ type MockPartRepository_GetParts_Call struct {
 // GetParts is a helper method to define mock.On call
 //   - ctx context.Context
 //   - filter model_part.Filter
-func (_e *MockPartRepository_Expecter) GetParts(ctx interface{}, filter interface{}) *MockPartRepository_GetParts_Call {
+func (_e *MockPartRepository_Expecter) GetParts(ctx, filter interface{}) *MockPartRepository_GetParts_Call {
 	return &MockPartRepository_GetParts_Call{Call: _e.mock.On("GetParts", ctx, filter)}
 }
 
@@ -201,7 +202,7 @@ type MockPartRepository_SetPart_Call struct {
 // SetPart is a helper method to define mock.On call
 //   - ctx context.Context
 //   - part *model_part.Part
-func (_e *MockPartRepository_Expecter) SetPart(ctx interface{}, part interface{}) *MockPartRepository_SetPart_Call {
+func (_e *MockPartRepository_Expecter) SetPart(ctx, part interface{}) *MockPartRepository_SetPart_Call {
 	return &MockPartRepository_SetPart_Call{Call: _e.mock.On("SetPart", ctx, part)}
 }
 
