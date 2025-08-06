@@ -33,3 +33,9 @@ const (
 	OrderStatusPaid           OrderStatus = "PAID"
 	OrderStatusCancelled      OrderStatus = "CANCELLED"
 )
+
+type UpdateOrderFields struct {
+	Status          *OrderStatus
+	TransactionUUID *pgtype.UUID
+	PaymentMethod   *PaymentMethod
+}

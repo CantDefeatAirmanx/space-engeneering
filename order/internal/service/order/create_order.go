@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
-
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/part"
@@ -22,11 +20,6 @@ func (s *OrderServiceImpl) CreateOrder(
 	ctx context.Context,
 	params CreateOrderParams,
 ) (*CreateOrderResult, error) {
-	orderUUID, err := uuid.NewV7()
-	if err != nil {
-		return nil, model_order.ErrOrderInternal
-	}
-
 	partsCtx, partsCancel := context.WithTimeout(ctx, partsTimeout)
 	defer partsCancel()
 
@@ -54,7 +47,6 @@ func (s *OrderServiceImpl) CreateOrder(
 	}
 
 	order := model_order.Order{
-		OrderUUID:  orderUUID.String(),
 		UserUUID:   params.UserUUID,
 		PartUuids:  params.PartUuids,
 		Status:     model_order.OrderStatusPendingPayment,
@@ -64,13 +56,13 @@ func (s *OrderServiceImpl) CreateOrder(
 	orderCtx, orderCancel := context.WithTimeout(ctx, orderTimeout)
 	defer orderCancel()
 
-	err = s.orderRepository.CreateOrder(orderCtx, order)
+	createdOrder, err := s.orderRepository.CreateOrder(orderCtx, order)
 	if err != nil {
 		return nil, err
 	}
 
 	return &CreateOrderResult{
-		OrderUUID:  order.OrderUUID,
-		TotalPrice: order.TotalPrice,
+		OrderUUID:  createdOrder.OrderUUID,
+		TotalPrice: createdOrder.TotalPrice,
 	}, nil
 }

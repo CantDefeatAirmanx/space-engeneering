@@ -2,11 +2,8 @@ package api_order_v1
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"net/http"
 
-	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	model_order_converter "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order/converter"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
@@ -17,18 +14,14 @@ func (api *api) GetOrder(
 ) (order_v1.GetOrderRes, error) {
 	order, err := api.orderService.GetOrder(ctx, params.OrderUUID)
 	if err != nil {
-		switch {
-		case errors.Is(err, model_order.ErrOrderNotFound):
-			return &order_v1.NotFoundError{
-				Code:    http.StatusNotFound,
-				Message: err.Error(),
-			}, nil
-		default:
+		res, err := handleServiceError[order_v1.GetOrderRes](err)
+		if err != nil {
 			return &order_v1.InternalServerError{
 				Code:    http.StatusInternalServerError,
-				Message: fmt.Sprintf("%s: %s", internalServerErrorMessage, err.Error()),
+				Message: internalServerErrorMessage,
 			}, nil
 		}
+		return res, nil
 	}
 
 	apiOrder := model_order_converter.ToApi(order)

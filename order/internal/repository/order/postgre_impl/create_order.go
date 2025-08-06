@@ -12,10 +12,10 @@ import (
 func (o *OrderRepositoryPostgre) CreateOrder(
 	ctx context.Context,
 	order model_order.Order,
-) error {
+) (*model_order.Order, error) {
 	repoOrder, err := ToRepository(&order)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInvalidArguments, err)
 	}
 
 	columns := []string{
@@ -26,7 +26,7 @@ func (o *OrderRepositoryPostgre) CreateOrder(
 		columnPaymentMethod,
 		columnStatus,
 	}
-	args := []interface{}{
+	args := []any{
 		repoOrder.UserUUID,
 		repoOrder.PartUuids,
 		repoOrder.TotalPrice,
@@ -38,14 +38,34 @@ func (o *OrderRepositoryPostgre) CreateOrder(
 	query, _, err := squirrel.Insert("orders").
 		Columns(columns...).
 		Values(args...).
+		Suffix("RETURNING " + columnOrderUUID + ", " + columnCreatedAt + ", " + columnUpdatedAt).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
 	}
 
-	res, err := o.db.Exec(ctx, query, args...)
-	fmt.Println(res)
+	createdOrder := Order{
+		UserUUID:        repoOrder.UserUUID,
+		PartUuids:       repoOrder.PartUuids,
+		TotalPrice:      repoOrder.TotalPrice,
+		TransactionUUID: repoOrder.TransactionUUID,
+		PaymentMethod:   repoOrder.PaymentMethod,
+		Status:          repoOrder.Status,
+	}
+	err = o.db.QueryRow(ctx, query, args...).Scan(
+		&createdOrder.OrderUUID,
+		&createdOrder.CreatedAt,
+		&createdOrder.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+	}
 
-	return err
+	modelOrder, err := ToModel(createdOrder)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+	}
+
+	return modelOrder, nil
 }

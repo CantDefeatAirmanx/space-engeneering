@@ -31,6 +31,15 @@ func (UnimplementedHandler) CreateOrder(ctx context.Context, req *CreateOrderReq
 	return r, ht.ErrNotImplemented
 }
 
+// DeleteOrder implements deleteOrder operation.
+//
+// Delete an order by UUID.
+//
+// DELETE /api/v1/orders/{order_uuid}
+func (UnimplementedHandler) DeleteOrder(ctx context.Context, params DeleteOrderParams) (r DeleteOrderRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GetOrder implements getOrder operation.
 //
 // Get an order by UUID.

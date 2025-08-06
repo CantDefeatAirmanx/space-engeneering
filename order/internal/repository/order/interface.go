@@ -7,11 +7,11 @@ import (
 )
 
 type OrderRepository interface {
-	// CreateOrder creates an order in the repository.
+	// CreateOrder creates an order in the repository and returns the created order with generated UUID.
 	// Errors:
 	//
 	// - [model_order.ErrOrderInternal]: if the order is not created
-	CreateOrder(ctx context.Context, order model_order.Order) error
+	CreateOrder(ctx context.Context, order model_order.Order) (*model_order.Order, error)
 	// GetOrder returns an order from the repository.
 	//
 	// Errors:

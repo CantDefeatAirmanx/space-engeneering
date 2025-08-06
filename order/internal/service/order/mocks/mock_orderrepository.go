@@ -42,20 +42,31 @@ func (_m *MockOrderRepository) EXPECT() *MockOrderRepository_Expecter {
 }
 
 // CreateOrder provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) CreateOrder(ctx context.Context, order model_order.Order) error {
+func (_mock *MockOrderRepository) CreateOrder(ctx context.Context, order model_order.Order) (*model_order.Order, error) {
 	ret := _mock.Called(ctx, order)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateOrder")
 	}
 
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, model_order.Order) error); ok {
+	var r0 *model_order.Order
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_order.Order) (*model_order.Order, error)); ok {
+		return returnFunc(ctx, order)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, model_order.Order) *model_order.Order); ok {
 		r0 = returnFunc(ctx, order)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model_order.Order)
+		}
 	}
-	return r0
+	if returnFunc, ok := ret.Get(1).(func(context.Context, model_order.Order) error); ok {
+		r1 = returnFunc(ctx, order)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
 }
 
 // MockOrderRepository_CreateOrder_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateOrder'
@@ -88,12 +99,12 @@ func (_c *MockOrderRepository_CreateOrder_Call) Run(run func(ctx context.Context
 	return _c
 }
 
-func (_c *MockOrderRepository_CreateOrder_Call) Return(err error) *MockOrderRepository_CreateOrder_Call {
-	_c.Call.Return(err)
+func (_c *MockOrderRepository_CreateOrder_Call) Return(order1 *model_order.Order, err error) *MockOrderRepository_CreateOrder_Call {
+	_c.Call.Return(order1, err)
 	return _c
 }
 
-func (_c *MockOrderRepository_CreateOrder_Call) RunAndReturn(run func(ctx context.Context, order model_order.Order) error) *MockOrderRepository_CreateOrder_Call {
+func (_c *MockOrderRepository_CreateOrder_Call) RunAndReturn(run func(ctx context.Context, order model_order.Order) (*model_order.Order, error)) *MockOrderRepository_CreateOrder_Call {
 	_c.Call.Return(run)
 	return _c
 }

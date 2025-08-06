@@ -2,8 +2,11 @@ package repository_order_postgre
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 )
@@ -12,37 +15,49 @@ func (o *OrderRepositoryPostgre) GetOrder(
 	ctx context.Context,
 	orderUUID string,
 ) (*model_order.Order, error) {
-	query, _, err := squirrel.Select(
-		columnOrderUUID,
-		columnUserUUID,
-		columnPartsUUIDs,
-		columnTotalPrice,
-		columnTransactionUUID,
-		columnPaymentMethod,
-		columnStatus,
-	).From("orders").Where(
-		squirrel.Eq{columnOrderUUID: orderUUID},
-	).ToSql()
+	query, _, err := squirrel.
+		Select(
+			columnOrderUUID,
+			columnUserUUID,
+			columnPartsUUIDs,
+			columnTotalPrice,
+			columnTransactionUUID,
+			columnPaymentMethod,
+			columnStatus,
+			columnCreatedAt,
+			columnUpdatedAt,
+		).
+		From(tableOrders).
+		Where(squirrel.Eq{columnOrderUUID: orderUUID}).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
 	}
 
-	var order model_order.Order
-	row := o.db.QueryRow(ctx, query, orderUUID)
-
-	err = row.Scan(
-		&order.OrderUUID,
-		&order.UserUUID,
-		&order.PartUuids,
-		&order.TotalPrice,
-		&order.TransactionUUID,
-		&order.TransactionUUID,
-		&order.PaymentMethod,
-		&order.Status,
+	var repoOrder Order
+	err = o.db.QueryRow(ctx, query, orderUUID).Scan(
+		&repoOrder.OrderUUID,
+		&repoOrder.UserUUID,
+		&repoOrder.PartUuids,
+		&repoOrder.TotalPrice,
+		&repoOrder.TransactionUUID,
+		&repoOrder.PaymentMethod,
+		&repoOrder.Status,
+		&repoOrder.CreatedAt,
+		&repoOrder.UpdatedAt,
 	)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, model_order.ErrOrderNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
 	}
 
-	return &order, nil
+	modelOrder, err := ToModel(repoOrder)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+	}
+
+	return modelOrder, nil
 }

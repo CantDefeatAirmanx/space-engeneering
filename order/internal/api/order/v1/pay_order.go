@@ -2,8 +2,6 @@ package api_order_v1
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"net/http"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
@@ -29,28 +27,14 @@ func (api *api) PayOrder(
 		PaymentMethod: paymentMethodMap[req.PaymentMethod],
 	})
 	if err != nil {
-		switch {
-		case errors.Is(err, model_order.ErrOrderNotFound):
-			return &order_v1.NotFoundError{
-				Code:    http.StatusNotFound,
-				Message: err.Error(),
-			}, nil
-		case errors.Is(err, model_order.ErrOrderConflict):
-			return &order_v1.ConflictError{
-				Code:    http.StatusConflict,
-				Message: err.Error(),
-			}, nil
-		case errors.Is(err, model_order.ErrOrderInternal):
+		res, err := handleServiceError[order_v1.PayOrderRes](err)
+		if err != nil {
 			return &order_v1.InternalServerError{
 				Code:    http.StatusInternalServerError,
-				Message: err.Error(),
-			}, nil
-		default:
-			return &order_v1.InternalServerError{
-				Code:    http.StatusInternalServerError,
-				Message: fmt.Sprintf("%s: %s", internalServerErrorMessage, err.Error()),
+				Message: internalServerErrorMessage,
 			}, nil
 		}
+		return res, nil
 	}
 
 	return &order_v1.PayOrderResponseBody{

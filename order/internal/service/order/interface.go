@@ -12,6 +12,7 @@ type OrderService interface {
 	// Errors:
 	//
 	// - ([model_order.ErrOrderInternal]): if the order is not created
+	// - ([model_order.ErrOrderInvalidArguments]): if payload is not valid
 	CreateOrder(ctx context.Context, params CreateOrderParams) (*CreateOrderResult, error)
 	// GetOrder returns an order from the repository.
 	//

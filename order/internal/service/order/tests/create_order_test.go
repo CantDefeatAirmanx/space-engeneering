@@ -46,6 +46,14 @@ func (s *TestingSuite) TestCreateOrderSuccess() {
 
 	userUUID := gofakeit.UUID()
 
+	createdOrder := &model_order.Order{
+		OrderUUID:  gofakeit.UUID(),
+		UserUUID:   userUUID,
+		PartUuids:  partUuids,
+		Status:     model_order.OrderStatusPendingPayment,
+		TotalPrice: totalPrice,
+	}
+
 	s.repoMock.EXPECT().CreateOrder(
 		mock.MatchedBy(func(ctx context.Context) bool {
 			_, ok := ctx.Deadline()
@@ -54,7 +62,7 @@ func (s *TestingSuite) TestCreateOrderSuccess() {
 		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
-	).Return(nil)
+	).Return(createdOrder, nil)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -174,7 +182,7 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
-	).Return(model_order.ErrOrderInternal)
+	).Return(nil, model_order.ErrOrderInternal)
 
 	result, err := s.service.CreateOrder(
 		s.ctx,

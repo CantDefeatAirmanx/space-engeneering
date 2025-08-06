@@ -6,11 +6,13 @@ import (
 
 func (s *TestingSuite) TestCreateOrderSuccess() {
 	order := helpers_test_data.GenerateRandomOrder()
-
-	s.repo.CreateOrder(s.ctx, *order)
-
-	res, err := s.repo.GetOrder(s.ctx, order.OrderUUID)
+	createdOrder, err := s.repo.CreateOrder(s.ctx, *order)
 
 	s.NoError(err)
-	s.Equal(*order, *res)
+	s.NotEmpty(createdOrder.OrderUUID)
+
+	res, err := s.repo.GetOrder(s.ctx, createdOrder.OrderUUID)
+
+	s.NoError(err)
+	s.Equal(*createdOrder, *res)
 }
