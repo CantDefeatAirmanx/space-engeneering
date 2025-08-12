@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/converter"
+	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/model"
 )
 
 var _ repository_part.PartRepository = (*RepositoryPartImpl)(nil)

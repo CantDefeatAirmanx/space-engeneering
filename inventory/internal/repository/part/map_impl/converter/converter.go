@@ -4,10 +4,10 @@ import (
 	"github.com/samber/lo"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	repository_model_part2 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/model"
 )
 
-func ToModel(repo *repository_model_part.Part) model_part.Part {
+func ToModel(repo *repository_model_part2.Part) model_part.Part {
 	metadata := make(
 		map[string]*model_part.MetaDataValue,
 		len(repo.Metadata),
@@ -46,13 +46,13 @@ func ToModel(repo *repository_model_part.Part) model_part.Part {
 	}
 }
 
-func ToRepository(model *model_part.Part) repository_model_part.Part {
+func ToRepository(model *model_part.Part) repository_model_part2.Part {
 	metadata := make(
-		map[string]*repository_model_part.MetaDataValue,
+		map[string]*repository_model_part2.MetaDataValue,
 		len(model.Metadata),
 	)
 	for key, value := range model.Metadata {
-		metadata[key] = &repository_model_part.MetaDataValue{
+		metadata[key] = &repository_model_part2.MetaDataValue{
 			StringValue: value.StringValue,
 			DoubleValue: value.DoubleValue,
 			Int64Value:  value.Int64Value,
@@ -60,20 +60,20 @@ func ToRepository(model *model_part.Part) repository_model_part.Part {
 		}
 	}
 
-	return repository_model_part.Part{
+	return repository_model_part2.Part{
 		UUID:          model.UUID,
 		Name:          model.Name,
 		Description:   model.Description,
 		Price:         model.Price,
 		StockQuantity: model.StockQuantity,
-		Category:      repository_model_part.Category(model.Category),
-		Dimensions: &repository_model_part.Dimensions{
+		Category:      repository_model_part2.Category(model.Category),
+		Dimensions: &repository_model_part2.Dimensions{
 			Length: model.Dimensions.Length,
 			Width:  model.Dimensions.Width,
 			Height: model.Dimensions.Height,
 			Weight: model.Dimensions.Weight,
 		},
-		Manufacturer: &repository_model_part.Manufacturer{
+		Manufacturer: &repository_model_part2.Manufacturer{
 			Name:    model.Manufacturer.Name,
 			Country: model.Manufacturer.Country,
 			Website: model.Manufacturer.Website,
@@ -85,13 +85,13 @@ func ToRepository(model *model_part.Part) repository_model_part.Part {
 	}
 }
 
-func ToRepositoryFilter(model model_part.Filter) repository_model_part.Filter {
-	return repository_model_part.Filter{
+func ToRepositoryFilter(model model_part.Filter) repository_model_part2.Filter {
+	return repository_model_part2.Filter{
 		Uuids: model.Uuids,
 		Categories: lo.Map(
 			model.Categories,
-			func(category model_part.Category, _ int) repository_model_part.Category {
-				return repository_model_part.Category(category)
+			func(category model_part.Category, _ int) repository_model_part2.Category {
+				return repository_model_part2.Category(category)
 			},
 		),
 		ManufacturerCountries: model.ManufacturerCountries,

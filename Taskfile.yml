@@ -103,12 +103,14 @@ tasks:
     cmds:
       - task up-core
       - task up-order
+      - task up-inventory
 
   down-all:
     desc: "Остановка всех зависимостей docker-compose"
     cmds:
       - task down-core
       - task down-order
+      - task down-inventory
 
   up-core:
     desc: "Запуск общих зависимостей docker-compose"
@@ -122,6 +124,12 @@ tasks:
       - echo "🚀 Запускаем зависимости order..."
       - 'docker compose -f deploy/order/docker-compose.yaml up --build --detach'
   
+  up-inventory:
+    desc: "Запуск зависимостей inventory docker-compose"
+    cmds:
+      - echo "🚀 Запускаем зависимости inventory..."
+      - 'docker compose -f deploy/inventory/docker-compose.yaml up --build --detach'
+
   down-core:
     desc: "Остановка общих зависимостей docker-compose"
     cmds:
@@ -133,6 +141,12 @@ tasks:
     cmds:
       - echo "🛑 Останавливаем зависимости order..."
       - 'docker compose -f deploy/order/docker-compose.yaml down'
+
+  down-inventory:
+    desc: "Остановка зависимостей inventory docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем зависимости inventory..."
+      - 'docker compose -f deploy/inventory/docker-compose.yaml down'
 
   run-checks:
     desc: "Запуск всех проверок"

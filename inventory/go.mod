@@ -6,5 +6,6 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.3.0 // indirect
 	github.com/samber/lo v1.51.0 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	golang.org/x/text v0.22.0 // indirect
 )

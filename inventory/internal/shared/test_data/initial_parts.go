@@ -2,20 +2,18 @@ package test_data
 
 import (
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
 	helpers_test_data "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 
-func GetRepoInitialParts() []repository_model_part.Part {
-	parts := []repository_model_part.Part{}
+func GetInitialParts() []*model_part.Part {
+	parts := []*model_part.Part{}
 	for _, data := range PartsData {
 		randomPart := helpers_test_data.GenerateRandomPart(
 			helpers_test_data.WithUUID(data.UUID),
 			helpers_test_data.WithName(data.Name),
 			helpers_test_data.WithCategory(data.Category),
 		)
-		parts = append(parts, repository_converter_part.ToRepository(randomPart))
+		parts = append(parts, randomPart)
 	}
 	return parts
 }

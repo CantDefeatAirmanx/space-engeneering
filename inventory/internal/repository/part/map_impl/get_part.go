@@ -4,7 +4,7 @@ import (
 	"context"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/converter"
 )
 
 func (r *RepositoryPartImpl) GetPart(
