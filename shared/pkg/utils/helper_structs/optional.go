@@ -27,9 +27,18 @@ func NewOptionalEmpty[T any]() *Optional[T] {
 }
 
 func (o *Optional[T]) IsSet() bool {
+	if o == nil {
+		return false
+	}
+
 	return o.isSet
 }
 
 func (o *Optional[T]) GetValue() T {
+	if o == nil {
+		var zero T
+		return zero
+	}
+
 	return o.value
 }

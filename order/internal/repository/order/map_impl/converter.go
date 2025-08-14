@@ -1,11 +1,10 @@
-package repository_order_converter
+package repository_order_map
 
 import (
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
-	repository_order_model "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/model"
 )
 
-func ToModel(repo *repository_order_model.Order) model_order.Order {
+func ToModel(repo *Order) model_order.Order {
 	result := model_order.Order{
 		OrderUUID:       repo.OrderUUID,
 		UserUUID:        repo.UserUUID,
@@ -23,18 +22,18 @@ func ToModel(repo *repository_order_model.Order) model_order.Order {
 	return result
 }
 
-func ToRepository(model *model_order.Order) repository_order_model.Order {
-	result := repository_order_model.Order{
+func ToRepository(model *model_order.Order) Order {
+	result := Order{
 		OrderUUID:       model.OrderUUID,
 		UserUUID:        model.UserUUID,
 		PartUuids:       model.PartUuids,
 		TotalPrice:      model.TotalPrice,
 		TransactionUUID: model.TransactionUUID,
-		Status:          repository_order_model.OrderStatus(model.Status),
+		Status:          OrderStatus(model.Status),
 	}
 
 	if model.PaymentMethod != nil {
-		paymentMethod := repository_order_model.PaymentMethod(*model.PaymentMethod)
+		paymentMethod := PaymentMethod(*model.PaymentMethod)
 		result.PaymentMethod = &paymentMethod
 	}
 

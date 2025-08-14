@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part"
-	repository_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/converter"
-	repository_model_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/model"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/converter"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl/model"
 	helpers_test_data "github.com/CantDefeatAirmanx/space-engeneering/inventory/pkg/lib/helpers/test_data"
 )
 

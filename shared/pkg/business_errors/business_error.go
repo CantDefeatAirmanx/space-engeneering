@@ -58,7 +58,6 @@ var businessCodesToMessages = map[ErrCode]string{
 
 type BusinessError struct {
 	Code     ErrCode
-	Message  string
 	Err      error
 	HttpCode helper_structs.OptionalInterface[int]
 	GRPCCode helper_structs.OptionalInterface[codes.Code]
@@ -72,12 +71,24 @@ type newBusinessErrorParams struct {
 }
 
 func newBusinessError(params newBusinessErrorParams) *BusinessError {
-	return &BusinessError{
-		Code:     params.Code,
-		Err:      params.Err,
-		HttpCode: params.HttpCode,
-		GRPCCode: params.GRPCCode,
+	err := BusinessError{
+		Code: params.Code,
+		Err:  params.Err,
 	}
+
+	if params.GRPCCode != nil {
+		err.GRPCCode = params.GRPCCode
+	} else {
+		err.GRPCCode = helper_structs.NewOptionalEmpty[codes.Code]()
+	}
+
+	if params.HttpCode != nil {
+		err.HttpCode = params.HttpCode
+	} else {
+		err.HttpCode = helper_structs.NewOptionalEmpty[int]()
+	}
+
+	return &err
 }
 
 type BusinessHttpErrResponse struct {
@@ -120,7 +131,7 @@ func ConvertBusinessErrToGRPCStatus(err *BusinessError) *status.Status {
 	grpcCode, isSet := err.GRPCCode.GetValue(), err.GRPCCode.IsSet()
 
 	if isSet {
-		return status.New(grpcCode, err.Message)
+		return status.New(grpcCode, err.Error())
 	}
 
 	grpcCode, ok := businessCodesToGRPCCodes[err.Code]
@@ -128,7 +139,7 @@ func ConvertBusinessErrToGRPCStatus(err *BusinessError) *status.Status {
 		grpcCode = codes.Unknown
 	}
 
-	return status.New(grpcCode, err.Message)
+	return status.New(grpcCode, err.Error())
 }
 
 func ConvertBusinessErrToHttpResponse(err *BusinessError) *BusinessHttpErrResponse {
@@ -137,7 +148,7 @@ func ConvertBusinessErrToHttpResponse(err *BusinessError) *BusinessHttpErrRespon
 	if isSet {
 		return &BusinessHttpErrResponse{
 			Code:     err.Code,
-			Message:  err.Message,
+			Message:  err.Error(),
 			HttpCode: httpCode,
 		}
 	}
@@ -149,7 +160,7 @@ func ConvertBusinessErrToHttpResponse(err *BusinessError) *BusinessHttpErrRespon
 
 	return &BusinessHttpErrResponse{
 		Code:     err.Code,
-		Message:  err.Message,
+		Message:  err.Error(),
 		HttpCode: httpCode,
 	}
 }

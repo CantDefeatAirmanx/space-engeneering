@@ -20,6 +20,12 @@ type Handler interface {
 	//
 	// POST /api/v1/orders
 	CreateOrder(ctx context.Context, req *CreateOrderRequestBody) (CreateOrderRes, error)
+	// DeleteOrder implements deleteOrder operation.
+	//
+	// Delete an order by UUID.
+	//
+	// DELETE /api/v1/orders/{order_uuid}
+	DeleteOrder(ctx context.Context, params DeleteOrderParams) (DeleteOrderRes, error)
 	// GetOrder implements getOrder operation.
 	//
 	// Get an order by UUID.

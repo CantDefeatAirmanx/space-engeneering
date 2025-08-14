@@ -1,18 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 
+	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
 	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
-	repository_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/map_impl"
+	repository_part_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/mongo_impl"
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	configs_inventory "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/inventory"
@@ -21,9 +26,32 @@ import (
 )
 
 func main() {
-	partRepo := repository_part.NewRepositoryPart(
-		repository_part.NewRepositoryPartParams{
-			InitialParts: test_data.GetRepoInitialParts(),
+	ctx := context.Background()
+	// ToDo: Add working with .env abstactions (4 module)
+	workingDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting working directory: %v", err)
+	}
+	envPath := filepath.Join(workingDir, "inventory", ".env")
+	err = godotenv.Load(envPath)
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	connStr := os.Getenv(configs_inventory.EnvMongoDbURI)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connStr))
+	if err != nil {
+		discErr := client.Disconnect(ctx)
+		if discErr != nil {
+			log.Printf("Error disconnecting from database: %v", discErr)
+		}
+		log.Fatalf("Error connecting to database: %v", err)
+	}
+
+	partRepo := repository_part_mongo.NewRepositoryPartMongoImpl(
+		repository_part_mongo.NewRepositoryPartMongoImplParams{
+			Db:           client.Database(os.Getenv(configs_inventory.EnvMongoDbName)),
+			InitialParts: test_data.GetInitialParts(),
 		},
 	)
 	partService := service_part.NewPartService(

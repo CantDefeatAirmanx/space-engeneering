@@ -8,6 +8,7 @@ type OperationName = string
 const (
 	CancelOrderOperation OperationName = "CancelOrder"
 	CreateOrderOperation OperationName = "CreateOrder"
+	DeleteOrderOperation OperationName = "DeleteOrder"
 	GetOrderOperation    OperationName = "GetOrder"
 	PayOrderOperation    OperationName = "PayOrder"
 )

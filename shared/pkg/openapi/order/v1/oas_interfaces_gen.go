@@ -9,6 +9,10 @@ type CreateOrderRes interface {
 	createOrderRes()
 }
 
+type DeleteOrderRes interface {
+	deleteOrderRes()
+}
+
 type GetOrderRes interface {
 	getOrderRes()
 }

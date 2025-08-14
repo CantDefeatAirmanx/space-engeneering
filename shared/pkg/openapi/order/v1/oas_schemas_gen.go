@@ -35,6 +35,7 @@ func (s *BadRequestError) SetMessage(val string) {
 }
 
 func (*BadRequestError) createOrderRes() {}
+func (*BadRequestError) deleteOrderRes() {}
 
 type CancelOrderOK struct{}
 
@@ -129,6 +130,10 @@ func (s *CreateOrderResponseBody) SetTotalPrice(val float64) {
 
 func (*CreateOrderResponseBody) createOrderRes() {}
 
+type DeleteOrderOK struct{}
+
+func (*DeleteOrderOK) deleteOrderRes() {}
+
 // Ref: #/components/schemas/internal_server_error
 type InternalServerError struct {
 	// HTTP-код ошибки.
@@ -159,6 +164,7 @@ func (s *InternalServerError) SetMessage(val string) {
 
 func (*InternalServerError) cancelOrderRes() {}
 func (*InternalServerError) createOrderRes() {}
+func (*InternalServerError) deleteOrderRes() {}
 func (*InternalServerError) getOrderRes()    {}
 func (*InternalServerError) payOrderRes()    {}
 
@@ -191,6 +197,7 @@ func (s *NotFoundError) SetMessage(val string) {
 }
 
 func (*NotFoundError) cancelOrderRes() {}
+func (*NotFoundError) deleteOrderRes() {}
 func (*NotFoundError) getOrderRes()    {}
 func (*NotFoundError) payOrderRes()    {}
 

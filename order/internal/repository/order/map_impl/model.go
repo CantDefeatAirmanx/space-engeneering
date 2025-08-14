@@ -1,4 +1,4 @@
-package repository_order_model
+package repository_order_map
 
 type Order struct {
 	// Уникальный идентификатор заказа.
