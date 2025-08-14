@@ -5,7 +5,7 @@ services:
         ports:
             - 5432:5432
         env_file:
-            - ../../order/.env
+            - ./.env
         volumes:
             - order-postgres-data:/var/lib/postgresql/data
         healthcheck:

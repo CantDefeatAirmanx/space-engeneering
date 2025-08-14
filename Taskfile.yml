@@ -106,11 +106,11 @@ tasks:
       - task up-inventory
 
   down-all:
-    desc: "Остановка всех зависимостей docker-compose"
+    desc: "Остановка всех зависимостей docker-compose, core должен быть последним"
     cmds:
-      - task down-core
       - task down-order
       - task down-inventory
+      - task down-core
 
   up-core:
     desc: "Запуск общих зависимостей docker-compose"
@@ -122,12 +122,14 @@ tasks:
     desc: "Запуск зависимостей order docker-compose"
     cmds:
       - echo "🚀 Запускаем зависимости order..."
+      - cp -r {{.ROOT_DIR}}/order/.env {{.ROOT_DIR}}/deploy/order
       - 'docker compose -f deploy/order/docker-compose.yaml up --build --detach'
   
   up-inventory:
     desc: "Запуск зависимостей inventory docker-compose"
     cmds:
       - echo "🚀 Запускаем зависимости inventory..."
+      - cp -r {{.ROOT_DIR}}/inventory/.env {{.ROOT_DIR}}/deploy/inventory
       - 'docker compose -f deploy/inventory/docker-compose.yaml up --build --detach'
 
   down-core:
@@ -140,12 +142,14 @@ tasks:
     desc: "Остановка зависимостей order docker-compose"
     cmds:
       - echo "🛑 Останавливаем зависимости order..."
+      - cp {{.ROOT_DIR}}/order/.env {{.ROOT_DIR}}/deploy/order/.env
       - 'docker compose -f deploy/order/docker-compose.yaml down'
 
   down-inventory:
     desc: "Остановка зависимостей inventory docker-compose"
     cmds:
       - echo "🛑 Останавливаем зависимости inventory..."
+      - cp {{.ROOT_DIR}}/inventory/.env {{.ROOT_DIR}}/deploy/inventory/.env
       - 'docker compose -f deploy/inventory/docker-compose.yaml down'
 
   run-checks:
