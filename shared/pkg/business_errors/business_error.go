@@ -3,9 +3,9 @@ package business_errors
 import (
 	"errors"
 	"fmt"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/helper_structs"
 	"net/http"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/utils/helper_structs"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

@@ -1,7 +1,7 @@
 package business_errors
 
 import (
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/utils/helper_structs"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/helper_structs"
 	"google.golang.org/grpc/codes"
 )
 

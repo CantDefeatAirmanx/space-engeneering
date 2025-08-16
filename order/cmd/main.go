@@ -21,9 +21,9 @@ import (
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	repository_order_postgre "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/postgre_impl"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/migrator"
 	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/utils/migrator"
 )
 
 func main() {
