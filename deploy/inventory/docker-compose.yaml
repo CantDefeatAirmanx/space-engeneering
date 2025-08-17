@@ -3,10 +3,10 @@ services:
         image: mongo:7.0.5
         container_name: inventory-mongodb
         ports:
-            - ${MONGO_PORT}:27017
+            - ${mongo__port}:27017
         environment:
-            - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+            - MONGO_INITDB_ROOT_USERNAME=${mongo__username}
+            - MONGO_INITDB_ROOT_PASSWORD=${mongo__password}
         env_file:
             - ./.env
         volumes:
@@ -16,9 +16,9 @@ services:
                     'CMD-SHELL',
                     "echo 'db.runCommand({ ping: 1 }).ok' | \
                     mongosh --quiet \
-                    -u ${MONGO_USERNAME} \
-                    -p ${MONGO_PASSWORD} \
-                    --authenticationDatabase ${MONGO_AUTH_SOURCE}",
+                    -u ${mongo__username} \
+                    -p ${mongo__password} \
+                    --authenticationDatabase ${mongo__authSource}",
                 ]
             interval: 10s
             timeout: 5s

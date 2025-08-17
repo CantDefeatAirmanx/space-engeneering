@@ -1,0 +1,50 @@
+package config
+
+import (
+	"os"
+
+	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
+	config_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/mongo"
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
+)
+
+type ConfigData struct {
+	MongoConfig config_mongo.MongoConfigData `envPrefix:"mongo__"`
+	GRPCConfig  config_grpc.GRPCConfigData   `envPrefix:"grpc__"`
+}
+
+var configData ConfigData
+var isDev = os.Getenv("GO_ENV") == "dev"
+
+func LoadConfig(opts ...LoadConfigOption) error {
+	options := LoadConfigOptions{
+		EnvPath: ".env",
+	}
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	if isDev {
+		godotenv.Load(options.EnvPath)
+	}
+
+	if err := env.Parse(&configData); err != nil {
+		return err
+	}
+
+	Config = NewConfig(configData)
+
+	return nil
+}
+
+type LoadConfigOptions struct {
+	EnvPath string
+}
+type LoadConfigOption func(o *LoadConfigOptions)
+
+func WithEnvPath(path string) LoadConfigOption {
+	return func(o *LoadConfigOptions) {
+		o.EnvPath = path
+	}
+}
