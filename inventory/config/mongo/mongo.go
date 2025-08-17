@@ -1,10 +1,10 @@
 package config_mongo
 
 type MongoConfigData struct {
-	URI        string `env:"mongo__uri,required"`
-	Username   string `env:"mongo__username,required"`
-	Password   string `env:"mongo__password,required"`
-	DBName     string `env:"mongo__dbName,required"`
-	Port       int    `env:"mongo__port,required"`
-	AuthSource string `env:"mongo__authSource,required"`
+	URI        string `env:"uri,required"`
+	Username   string `env:"username,required"`
+	Password   string `env:"password,required"`
+	DBName     string `env:"dbName,required"`
+	Port       int    `env:"port,required"`
+	AuthSource string `env:"authSource,required"`
 }

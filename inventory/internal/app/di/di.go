@@ -1,0 +1,90 @@
+package di
+
+import (
+	"context"
+	"log"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
+	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
+	repository_part_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/mongo_impl"
+	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
+	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
+	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+type DiContainer struct {
+	inventoryAPI   inventory_v1.InventoryServiceServer
+	partService    service_part.PartService
+	partRepository service_part.PartRepository
+	mongoClient    *mongo.Client
+}
+
+func NewDiContainer() *DiContainer {
+	return &DiContainer{}
+}
+
+func (d *DiContainer) GetInventoryAPI() inventory_v1.InventoryServiceServer {
+	if d.inventoryAPI != nil {
+		return d.inventoryAPI
+	}
+
+	d.inventoryAPI = api_inventory_v1.NewApi(
+		d.GetPartService(),
+	)
+
+	return d.inventoryAPI
+}
+
+func (d *DiContainer) GetPartService() service_part.PartService {
+	if d.partService != nil {
+		return d.partService
+	}
+
+	d.partService = service_part.NewPartService(
+		service_part.NewPartServiceParams{
+			Repository: d.GetPartRepository(),
+		},
+	)
+
+	return d.partService
+}
+
+func (d *DiContainer) GetPartRepository() service_part.PartRepository {
+	if d.partRepository != nil {
+		return d.partRepository
+	}
+
+	params := repository_part_mongo.NewRepositoryPartMongoImplParams{
+		Db: d.GetMongoClient().Database(config.Config.Mongo().DBName()),
+	}
+	if config.Config.IsDev() {
+		params.InitialParts = test_data.GetInitialParts()
+	}
+
+	d.partRepository = repository_part_mongo.NewRepositoryPartMongoImpl(
+		params,
+	)
+
+	return d.partRepository
+}
+
+func (d *DiContainer) GetMongoClient() *mongo.Client {
+	if d.mongoClient != nil {
+		return d.mongoClient
+	}
+
+	mongoClient, err := mongo.Connect(
+		context.Background(),
+		options.Client().ApplyURI(config.Config.Mongo().URI()),
+	)
+
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	}
+
+	d.mongoClient = mongoClient
+
+	return d.mongoClient
+}
