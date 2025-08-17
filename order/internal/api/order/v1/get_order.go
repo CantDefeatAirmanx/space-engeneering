@@ -8,7 +8,7 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-func (api *api) GetOrder(
+func (api *Api) GetOrder(
 	ctx context.Context,
 	params order_v1.GetOrderParams,
 ) (order_v1.GetOrderRes, error) {

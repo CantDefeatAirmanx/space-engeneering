@@ -8,7 +8,7 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-func (api *api) CreateOrder(
+func (api *Api) CreateOrder(
 	ctx context.Context,
 	req *order_v1.CreateOrderRequestBody,
 ) (order_v1.CreateOrderRes, error) {

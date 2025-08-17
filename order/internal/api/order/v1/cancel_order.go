@@ -7,7 +7,7 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-func (api *api) CancelOrder(
+func (api *Api) CancelOrder(
 	ctx context.Context,
 	params order_v1.CancelOrderParams,
 ) (order_v1.CancelOrderRes, error) {

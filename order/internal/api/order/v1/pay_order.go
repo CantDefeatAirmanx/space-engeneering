@@ -17,7 +17,7 @@ var paymentMethodMap = map[order_v1.PaymentMethod]model_order.PaymentMethod{
 	order_v1.PaymentMethodUNKNOWN:       model_order.PaymentMethodUnknown,
 }
 
-func (api *api) PayOrder(
+func (api *Api) PayOrder(
 	ctx context.Context,
 	req *order_v1.PayOrderRequestBody,
 	params order_v1.PayOrderParams,

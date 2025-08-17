@@ -7,7 +7,7 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-func (api *api) DeleteOrder(
+func (api *Api) DeleteOrder(
 	ctx context.Context,
 	params order_v1.DeleteOrderParams,
 ) (order_v1.DeleteOrderRes, error) {

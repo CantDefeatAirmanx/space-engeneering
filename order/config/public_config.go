@@ -23,8 +23,11 @@ func NewConfig(configData ConfigData) *ConfigImpl {
 		configData: configData,
 
 		httpServer: &HttpServerConfigType{
-			host: configData.HttpServer.Host,
-			port: configData.HttpServer.Port,
+			host:              configData.HttpServer.Host,
+			port:              configData.HttpServer.Port,
+			timeout:           configData.HttpServer.Timeout,
+			readHeaderTimeout: configData.HttpServer.ReadHeaderTimeout,
+			shutdownTimeout:   configData.HttpServer.ShutdownTimeout,
 		},
 
 		inventoryClient: &InventoryClientConfigType{
@@ -67,8 +70,11 @@ func (c *ConfigImpl) Postgres() PostgresConfigInterface {
 }
 
 type HttpServerConfigType struct {
-	host string
-	port int
+	host              string
+	port              int
+	timeout           int
+	readHeaderTimeout int
+	shutdownTimeout   int
 }
 
 func (h *HttpServerConfigType) Host() string {
@@ -77,6 +83,18 @@ func (h *HttpServerConfigType) Host() string {
 
 func (h *HttpServerConfigType) Port() int {
 	return h.port
+}
+
+func (h *HttpServerConfigType) ReadHeaderTimeout() int {
+	return h.readHeaderTimeout
+}
+
+func (h *HttpServerConfigType) ShutdownTimeout() int {
+	return h.shutdownTimeout
+}
+
+func (h *HttpServerConfigType) Timeout() int {
+	return h.timeout
 }
 
 type PostgresConfigType struct {

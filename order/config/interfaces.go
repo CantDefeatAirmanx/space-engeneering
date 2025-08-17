@@ -11,6 +11,9 @@ type ConfigInterface interface {
 type HttpServerConfigInterface interface {
 	Host() string
 	Port() int
+	Timeout() int
+	ReadHeaderTimeout() int
+	ShutdownTimeout() int
 }
 
 type PostgresConfigInterface interface {
