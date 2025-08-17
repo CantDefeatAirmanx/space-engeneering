@@ -6,13 +6,14 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/app/di"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 )
 
 type App struct {
@@ -90,7 +91,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	inventory_v1.RegisterInventoryServiceServer(
 		a.grpcServer,
-		di.NewDiContainer().GetInventoryAPI(),
+		di.NewDiContainer().GetInventoryAPI(ctx),
 	)
 	reflection.Register(a.grpcServer)
 

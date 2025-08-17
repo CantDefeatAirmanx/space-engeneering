@@ -7,13 +7,14 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/internal/app/di"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 )
 
 type App struct {

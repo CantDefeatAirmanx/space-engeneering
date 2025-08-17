@@ -3,10 +3,11 @@ package config
 import (
 	"os"
 
-	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
-	config_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/mongo"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
+
+	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
+	config_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/mongo"
 )
 
 type ConfigData struct {
@@ -14,8 +15,10 @@ type ConfigData struct {
 	GRPCConfig  config_grpc.GRPCConfigData   `envPrefix:"grpc__"`
 }
 
-var configData ConfigData
-var isDev = os.Getenv("GO_ENV") == "dev"
+var (
+	configData ConfigData
+	isDev      = os.Getenv("GO_ENV") == "dev"
+)
 
 func LoadConfig(opts ...LoadConfigOption) error {
 	options := LoadConfigOptions{
@@ -26,7 +29,9 @@ func LoadConfig(opts ...LoadConfigOption) error {
 	}
 
 	if isDev {
-		godotenv.Load(options.EnvPath)
+		if err := godotenv.Load(options.EnvPath); err != nil {
+			return err
+		}
 	}
 
 	if err := env.Parse(&configData); err != nil {

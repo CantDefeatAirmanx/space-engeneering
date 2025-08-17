@@ -1,8 +1,10 @@
 package config
 
-var _ ConfigInterface = (*ConfigType)(nil)
-var _ MongoConfigInterface = (*MongoConfigType)(nil)
-var _ GRPCConfigInterface = (*GRPCConfigType)(nil)
+var (
+	_ ConfigInterface      = (*ConfigType)(nil)
+	_ MongoConfigInterface = (*MongoConfigType)(nil)
+	_ GRPCConfigInterface  = (*GRPCConfigType)(nil)
+)
 
 var Config = &ConfigType{}
 

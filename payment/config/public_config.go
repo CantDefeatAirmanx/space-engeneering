@@ -1,8 +1,10 @@
 package config
 
-var _ ConfigInterface = (*ConfigType)(nil)
-var _ LoggerConfig = (*LoggerConfigType)(nil)
-var _ GRPCConfig = (*GRPCConfigType)(nil)
+var (
+	_ ConfigInterface = (*ConfigType)(nil)
+	_ LoggerConfig    = (*LoggerConfigType)(nil)
+	_ GRPCConfig      = (*GRPCConfigType)(nil)
+)
 
 var Config = &ConfigType{}
 
