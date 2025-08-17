@@ -1,11 +1,14 @@
 package config
 
+import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+
 type ConfigInterface interface {
 	IsDev() bool
 	Postgres() PostgresConfigInterface
 	HttpServer() HttpServerConfigInterface
 	InventoryClient() InventoryClientConfigInterface
 	PaymentClient() PaymentClientConfigInterface
+	Logger() LoggerConfigInterface
 }
 
 type HttpServerConfigInterface interface {
@@ -31,4 +34,9 @@ type InventoryClientConfigInterface interface {
 
 type PaymentClientConfigInterface interface {
 	Url() string
+}
+
+type LoggerConfigInterface interface {
+	Level() logger.Level
+	Encoder() logger.EncoderType
 }

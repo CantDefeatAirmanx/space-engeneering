@@ -1,17 +1,19 @@
 package config
 
+import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+
 var (
-	_ ConfigInterface = (*ConfigType)(nil)
-	_ LoggerConfig    = (*LoggerConfigType)(nil)
-	_ GRPCConfig      = (*GRPCConfigType)(nil)
+	_ ConfigInterface       = (*ConfigType)(nil)
+	_ LoggerConfigInterface = (*LoggerConfigType)(nil)
+	_ GRPCConfigInterface   = (*GRPCConfigType)(nil)
 )
 
 var Config = &ConfigType{}
 
 type ConfigType struct {
 	configData ConfigData
-	logger     LoggerConfig
-	grpc       GRPCConfig
+	logger     LoggerConfigInterface
+	grpc       GRPCConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigType {
@@ -19,8 +21,8 @@ func NewConfig(configData ConfigData) *ConfigType {
 		configData: configData,
 
 		logger: &LoggerConfigType{
-			level:  configData.LoggerConfig.Level,
-			asJSON: configData.LoggerConfig.AsJSON,
+			level:   configData.LoggerConfig.Level,
+			encoder: configData.LoggerConfig.Encoder,
 		},
 
 		grpc: &GRPCConfigType{
@@ -30,25 +32,25 @@ func NewConfig(configData ConfigData) *ConfigType {
 	}
 }
 
-func (c *ConfigType) GRPC() GRPCConfig {
+func (c *ConfigType) GRPC() GRPCConfigInterface {
 	return c.grpc
 }
 
-func (c *ConfigType) Logger() LoggerConfig {
+func (c *ConfigType) Logger() LoggerConfigInterface {
 	return c.logger
 }
 
 type LoggerConfigType struct {
-	level  string
-	asJSON bool
+	level   logger.Level
+	encoder logger.EncoderType
 }
 
-func (l *LoggerConfigType) AsJSON() bool {
-	return l.asJSON
-}
-
-func (l *LoggerConfigType) Level() string {
+func (l *LoggerConfigType) Level() logger.Level {
 	return l.level
+}
+
+func (l *LoggerConfigType) Encoder() logger.EncoderType {
+	return l.encoder
 }
 
 type GRPCConfigType struct {

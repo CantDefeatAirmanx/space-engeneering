@@ -1,9 +1,12 @@
 package config
 
+import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+
 var (
-	_ ConfigInterface      = (*ConfigType)(nil)
-	_ MongoConfigInterface = (*MongoConfigType)(nil)
-	_ GRPCConfigInterface  = (*GRPCConfigType)(nil)
+	_ ConfigInterface       = (*ConfigType)(nil)
+	_ MongoConfigInterface  = (*MongoConfigType)(nil)
+	_ GRPCConfigInterface   = (*GRPCConfigType)(nil)
+	_ LoggerConfigInterface = (*LoggerConfigType)(nil)
 )
 
 var Config = &ConfigType{}
@@ -12,6 +15,7 @@ type ConfigType struct {
 	configData ConfigData
 	grpc       GRPCConfigInterface
 	mongo      MongoConfigInterface
+	logger     LoggerConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigType {
@@ -31,6 +35,11 @@ func NewConfig(configData ConfigData) *ConfigType {
 			port:       configData.MongoConfig.Port,
 			username:   configData.MongoConfig.Username,
 		},
+
+		logger: &LoggerConfigType{
+			level:   configData.LoggerConfig.Level,
+			encoder: configData.LoggerConfig.Encoder,
+		},
 	}
 }
 
@@ -44,6 +53,10 @@ func (c *ConfigType) IsDev() bool {
 
 func (c *ConfigType) Mongo() MongoConfigInterface {
 	return c.mongo
+}
+
+func (c *ConfigType) Logger() LoggerConfigInterface {
+	return c.logger
 }
 
 type GRPCConfigType struct {
@@ -90,4 +103,17 @@ func (m *MongoConfigType) Username() string {
 
 func (m *MongoConfigType) URI() string {
 	return m.uri
+}
+
+type LoggerConfigType struct {
+	level   logger.Level
+	encoder logger.EncoderType
+}
+
+func (l *LoggerConfigType) Level() logger.Level {
+	return l.level
+}
+
+func (l *LoggerConfigType) Encoder() logger.EncoderType {
+	return l.encoder
 }

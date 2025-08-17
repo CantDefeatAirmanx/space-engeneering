@@ -1,16 +1,18 @@
 package config
 
+import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+
 type ConfigInterface interface {
-	Logger() LoggerConfig
-	GRPC() GRPCConfig
+	Logger() LoggerConfigInterface
+	GRPC() GRPCConfigInterface
 }
 
-type LoggerConfig interface {
-	Level() string
-	AsJSON() bool
+type LoggerConfigInterface interface {
+	Level() logger.Level
+	Encoder() logger.EncoderType
 }
 
-type GRPCConfig interface {
+type GRPCConfigInterface interface {
 	Host() string
 	Port() int
 }

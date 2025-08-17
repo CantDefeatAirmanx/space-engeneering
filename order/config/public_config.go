@@ -1,11 +1,14 @@
 package config
 
+import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+
 var (
 	_ ConfigInterface                = (*ConfigImpl)(nil)
 	_ HttpServerConfigInterface      = (*HttpServerConfigType)(nil)
 	_ InventoryClientConfigInterface = (*InventoryClientConfigType)(nil)
 	_ PaymentClientConfigInterface   = (*PaymentClientConfigType)(nil)
 	_ PostgresConfigInterface        = (*PostgresConfigType)(nil)
+	_ LoggerConfigInterface          = (*LoggerConfigType)(nil)
 )
 
 var Config = &ConfigImpl{}
@@ -16,6 +19,7 @@ type ConfigImpl struct {
 	inventoryClient InventoryClientConfigInterface
 	paymentClient   PaymentClientConfigInterface
 	postgres        PostgresConfigInterface
+	logger          LoggerConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigImpl {
@@ -46,7 +50,16 @@ func NewConfig(configData ConfigData) *ConfigImpl {
 			port:          configData.Postgres.Port,
 			user:          configData.Postgres.User,
 		},
+
+		logger: &LoggerConfigType{
+			level:   configData.LoggerConfig.Level,
+			encoder: configData.LoggerConfig.Encoder,
+		},
 	}
+}
+
+func (c *ConfigImpl) Logger() LoggerConfigInterface {
+	return c.logger
 }
 
 func (c *ConfigImpl) IsDev() bool {
@@ -144,4 +157,17 @@ type PaymentClientConfigType struct {
 
 func (p *PaymentClientConfigType) Url() string {
 	return p.url
+}
+
+type LoggerConfigType struct {
+	level   logger.Level
+	encoder logger.EncoderType
+}
+
+func (l *LoggerConfigType) Level() logger.Level {
+	return l.level
+}
+
+func (l *LoggerConfigType) Encoder() logger.EncoderType {
+	return l.encoder
 }

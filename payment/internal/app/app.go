@@ -13,6 +13,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
@@ -46,6 +47,7 @@ func (a *App) initDeps(ctx context.Context) error {
 
 	initFuncs := []InitFunc{
 		a.initConfig,
+		a.initLogger,
 		a.initDiContainer,
 		a.initListener,
 		a.initGrpcServer,
@@ -73,6 +75,13 @@ func (a *App) initConfig(_ context.Context) error {
 	}
 
 	return nil
+}
+
+func (a *App) initLogger(_ context.Context) error {
+	return logger.Init(
+		logger.WithLevel(config.Config.Logger().Level()),
+		logger.WithEncoder(config.Config.Logger().Encoder()),
+	)
 }
 
 func (a *App) initDiContainer(_ context.Context) error {
@@ -113,9 +122,7 @@ func (a *App) initGrpcServer(ctx context.Context) error {
 }
 
 func (a *App) runGrpcServer(_ context.Context) error {
-	fmt.Printf("running Payment GRPC server on %s\n",
-		a.listener.Addr().String(),
-	)
+	logger.Logger().Info(fmt.Sprintf("running Payment GRPC server on %s", a.listener.Addr().String()))
 
 	if err := a.grpcServer.Serve(a.listener); err != nil {
 		return err

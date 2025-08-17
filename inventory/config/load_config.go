@@ -7,12 +7,14 @@ import (
 	"github.com/joho/godotenv"
 
 	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
+	config_logger "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/logger"
 	config_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/mongo"
 )
 
 type ConfigData struct {
-	MongoConfig config_mongo.MongoConfigData `envPrefix:"mongo__"`
-	GRPCConfig  config_grpc.GRPCConfigData   `envPrefix:"grpc__"`
+	MongoConfig  config_mongo.MongoConfigData   `envPrefix:"mongo__"`
+	GRPCConfig   config_grpc.GRPCConfigData     `envPrefix:"grpc__"`
+	LoggerConfig config_logger.LoggerConfigData `envPrefix:"logger__"`
 }
 
 var (
