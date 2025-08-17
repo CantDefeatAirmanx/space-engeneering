@@ -7,7 +7,8 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/inventory/cmd/main.go",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/inventory/.env"
         },
         {
             "name": "Debug Order Service",
@@ -15,7 +16,8 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/order/cmd/main.go",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/order/.env"
         },
         {
             "name": "Debug Payment Service",
@@ -23,7 +25,8 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/payment/cmd/main.go",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/payment/.env"
         }
     ],
     "compounds": [

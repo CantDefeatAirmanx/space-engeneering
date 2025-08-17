@@ -10,8 +10,10 @@ require (
 )
 
 require (
+	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect

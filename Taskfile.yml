@@ -86,18 +86,36 @@ tasks:
   run-order:
     desc: "Запуск order"
     cmds:
-      - '{{.BUILD_DIR}}/order'
+      - 'GO_ENV=production {{.BUILD_DIR}}/order'
+
+  run-order:dev:
+    deps: [ build:order ]
+    desc: "Запуск order в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/order'
 
   run-inventory:
     desc: "Запуск inventory"
     cmds:
-      - '{{.BUILD_DIR}}/inventory'
+      - 'GO_ENV=production {{.BUILD_DIR}}/inventory'
+
+  run-inventory:dev:
+    deps: [ build:inventory ]
+    desc: "Запуск inventory в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/inventory'
 
   run-payment:
     desc: "Запуск payment"
     cmds:
-      - '{{.BUILD_DIR}}/payment'
-  
+      - 'GO_ENV=production {{.BUILD_DIR}}/payment'
+
+  run-payment:dev:
+    deps: [ build:payment ]
+    desc: "Запуск payment в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/payment'
+
   up-all: 
     desc: "Запуск всех зависимостей docker-compose"
     cmds:
