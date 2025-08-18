@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"path/filepath"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
@@ -32,6 +34,18 @@ func NewApp(ctx context.Context) (*App, error) {
 }
 
 func (a *App) Run(ctx context.Context) error {
+	if err := a.runGRPCServer(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *App) runGRPCServer(_ context.Context) error {
+	logger.Logger().Info(
+		fmt.Sprintf("running Inventory GRPC server on %s", a.listener.Addr().String()),
+	)
+
 	if err := a.grpcServer.Serve(a.listener); err != nil {
 		return err
 	}
@@ -44,6 +58,7 @@ func (a *App) init(ctx context.Context) error {
 
 	initFuncs := []initFunc{
 		a.initConfig,
+		a.initLogger,
 		a.initListener,
 		a.initGRPCServer,
 	}
@@ -60,6 +75,13 @@ func (a *App) init(ctx context.Context) error {
 func (a *App) initConfig(ctx context.Context) error {
 	return config.LoadConfig(
 		config.WithEnvPath(filepath.Join("inventory", ".env")),
+	)
+}
+
+func (a *App) initLogger(_ context.Context) error {
+	return logger.Init(
+		logger.WithLevel(config.Config.Logger().Level()),
+		logger.WithEncoder(config.Config.Logger().Encoder()),
 	)
 }
 

@@ -42,6 +42,16 @@ func (a *App) Run(ctx context.Context) error {
 	return nil
 }
 
+func (a *App) runGrpcServer(_ context.Context) error {
+	logger.Logger().Info(fmt.Sprintf("running Payment GRPC server on %s", a.listener.Addr().String()))
+
+	if err := a.grpcServer.Serve(a.listener); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (a *App) initDeps(ctx context.Context) error {
 	type InitFunc func(context.Context) error
 
@@ -117,16 +127,6 @@ func (a *App) initGrpcServer(ctx context.Context) error {
 	payment_v1.RegisterPaymentServiceServer(grpcServer, a.diContainer.GetPaymentV1Api(ctx))
 
 	a.grpcServer = grpcServer
-
-	return nil
-}
-
-func (a *App) runGrpcServer(_ context.Context) error {
-	logger.Logger().Info(fmt.Sprintf("running Payment GRPC server on %s", a.listener.Addr().String()))
-
-	if err := a.grpcServer.Serve(a.listener); err != nil {
-		return err
-	}
 
 	return nil
 }

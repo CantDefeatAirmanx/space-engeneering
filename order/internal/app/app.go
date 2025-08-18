@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 type App struct {
@@ -39,6 +41,10 @@ func (a *App) Run(ctx context.Context) error {
 }
 
 func (a *App) runHttpServer(_ context.Context) error {
+	logger.Logger().Info(
+		fmt.Sprintf("running Order HTTP server on %s", a.httpServer.Addr),
+	)
+
 	if err := a.httpServer.ListenAndServe(); err != nil {
 		return err
 	}
@@ -50,6 +56,7 @@ func (a *App) init(ctx context.Context) error {
 
 	initFuncs := []initFunc{
 		a.initConfig,
+		a.initLogger,
 		a.initDiContainer,
 		a.initHttpServer,
 	}
@@ -67,6 +74,13 @@ func (a *App) initConfig(ctx context.Context) error {
 	envPath := filepath.Join("order", ".env")
 
 	return config.LoadConfig(ctx, config.WithEnvPath(envPath))
+}
+
+func (a *App) initLogger(_ context.Context) error {
+	return logger.Init(
+		logger.WithLevel(config.Config.Logger().Level()),
+		logger.WithEncoder(config.Config.Logger().Encoder()),
+	)
 }
 
 func (a *App) initDiContainer(_ context.Context) error {
