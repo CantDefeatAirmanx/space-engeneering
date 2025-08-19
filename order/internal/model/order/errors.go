@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	ErrOrderInternal         = business_errors.NewInternalError(errors.New("order internal"))
 	ErrOrderNotFound         = business_errors.NewNotFoundError(errors.New("order not found"))
 	ErrOrderConflict         = business_errors.NewConflictError(errors.New("order conflict"))
 	ErrOrderInvalidArguments = business_errors.NewBadRequestError(errors.New("order invalid arguments"))

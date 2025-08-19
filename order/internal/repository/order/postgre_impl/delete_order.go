@@ -2,7 +2,6 @@ package repository_order_postgre
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Masterminds/squirrel"
 
@@ -24,7 +23,7 @@ func (o *OrderRepositoryPostgre) DeleteOrder(
 
 	result, err := o.db.Exec(ctx, query, args...)
 	if err != nil {
-		return fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return err
 	}
 
 	rowsAffected := result.RowsAffected()

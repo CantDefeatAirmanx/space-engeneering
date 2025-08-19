@@ -25,8 +25,7 @@ func NewInventoryClient(
 	ctx context.Context,
 	url string,
 ) (*inventoryV1GrpcClient, error) {
-	//nolint:staticcheck
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		url,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)

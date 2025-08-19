@@ -3,7 +3,6 @@ package repository_order_postgre
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
@@ -32,7 +31,7 @@ func (o *OrderRepositoryPostgre) GetOrder(
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	var repoOrder Order
@@ -51,12 +50,12 @@ func (o *OrderRepositoryPostgre) GetOrder(
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, model_order.ErrOrderNotFound
 		}
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	modelOrder, err := ToModel(repoOrder)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	return modelOrder, nil

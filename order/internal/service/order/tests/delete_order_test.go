@@ -1,6 +1,8 @@
 package service_order_tests
 
 import (
+	"errors"
+
 	"github.com/brianvoe/gofakeit/v7"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
@@ -30,11 +32,10 @@ func (s *TestingSuite) TestDeleteOrderNotFound() {
 func (s *TestingSuite) TestDeleteOrderRepositoryUnknownError() {
 	orderUUID := gofakeit.UUID()
 	s.repoMock.EXPECT().DeleteOrder(s.ctx, orderUUID).Return(
-		model_order.ErrOrderInternal,
+		errors.New("unknown error"),
 	)
 
 	err := s.service.DeleteOrder(s.ctx, orderUUID)
 
 	s.Error(err)
-	s.ErrorIs(err, model_order.ErrOrderInternal)
 }

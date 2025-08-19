@@ -25,8 +25,7 @@ func NewPaymentClient(
 	ctx context.Context,
 	url string,
 ) (*paymentV1GrpcClient, error) {
-	//nolint:staticcheck
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		url,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)

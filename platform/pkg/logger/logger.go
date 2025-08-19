@@ -14,6 +14,8 @@ var (
 	dynamicLevel zap.AtomicLevel
 )
 
+var _ LoggerInterface = (*logger)(nil)
+
 type logger struct {
 	zapLogger *zap.Logger
 }

@@ -17,7 +17,7 @@ func (repo *OrderRepositoryMap) CreateOrder(
 
 	orderUUID, err := uuid.NewV7()
 	if err != nil {
-		return nil, model_order.ErrOrderInternal
+		return nil, err
 	}
 
 	order.OrderUUID = orderUUID.String()

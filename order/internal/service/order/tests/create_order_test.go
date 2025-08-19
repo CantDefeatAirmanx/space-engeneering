@@ -121,7 +121,6 @@ func (s *TestingSuite) TestCreateOrderClientInventoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }
 
@@ -182,7 +181,7 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 		mock.MatchedBy(func(repoOrder model_order.Order) bool {
 			return true
 		}),
-	).Return(nil, model_order.ErrOrderInternal)
+	).Return(nil, errors.New("unknown error"))
 
 	result, err := s.service.CreateOrder(
 		s.ctx,
@@ -193,6 +192,5 @@ func (s *TestingSuite) TestCreateOrderRepositoryUnknownError() {
 	)
 
 	s.Error(err)
-	s.ErrorIs(err, model_order.ErrOrderInternal)
 	s.Nil(result)
 }

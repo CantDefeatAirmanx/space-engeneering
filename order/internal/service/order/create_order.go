@@ -34,7 +34,7 @@ func (s *OrderServiceImpl) CreateOrder(
 			return nil, fmt.Errorf("%w: %s", model_order.ErrOrderInvalidArguments, "some parts not found")
 		}
 
-		return nil, model_order.ErrOrderInternal
+		return nil, err
 	}
 
 	if len(parts) != len(params.PartUuids) {
