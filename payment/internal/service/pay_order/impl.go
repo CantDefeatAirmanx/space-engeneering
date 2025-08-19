@@ -9,5 +9,5 @@ func NewPayOrderServiceImpl() *PayOrderServiceImpl {
 }
 
 const (
-	maxDelaySeconds = 3
+	maxDelaySeconds = 2
 )
