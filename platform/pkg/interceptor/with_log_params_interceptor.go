@@ -3,8 +3,9 @@ package interceptor
 import (
 	"context"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	"google.golang.org/grpc"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 )
 
 func WithLogParamsInterceptor() grpc.UnaryServerInterceptor {

@@ -9,9 +9,7 @@ import (
 )
 
 func CreateLogMiddleware(logger Logger) Middleware {
-
 	return func(next http.Handler) http.Handler {
-
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			reqId := r.Context().Value(RequestIDCtxKey)
 			start := time.Now()

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/helper_structs"
-
 	"google.golang.org/grpc/codes"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/helper_structs"
 )
 
 type ErrCode int64

@@ -3,10 +3,11 @@ package api_inventory_v1
 import (
 	"context"
 
+	"go.uber.org/zap"
+
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
-	"go.uber.org/zap"
 )
 
 func (api *api) GetPart(

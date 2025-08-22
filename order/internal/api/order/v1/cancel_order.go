@@ -4,9 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"go.uber.org/zap"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
-	"go.uber.org/zap"
 )
 
 func (api *Api) CancelOrder(
