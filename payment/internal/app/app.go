@@ -13,8 +13,8 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
@@ -118,8 +118,11 @@ func (a *App) initGrpcServer(ctx context.Context) error {
 	grpcServer := grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.ChainUnaryInterceptor(
-			interceptor.UnaryErrorInterceptor(),
+			interceptor.WithLogParamsInterceptor(),
 			interceptor.ValidateInterceptor(),
+			interceptor.UnaryErrorInterceptor(
+				interceptor.WithLogger(logger.Logger()),
+			),
 		),
 	)
 

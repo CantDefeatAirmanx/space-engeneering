@@ -3,6 +3,7 @@ module github.com/CantDefeatAirmanx/space-engeneering/platform
 go 1.24.4
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/pressly/goose/v3 v3.24.3
 	go.uber.org/zap v1.27.0
 )

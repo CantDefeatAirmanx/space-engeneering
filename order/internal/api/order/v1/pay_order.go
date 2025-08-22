@@ -6,7 +6,9 @@ import (
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 var paymentMethodMap = map[order_v1.PaymentMethod]model_order.PaymentMethod{
@@ -22,6 +24,13 @@ func (api *Api) PayOrder(
 	req *order_v1.PayOrderRequestBody,
 	params order_v1.PayOrderParams,
 ) (order_v1.PayOrderRes, error) {
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(orderUUIDLogKey, params.OrderUUID),
+			zap.String(paymentMethodLogKey, string(req.PaymentMethod)),
+		},
+	)
+
 	payRes, err := api.orderService.PayOrder(ctx, service_order.PayOrderParams{
 		OrderUUID:     params.OrderUUID,
 		PaymentMethod: paymentMethodMap[req.PaymentMethod],

@@ -15,6 +15,7 @@ import (
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/app/di"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+	platform_middleware "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/middleware"
 )
 
 type App struct {
@@ -100,6 +101,9 @@ func (a *App) initHttpServer(ctx context.Context) error {
 	router.Use(middleware.Timeout(
 		time.Duration(config.Config.HttpServer().Timeout()) * time.Millisecond,
 	))
+	router.Use(platform_middleware.CreateReqIdMiddleware())
+	router.Use(platform_middleware.CreateLogMiddleware(logger.Logger()))
+	router.Use(platform_middleware.CreateErrorLoggingMiddleware(logger.Logger()))
 
 	router.Mount("/", a.diContainer.GetOrderServer(ctx))
 

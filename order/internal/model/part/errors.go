@@ -3,7 +3,7 @@ package model_part
 import (
 	"errors"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/business_errors"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/business_errors"
 )
 
 var (

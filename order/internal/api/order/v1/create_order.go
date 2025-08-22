@@ -5,13 +5,22 @@ import (
 	"net/http"
 
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 func (api *Api) CreateOrder(
 	ctx context.Context,
 	req *order_v1.CreateOrderRequestBody,
 ) (order_v1.CreateOrderRes, error) {
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(userUUIDLogKey, req.UserUUID),
+			zap.Strings(partUUIDsLogKey, req.PartUuids),
+		},
+	)
+
 	result, err := api.orderService.CreateOrder(
 		ctx,
 		service_order.CreateOrderParams{

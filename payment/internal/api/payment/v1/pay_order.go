@@ -7,7 +7,7 @@ import (
 
 	model_payment_method_converter "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/model/payment_method/converter"
 	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
@@ -15,13 +15,15 @@ func (api Api) PayOrder(
 	ctx context.Context,
 	request *payment_v1.PayOrderRequest,
 ) (*payment_v1.PayOrderResponse, error) {
-	ctxWithLogParams := context.WithValue(ctx, interceptor.LogParamsKey, []zap.Field{
-		zap.String(orderUUIDLogKey, request.OrderUuid),
-		zap.String(userUUIDLogKey, request.UserUuid),
-	})
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(orderUUIDLogKey, request.OrderUuid),
+			zap.String(userUUIDLogKey, request.UserUuid),
+		},
+	)
 
 	paymentData, err := api.payOrderService.PayOrder(
-		ctxWithLogParams,
+		ctx,
 		service_pay_order.PayOrderMethodParams{
 			OrderUUID:     request.OrderUuid,
 			UserUUID:      request.UserUuid,

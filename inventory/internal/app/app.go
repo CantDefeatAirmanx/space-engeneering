@@ -13,8 +13,8 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -105,8 +105,11 @@ func (a *App) initListener(ctx context.Context) error {
 func (a *App) initGRPCServer(ctx context.Context) error {
 	a.grpcServer = grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			interceptor.UnaryErrorInterceptor(),
 			interceptor.ValidateInterceptor(),
+			interceptor.WithLogParamsInterceptor(),
+			interceptor.UnaryErrorInterceptor(
+				interceptor.WithLogger(logger.Logger()),
+			),
 		),
 		grpc.Creds(insecure.NewCredentials()),
 	)

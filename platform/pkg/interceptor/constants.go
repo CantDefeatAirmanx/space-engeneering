@@ -3,7 +3,7 @@ package interceptor
 type logParamsKey string
 
 var (
-	LogParamsKey logParamsKey = "logParams"
+	LogSetParamsKey logParamsKey = "logSetParams"
 
 	logCodeKey       = "code"
 	logGRPCCodeKey   = "grpc_code"

@@ -1,7 +1,5 @@
 github.com/CantDefeatAirmanx/space-engeneering/inventory v0.0.0-20250814190328-0af679cc83ba h1:bbu/1NA1+QI2GvJCY1yKMxIp/BYrmt2XWQ4/KRaSeiE=
 github.com/CantDefeatAirmanx/space-engeneering/inventory v0.0.0-20250814190328-0af679cc83ba/go.mod h1:/VxUmbUENqDAT9iOBJ60aPLAr1FTNCz2eemMWvfxdz4=
-github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250814190328-0af679cc83ba h1:ALPVDTJjeDxQv4DAv5Kcq44rm46+3MpT8JKAm46ushw=
-github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250814190328-0af679cc83ba/go.mod h1:+6xjXRCM1A2JDc8eS51xjQgwX+pIvfdc4MbGOZ9vKdg=
 github.com/Masterminds/squirrel v1.5.4 h1:uUcX/aBc8O7Fg9kaISIUsHXdKuqehiXAMQTYX8afzqM=
 github.com/Masterminds/squirrel v1.5.4/go.mod h1:NNaOrjSoIDfDA40n7sr2tPNZRfjzjA400rg+riTZj10=
 github.com/brianvoe/gofakeit/v7 v7.3.0 h1:TWStf7/lLpAjKw+bqwzeORo9jvrxToWEwp9b1J2vApQ=

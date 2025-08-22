@@ -4,13 +4,21 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 func (api *Api) CancelOrder(
 	ctx context.Context,
 	params order_v1.CancelOrderParams,
 ) (order_v1.CancelOrderRes, error) {
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(orderUUIDLogKey, params.OrderUUID),
+		},
+	)
+
 	err := api.orderService.CancelOrder(ctx, params.OrderUUID)
 	if err != nil {
 		res, err := handleServiceError[order_v1.CancelOrderRes](err)
