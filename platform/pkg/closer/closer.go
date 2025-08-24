@@ -17,21 +17,29 @@ var _ Closer = (*CloserImpl)(nil)
 
 type CloserImpl struct {
 	mu      sync.Mutex
-	once    sync.Once
 	funcs   []closerFunc
 	signals []os.Signal
 	logger  Logger
-	done    bool
+	done    chan status
+	status  status
 }
+
+type status int
+
+const (
+	StatusIdle status = iota
+	StatusRunning
+	StatusDone
+)
 
 type closerFunc struct {
 	name string
 	fn   func(ctx context.Context) error
 }
 
-func NewCloser(ctx context.Context, opts ...CloserOptsFunc) *CloserImpl {
+func NewCloser(ctx context.Context, opts ...CloserOptsFunc) (*CloserImpl, chan status) {
 	options := &CloserOpts{
-		Logger: logger.NoopLogger(),
+		Logger: logger.DefaultInfoLogger(),
 		Signals: []os.Signal{
 			syscall.SIGINT,
 			syscall.SIGTERM,
@@ -44,6 +52,8 @@ func NewCloser(ctx context.Context, opts ...CloserOptsFunc) *CloserImpl {
 	closer := &CloserImpl{
 		logger:  options.Logger,
 		signals: options.Signals,
+		done:    make(chan status),
+		status:  StatusIdle,
 	}
 
 	go func() {
@@ -52,7 +62,14 @@ func NewCloser(ctx context.Context, opts ...CloserOptsFunc) *CloserImpl {
 		}
 	}()
 
-	return closer
+	return closer, closer.done
+}
+
+func (c *CloserImpl) SetLogger(logger Logger) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.logger = logger
 }
 
 func (c *CloserImpl) Add(funcs ...func(ctx context.Context) error) {
@@ -78,72 +95,82 @@ func (c *CloserImpl) AddNamed(name string, f func(ctx context.Context) error) {
 }
 
 func (c *CloserImpl) CloseAll(ctx context.Context) error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if c.done {
-		c.logger.Error("Second call to Closer.CloseAll, ignoring")
+	if c.status == StatusRunning {
+		return nil
+	}
+	if c.status == StatusDone {
+		c.logger.Info("Closer already done")
 		return nil
 	}
 
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.status = StatusRunning
+
 	result := make([]error, 0, len(c.funcs))
 
-	c.once.Do(func() {
-		wg := sync.WaitGroup{}
-		errCh := make(chan error)
+	wg := sync.WaitGroup{}
+	errCh := make(chan error)
 
-		for _, fn := range c.funcs {
-			wg.Add(1)
-
-			go func() {
-				defer wg.Done()
-				defer func() {
-					if r := recover(); r != nil {
-						c.logger.Error(fmt.Sprintf("Panic while closing %s - %v", c.getFuncTitle(fn), r))
-						if err, ok := r.(error); ok {
-							errCh <- err
-						}
-					}
-				}()
-
-				err := c.close(ctx, fn)
-				if err != nil {
-					errCh <- err
-				}
-			}()
-		}
+	for _, fn := range c.funcs {
+		wg.Add(1)
 
 		go func() {
-			wg.Wait()
-			close(errCh)
-		}()
-
-		for {
-			select {
-			case <-ctx.Done():
-				c.logger.Error("Context done before all closer functions closed")
-				result = append(result, ctx.Err())
-				return
-			case err, isOpen := <-errCh:
-				if !isOpen {
-					c.logger.Info("All closer functions successfully closed")
-					return
+			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					c.logger.Error(fmt.Sprintf("Panic while closing %s - %v", c.getFuncTitle(fn), r))
+					if err, ok := r.(error); ok {
+						errCh <- err
+					}
 				}
-				result = append(result, err)
+			}()
+
+			err := c.close(ctx, fn)
+			if err != nil {
+				errCh <- err
 			}
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+outer:
+	for {
+		select {
+		case <-ctx.Done():
+			c.logger.Error("Context done before all closer functions closed")
+			result = append(result, ctx.Err())
+			break outer
+		case err, isOpen := <-errCh:
+			if !isOpen {
+				c.logger.Info("All closer functions successfully closed")
+				break outer
+			}
+			result = append(result, err)
 		}
-	})
-	c.done = true
+	}
+	c.status = StatusDone
+	c.done <- StatusDone
+	close(c.done)
 
 	return errors.Join(result...)
 }
 
 func (c *CloserImpl) close(ctx context.Context, fn closerFunc) error {
+	c.logger.Info(fmt.Sprintf("Closing %s", c.getFuncTitle(fn)))
 	err := fn.fn(ctx)
+
 	if err != nil {
 		c.logger.Error(fmt.Sprintf("Error while closing %s - %v", c.getFuncTitle(fn), err))
+		return err
 	}
-	return err
+	c.logger.Info(fmt.Sprintf("Successfully closed %s", c.getFuncTitle(fn)))
+
+	return nil
 }
 
 func (c *CloserImpl) getFuncTitle(fn closerFunc) string {
@@ -163,7 +190,7 @@ func (c *CloserImpl) watchSignals(ctx context.Context) error {
 			return ctx.Err()
 		case signal := <-signals:
 			c.logger.Info(fmt.Sprintf("Received signal: %s", signal.String()))
-			c.CloseAll(ctx)
+			return c.CloseAll(ctx)
 		}
 	}
 }

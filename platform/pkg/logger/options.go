@@ -4,6 +4,7 @@ type Options struct {
 	Level   Level
 	Env     Env
 	Encoder EncoderType
+	Target  *logger
 }
 
 type OptionFunc func(opts *Options)
@@ -23,5 +24,11 @@ func WithEnv(env Env) OptionFunc {
 func WithEncoder(encoder EncoderType) OptionFunc {
 	return func(opts *Options) {
 		opts.Encoder = encoder
+	}
+}
+
+func WithTarget(target *logger) OptionFunc {
+	return func(opts *Options) {
+		opts.Target = target
 	}
 }

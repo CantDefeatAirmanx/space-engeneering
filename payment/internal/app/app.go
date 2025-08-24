@@ -13,6 +13,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/payment/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
@@ -22,10 +23,13 @@ type App struct {
 	diContainer *di.DiContainer
 	listener    net.Listener
 	grpcServer  *grpc.Server
+	closer      closer.Closer
 }
 
-func NewApp(ctx context.Context) (*App, error) {
-	app := App{}
+func NewApp(ctx context.Context, closer closer.Closer) (*App, error) {
+	app := App{
+		closer: closer,
+	}
 
 	if err := app.initDeps(ctx); err != nil {
 		return nil, err
@@ -125,6 +129,11 @@ func (a *App) initGrpcServer(ctx context.Context) error {
 			),
 		),
 	)
+	a.closer.AddNamed("Payment GRPC Server", func(ctx context.Context) error {
+		grpcServer.GracefulStop()
+
+		return nil
+	})
 
 	reflection.Register(grpcServer)
 	payment_v1.RegisterPaymentServiceServer(grpcServer, a.diContainer.GetPaymentV1Api(ctx))

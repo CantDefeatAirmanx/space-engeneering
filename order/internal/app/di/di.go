@@ -12,10 +12,13 @@ import (
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	repository_order_postgre "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/postgre_impl"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
 type DiContainer struct {
+	closer closer.Closer
+
 	ordersDb *pgxpool.Pool
 
 	orderHandler    *api_order_v1.Api
@@ -23,6 +26,12 @@ type DiContainer struct {
 	orderRepository service_order.OrderRepository
 	inventoryClient client_inventory_v1.InventoryV1Client
 	paymentClient   client_payment_v1.PaymentV1Client
+}
+
+func NewDiContainer(closer closer.Closer) *DiContainer {
+	return &DiContainer{
+		closer: closer,
+	}
 }
 
 func (d *DiContainer) GetOrderServer(ctx context.Context) http.Handler {
@@ -91,6 +100,11 @@ func (d *DiContainer) GetDB(ctx context.Context) *pgxpool.Pool {
 	}
 
 	db, err := pgxpool.New(ctx, config.Config.Postgres().Uri())
+	d.closer.AddNamed("Orders Postgres Db", func(ctx context.Context) error {
+		db.Close()
+
+		return nil
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -107,6 +121,9 @@ func (d *DiContainer) GetInventoryClient(
 		ctx,
 		config.Config.InventoryClient().Url(),
 	)
+	d.closer.AddNamed("Inventory GRPC Client", func(ctx context.Context) error {
+		return inventoryClient.Close()
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -123,6 +140,9 @@ func (d *DiContainer) GetPaymentClient(
 		ctx,
 		config.Config.PaymentClient().Url(),
 	)
+	d.closer.AddNamed("Payment GRPC Client", func(ctx context.Context) error {
+		return paymentClient.Close()
+	})
 	if err != nil {
 		panic(err)
 	}

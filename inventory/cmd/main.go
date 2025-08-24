@@ -2,20 +2,33 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/app"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 )
 
 func main() {
 	ctx := context.Background()
+	closer, done := closer.NewCloser(ctx)
 
-	app, err := app.NewApp(ctx)
+	defer func() {
+		go closer.CloseAll(ctx)
+		<-done
+	}()
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Panic in main goroutine, closing. %v\n", r)
+		}
+	}()
+
+	app, err := app.NewApp(ctx, closer)
 	if err != nil {
-		log.Fatalf("Failed to initialize app: %v", err)
+		panic(fmt.Sprintf("Failed to initialize app: %v", err))
 	}
 
 	if err := app.Run(ctx); err != nil {
-		log.Fatalf("Failed to run app: %v", err)
+		panic(fmt.Sprintf("Failed to run app: %v", err))
 	}
 }

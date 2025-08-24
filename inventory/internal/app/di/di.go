@@ -12,18 +12,23 @@ import (
 	repository_part_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/mongo_impl"
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
 type DiContainer struct {
+	closer closer.Closer
+
 	inventoryAPI   inventory_v1.InventoryServiceServer
 	partService    service_part.PartService
 	partRepository service_part.PartRepository
 	mongoClient    *mongo.Client
 }
 
-func NewDiContainer() *DiContainer {
-	return &DiContainer{}
+func NewDiContainer(closer closer.Closer) *DiContainer {
+	return &DiContainer{
+		closer: closer,
+	}
 }
 
 func (d *DiContainer) GetInventoryAPI(ctx context.Context) inventory_v1.InventoryServiceServer {
@@ -84,8 +89,11 @@ func (d *DiContainer) GetMongoClient(ctx context.Context) *mongo.Client {
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %v", err)
 	}
-
 	d.mongoClient = mongoClient
+
+	d.closer.AddNamed("Mongo client", func(ctx context.Context) error {
+		return d.mongoClient.Disconnect(ctx)
+	})
 
 	return d.mongoClient
 }

@@ -1,5 +1,5 @@
 package interfaces
 
-type Closer interface {
+type WithClose interface {
 	Close() error
 }

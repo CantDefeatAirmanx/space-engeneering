@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	_ InventoryV1Client = (*inventoryV1GrpcClient)(nil)
-	_ interfaces.Closer = (*inventoryV1GrpcClient)(nil)
+	_ InventoryV1Client    = (*inventoryV1GrpcClient)(nil)
+	_ interfaces.WithClose = (*inventoryV1GrpcClient)(nil)
 )
 
 type inventoryV1GrpcClient struct {

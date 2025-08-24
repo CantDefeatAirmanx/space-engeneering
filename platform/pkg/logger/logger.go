@@ -2,15 +2,13 @@ package logger
 
 import (
 	"os"
-	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 var (
-	globalLogger *logger
-	once         sync.Once
+	globalLogger = &logger{}
 	dynamicLevel zap.AtomicLevel
 )
 
@@ -25,31 +23,32 @@ func Logger() *logger {
 }
 
 func Init(opts ...OptionFunc) error {
-	once.Do(func() {
-		params := Options{
-			Level:   LevelInfo,
-			Env:     EnvProd,
-			Encoder: EncoderTypeJSON,
-		}
-		for _, opt := range opts {
-			opt(&params)
-		}
+	params := Options{
+		Level:   LevelInfo,
+		Env:     EnvProd,
+		Encoder: EncoderTypeJSON,
+		Target:  globalLogger,
+	}
+	for _, opt := range opts {
+		opt(&params)
+	}
 
-		dynamicLevel = zap.NewAtomicLevelAt(getZapLevel(params.Level))
-		encoder := getEncoder(params.Encoder, getEncoderConfig())
+	dynamicLevel = zap.NewAtomicLevelAt(getZapLevel(params.Level))
+	encoder := getEncoder(params.Encoder, getEncoderConfig())
 
-		core := zapcore.NewCore(
-			encoder,
-			zapcore.AddSync(os.Stdout),
-			dynamicLevel,
-		)
+	core := zapcore.NewCore(
+		encoder,
+		zapcore.AddSync(os.Stdout),
+		dynamicLevel,
+	)
 
-		zLogger := zap.New(core)
+	zLogger := zap.New(core)
 
-		globalLogger = &logger{
-			zapLogger: zLogger,
-		}
-	})
+	newLogger := &logger{
+		zapLogger: zLogger,
+	}
+
+	*params.Target = *newLogger
 
 	return nil
 }

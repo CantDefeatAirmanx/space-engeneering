@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/order/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	platform_middleware "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/middleware"
 )
@@ -21,10 +23,13 @@ import (
 type App struct {
 	diContainer *di.DiContainer
 	httpServer  *http.Server
+	closer      closer.Closer
 }
 
-func NewApp(ctx context.Context) (*App, error) {
-	app := &App{}
+func NewApp(ctx context.Context, closer closer.Closer) (*App, error) {
+	app := &App{
+		closer: closer,
+	}
 
 	if err := app.init(ctx); err != nil {
 		return nil, err
@@ -47,6 +52,10 @@ func (a *App) runHttpServer(_ context.Context) error {
 	)
 
 	if err := a.httpServer.ListenAndServe(); err != nil {
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
+		}
+
 		return err
 	}
 	return nil
@@ -85,7 +94,7 @@ func (a *App) initLogger(_ context.Context) error {
 }
 
 func (a *App) initDiContainer(_ context.Context) error {
-	diContainer := &di.DiContainer{}
+	diContainer := di.NewDiContainer(a.closer)
 
 	a.diContainer = diContainer
 
@@ -117,6 +126,10 @@ func (a *App) initHttpServer(ctx context.Context) error {
 			config.Config.HttpServer().ReadHeaderTimeout(),
 		) * time.Millisecond,
 	}
+
+	a.closer.AddNamed("Order HTTP Server", func(ctx context.Context) error {
+		return a.httpServer.Shutdown(ctx)
+	})
 
 	return nil
 }

@@ -13,6 +13,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/app/di"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
@@ -21,10 +22,15 @@ import (
 type App struct {
 	grpcServer *grpc.Server
 	listener   net.Listener
+	closer     closer.Closer
+	di         *di.DiContainer
 }
 
-func NewApp(ctx context.Context) (*App, error) {
-	app := &App{}
+func NewApp(ctx context.Context, closer closer.Closer) (*App, error) {
+	app := &App{
+		closer: closer,
+		di:     di.NewDiContainer(closer),
+	}
 
 	if err := app.init(ctx); err != nil {
 		return nil, err
@@ -39,6 +45,10 @@ func (a *App) Run(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (a *App) Close(ctx context.Context) error {
+	return a.closer.CloseAll(ctx)
 }
 
 func (a *App) runGRPCServer(_ context.Context) error {
@@ -79,10 +89,17 @@ func (a *App) initConfig(ctx context.Context) error {
 }
 
 func (a *App) initLogger(_ context.Context) error {
-	return logger.Init(
+	err := logger.Init(
 		logger.WithLevel(config.Config.Logger().Level()),
 		logger.WithEncoder(config.Config.Logger().Encoder()),
 	)
+	if err != nil {
+		return err
+	}
+
+	a.closer.SetLogger(logger.Logger())
+
+	return nil
 }
 
 func (a *App) initListener(ctx context.Context) error {
@@ -113,10 +130,15 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		),
 		grpc.Creds(insecure.NewCredentials()),
 	)
+	a.closer.AddNamed("Inventory GRPC server", func(ctx context.Context) error {
+		a.grpcServer.GracefulStop()
+
+		return nil
+	})
 
 	inventory_v1.RegisterInventoryServiceServer(
 		a.grpcServer,
-		di.NewDiContainer().GetInventoryAPI(ctx),
+		a.di.GetInventoryAPI(ctx),
 	)
 	reflection.Register(a.grpcServer)
 

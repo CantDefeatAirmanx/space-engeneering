@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	_ PaymentV1Client   = (*paymentV1GrpcClient)(nil)
-	_ interfaces.Closer = (*paymentV1GrpcClient)(nil)
+	_ PaymentV1Client      = (*paymentV1GrpcClient)(nil)
+	_ interfaces.WithClose = (*paymentV1GrpcClient)(nil)
 )
 
 type paymentV1GrpcClient struct {
@@ -25,7 +25,6 @@ func NewPaymentClient(
 	ctx context.Context,
 	url string,
 ) (*paymentV1GrpcClient, error) {
-	// static check
 	conn, err := grpc.NewClient(
 		url,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
