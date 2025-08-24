@@ -9,8 +9,9 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"go.uber.org/zap"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 var _ Closer = (*CloserImpl)(nil)
@@ -163,7 +164,6 @@ outer:
 func (c *CloserImpl) close(ctx context.Context, fn closerFunc) error {
 	c.logger.Info(fmt.Sprintf("Closing %s", c.getFuncTitle(fn)))
 	err := fn.fn(ctx)
-
 	if err != nil {
 		c.logger.Error(fmt.Sprintf("Error while closing %s - %v", c.getFuncTitle(fn), err))
 		return err

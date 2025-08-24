@@ -1,11 +1,13 @@
 package logger
 
-var defaultInfoLogger = &logger{}
-var isInited = false
+var (
+	defaultInfoLogger = &logger{}
+	isInited          = false
+)
 
 func DefaultInfoLogger() *logger {
 	if !isInited {
-		Init(WithTarget(defaultInfoLogger))
+		_ = Init(WithTarget(defaultInfoLogger)) //nolint:gosec
 		isInited = true
 	}
 	return defaultInfoLogger

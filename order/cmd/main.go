@@ -14,7 +14,11 @@ func main() {
 	closer, done := closer.NewCloser(ctx)
 
 	defer func() {
-		go closer.CloseAll(ctx)
+		go func() {
+			if err := closer.CloseAll(ctx); err != nil {
+				logger.Logger().Error(fmt.Sprintf("Failed to close app: %v", err))
+			}
+		}()
 		<-done
 	}()
 

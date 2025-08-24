@@ -6,9 +6,10 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 func (s *PayOrderServiceImpl) PayOrder(

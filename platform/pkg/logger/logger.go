@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	globalLogger = &logger{}
-	dynamicLevel zap.AtomicLevel
+	isGlobalInited = false
+	globalLogger   = &logger{}
+	dynamicLevel   zap.AtomicLevel
 )
 
 var _ LoggerInterface = (*logger)(nil)
@@ -19,6 +20,12 @@ type logger struct {
 }
 
 func Logger() *logger {
+	if !isGlobalInited {
+		res := DefaultInfoLogger()
+		res.Error("Logger is not initialed")
+		return res
+	}
+
 	return globalLogger
 }
 
