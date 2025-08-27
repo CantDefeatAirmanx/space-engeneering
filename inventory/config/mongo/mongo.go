@@ -7,4 +7,5 @@ type MongoConfigData struct {
 	DBName     string `env:"dbName,required"`
 	Port       int    `env:"port,required"`
 	AuthSource string `env:"authSource,required"`
+	ImageName  string `env:"imageName" envDefault:"mongo:7.0.5"`
 }

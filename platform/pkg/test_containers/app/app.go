@@ -3,6 +3,7 @@ package test_containers_app
 import (
 	"context"
 	"io"
+	"net"
 	"os"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
@@ -82,6 +83,14 @@ func NewContainer(ctx context.Context, opts ...optsFunc) (*Container, error) {
 		externalPort: mappedPort.Port(),
 		cfg:          cfg,
 	}, nil
+}
+
+func (a *Container) Address() string {
+	return net.JoinHostPort(a.externalHost, a.externalPort)
+}
+
+func (a *Container) Terminate(ctx context.Context) error {
+	return a.container.Terminate(ctx)
 }
 
 func streamContainerLogs(

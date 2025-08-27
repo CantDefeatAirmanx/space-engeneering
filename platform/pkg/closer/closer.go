@@ -21,14 +21,14 @@ type CloserImpl struct {
 	funcs   []closerFunc
 	signals []os.Signal
 	logger  Logger
-	done    chan status
-	status  status
+	done    chan Status
+	status  Status
 }
 
-type status int
+type Status int
 
 const (
-	StatusIdle status = iota
+	StatusIdle Status = iota
 	StatusRunning
 	StatusDone
 )
@@ -38,7 +38,7 @@ type closerFunc struct {
 	fn   func(ctx context.Context) error
 }
 
-func NewCloser(ctx context.Context, opts ...CloserOptsFunc) (*CloserImpl, chan status) {
+func NewCloser(ctx context.Context, opts ...CloserOptsFunc) (*CloserImpl, chan Status) {
 	options := &CloserOpts{
 		Logger: logger.DefaultInfoLogger(),
 		Signals: []os.Signal{
@@ -53,7 +53,7 @@ func NewCloser(ctx context.Context, opts ...CloserOptsFunc) (*CloserImpl, chan s
 	closer := &CloserImpl{
 		logger:  options.Logger,
 		signals: options.Signals,
-		done:    make(chan status),
+		done:    make(chan Status),
 		status:  StatusIdle,
 	}
 

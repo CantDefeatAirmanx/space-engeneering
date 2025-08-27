@@ -16,6 +16,7 @@ type MongoConfigInterface interface {
 	DBName() string
 	Port() int
 	AuthSource() string
+	ImageName() string
 }
 
 type GRPCConfigInterface interface {

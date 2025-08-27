@@ -191,7 +191,7 @@ tasks:
           fi
 
           echo "🧪 Тестируем модуль $mod"
-          go test -v -tags='!integration' ./$mod/... || ERR=1
+          GO_ENV=test go test -v -tags='!integration' ./$mod/... || ERR=1
 
           if [ $ERR -eq 0 ]; then
             echo "✅ Тесты прошли успешно"
@@ -274,7 +274,7 @@ tasks:
 
           echo "🧪 Тестируем модуль $mod с тегом integration"
 
-          go test --tags=integration -v ./$mod/... || ERR=1
+          GO_ENV=test go test --tags=integration -v ./$mod/... || ERR=1
 
           if [ $ERR -eq 0 ]; then
             echo "✅ Тесты прошли успешно"

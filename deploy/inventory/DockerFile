@@ -51,7 +51,7 @@ WORKDIR /app
 USER appuser
 
 # Копируем скомпилированный бинарник из стадии builder
-COPY --from=builder /app/app-inventory .
+COPY --from=builder /app/inventory/app-inventory .
 
 # Копируем бинарь grpc-health-probe в /bin
 COPY --from=builder /app/grpc-health-probe /bin/grpc-health-probe

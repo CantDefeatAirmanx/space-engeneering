@@ -7,7 +7,7 @@ import (
 const (
 	defaultContainerName  = "app"
 	defaultDockerFileDir  = "."
-	defaultDockerFileName = "Dockerfile"
+	defaultDockerFileName = "DockerFile"
 	defaultStartupTimeout = 1 * time.Minute
 	defaultAppPort        = "50051"
 )

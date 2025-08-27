@@ -34,6 +34,7 @@ func NewConfig(configData ConfigData) *ConfigType {
 			password:   configData.MongoConfig.Password,
 			port:       configData.MongoConfig.Port,
 			username:   configData.MongoConfig.Username,
+			imageName:  configData.MongoConfig.ImageName,
 		},
 
 		logger: &LoggerConfigType{
@@ -48,7 +49,7 @@ func (c *ConfigType) GRPC() GRPCConfigInterface {
 }
 
 func (c *ConfigType) IsDev() bool {
-	return isDev
+	return IsDev
 }
 
 func (c *ConfigType) Mongo() MongoConfigInterface {
@@ -79,6 +80,11 @@ type MongoConfigType struct {
 	password   string
 	port       int
 	username   string
+	imageName  string
+}
+
+func (m *MongoConfigType) ImageName() string {
+	return m.imageName
 }
 
 func (m *MongoConfigType) AuthSource() string {

@@ -40,6 +40,18 @@ func WithDatabase(database string) Option {
 	}
 }
 
+func WithUsername(username string) Option {
+	return func(c *Config) {
+		c.Username = username
+	}
+}
+
+func WithPassword(password string) Option {
+	return func(c *Config) {
+		c.Password = password
+	}
+}
+
 func WithAuth(username, password string) Option {
 	return func(c *Config) {
 		c.Username = username

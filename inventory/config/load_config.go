@@ -17,20 +17,27 @@ type ConfigData struct {
 	LoggerConfig config_logger.LoggerConfigData `envPrefix:"logger__"`
 }
 
+const (
+	goEnvKey = "GO_ENV"
+)
+
 var (
 	configData ConfigData
-	isDev      = os.Getenv("GO_ENV") == "dev"
+	IsDev      = os.Getenv(goEnvKey) == "dev"
+	IsTest     = os.Getenv(goEnvKey) == "test"
+	IsProd     = os.Getenv(goEnvKey) == "prod" || os.Getenv(goEnvKey) == ""
 )
 
 func LoadConfig(opts ...LoadConfigOption) error {
 	options := LoadConfigOptions{
 		EnvPath: ".env",
+		IsTest:  false,
 	}
 	for _, opt := range opts {
 		opt(&options)
 	}
 
-	if isDev {
+	if IsDev || IsTest || options.IsTest {
 		if err := godotenv.Load(options.EnvPath); err != nil {
 			return err
 		}
@@ -47,11 +54,18 @@ func LoadConfig(opts ...LoadConfigOption) error {
 
 type LoadConfigOptions struct {
 	EnvPath string
+	IsTest  bool
 }
 type LoadConfigOption func(o *LoadConfigOptions)
 
 func WithEnvPath(path string) LoadConfigOption {
 	return func(o *LoadConfigOptions) {
 		o.EnvPath = path
+	}
+}
+
+func WithIsTest(isTest bool) LoadConfigOption {
+	return func(o *LoadConfigOptions) {
+		o.IsTest = isTest
 	}
 }

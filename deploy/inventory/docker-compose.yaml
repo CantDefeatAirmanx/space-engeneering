@@ -1,6 +1,6 @@
 services:
     mongodb:
-        image: mongo:7.0.5
+        image: ${mongo__imageName}
         container_name: inventory-mongodb
         ports:
             - ${mongo__port}:27017

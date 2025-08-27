@@ -1,0 +1,21 @@
+{
+    "go.buildTags": "integration",
+    "go.testTags": "integration",
+    "gopls": {
+        "build.buildFlags": ["-tags=integration"],
+        "build.env": {
+            "GOFLAGS": "-tags=integration"
+        },
+        "ui.completion.usePlaceholders": true,
+        "ui.semanticTokens": true,
+        "ui.codelenses": {
+            "gc_details": false,
+            "regenerate_cgo": true,
+            "generate": true,
+            "test": true,
+            "tidy": true,
+            "upgrade_dependency": true,
+            "vendor": true
+        }
+    }
+}
