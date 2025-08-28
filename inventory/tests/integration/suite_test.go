@@ -5,9 +5,13 @@ package integration
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
@@ -16,8 +20,6 @@ import (
 	test_containers_mongo "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/mongo"
 	test_containers_network "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/network"
 	test_containers_path "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/path"
-	. "github.com/onsi/ginkgo/v2"
-	"github.com/onsi/gomega"
 )
 
 const (
@@ -75,8 +77,9 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
+	logger.DefaultInfoLogger().Info("AfterSuite")
+	go testEnv.Closer.CloseAll(context.Background())
 	<-testEnv.CloserStatus
-	testEnv.Closer.CloseAll(suiteCtx)
 	suiteCancel()
 })
 
@@ -89,7 +92,7 @@ func setUpTestEnvironment(ctx context.Context) *TestEnvironment {
 
 	go func() {
 		if r := recover(); r != nil {
-			go closer.CloseAll(ctx)
+			go closer.CloseAll(context.Background())
 			<-statusCh
 		}
 	}()
@@ -126,6 +129,7 @@ func setUpTestEnvironment(ctx context.Context) *TestEnvironment {
 		ctx,
 		test_containers_app.WithContainerName(appContainerName),
 		test_containers_app.WithNetworks([]string{networkName}),
+		test_containers_app.WithLogOutput(os.Stdout),
 		test_containers_app.WithLogger(logger.DefaultInfoLogger()),
 		test_containers_app.WithDockerFileDir(test_containers_path.GetProjectRoot()),
 		test_containers_app.WithDockerFileName(filepath.Join("deploy", "inventory", "DockerFile")),

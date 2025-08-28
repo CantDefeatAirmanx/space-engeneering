@@ -6,13 +6,14 @@ import (
 	"net"
 	"os"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/go-faster/errors"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.uber.org/zap"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 type Container struct {
@@ -100,7 +101,6 @@ func streamContainerLogs(
 	logger Logger,
 ) {
 	logs, err := container.Logs(ctx)
-
 	if err != nil {
 		logger.Error("failed to get container logs", zap.Error(err))
 		return

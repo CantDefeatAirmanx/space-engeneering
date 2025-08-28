@@ -8,7 +8,6 @@ import (
 )
 
 var _ = Describe("Example Integration Test", func() {
-
 	It("должен успешно запуститься", func() {
 		Expect(true).To(BeTrue())
 	})

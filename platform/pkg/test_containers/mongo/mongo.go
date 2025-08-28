@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/testcontainers/testcontainers-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 const (

@@ -30,8 +30,8 @@ COPY order ./order
 COPY inventory ./inventory
 COPY payment ./payment
 
-ADD https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.37/grpc_health_probe-linux-amd64 ./grpc-health-probe
-RUN chmod +x grpc-health-probe
+# ADD https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.37/grpc_health_probe-linux-amd64 ./grpc-health-probe
+# RUN chmod +x grpc-health-probe
 
 # Собираем бинарный файл Inventory-сервиса для Linux-архитектуры без CGO
 WORKDIR /app/inventory
@@ -54,7 +54,7 @@ USER appuser
 COPY --from=builder /app/inventory/app-inventory .
 
 # Копируем бинарь grpc-health-probe в /bin
-COPY --from=builder /app/grpc-health-probe /bin/grpc-health-probe
+# COPY --from=builder /app/grpc-health-probe /bin/grpc-health-probe
 
 # Экспонируем порт gRPC-сервиса Inventory
 EXPOSE 50051
