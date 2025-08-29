@@ -1,4 +1,4 @@
-package test_containers_network
+package network
 
 import (
 	"context"

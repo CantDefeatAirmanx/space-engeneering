@@ -1,4 +1,4 @@
-package test_containers_mongo
+package mongo
 
 import (
 	"context"

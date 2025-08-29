@@ -16,7 +16,7 @@ func main() {
 	defer func() {
 		go func() {
 			if err := closer.CloseAll(ctx); err != nil {
-				logger.Logger().Error(fmt.Sprintf("Failed to close app: %v", err))
+				logger.DefaultInfoLogger().Error(fmt.Sprintf("Failed to close app: %v", err))
 			}
 		}()
 		<-done
@@ -24,16 +24,20 @@ func main() {
 
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("Panic in main goroutine, closing. %v\n", r)
+			logger.DefaultInfoLogger().Error(fmt.Sprintf("Panic in main goroutine, closing. %v\n", r))
 		}
 	}()
 
 	app, err := app.NewApp(ctx, closer)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to initialize app: %v", err))
+		message := fmt.Sprintf("Failed to initialize app: %v", err)
+		logger.DefaultInfoLogger().Error(message)
+		panic(message)
 	}
 
 	if err := app.Run(ctx); err != nil {
-		panic(fmt.Sprintf("Failed to run app: %v", err))
+		message := fmt.Sprintf("Failed to run app: %v", err)
+		logger.DefaultInfoLogger().Error(message)
+		panic(message)
 	}
 }

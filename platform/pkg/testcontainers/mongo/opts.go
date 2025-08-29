@@ -1,18 +1,4 @@
-package test_containers_mongo
-
-type Config struct {
-	NetworkName   string
-	ContainerName string
-	ImageName     string
-	Database      string
-	Username      string
-	Password      string
-	AuthDB        string
-	Logger        Logger
-
-	Host string
-	Port string
-}
+package mongo
 
 type Option func(*Config)
 
@@ -37,18 +23,6 @@ func WithImageName(image string) Option {
 func WithDatabase(database string) Option {
 	return func(c *Config) {
 		c.Database = database
-	}
-}
-
-func WithUsername(username string) Option {
-	return func(c *Config) {
-		c.Username = username
-	}
-}
-
-func WithPassword(password string) Option {
-	return func(c *Config) {
-		c.Password = password
 	}
 }
 

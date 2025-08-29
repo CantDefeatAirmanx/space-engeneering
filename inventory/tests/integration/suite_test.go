@@ -9,163 +9,199 @@ import (
 	"path/filepath"
 	"strconv"
 	"testing"
+	"time"
 
+	"github.com/docker/go-connections/nat"
 	. "github.com/onsi/ginkgo/v2"
-	"github.com/onsi/gomega"
+	. "github.com/onsi/gomega"
+	"github.com/testcontainers/testcontainers-go/wait"
+	"go.uber.org/zap"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
-	test_containers_app "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/app"
-	test_containers_mongo "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/mongo"
-	test_containers_network "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/network"
-	test_containers_path "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/test_containers/path"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/testcontainers"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/testcontainers/app"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/testcontainers/mongo"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/testcontainers/network"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/testcontainers/path"
 )
 
 const (
-	appContainerName   = "inventory_test_app"
-	mongoContainerName = "inventory_test_mongodb"
-	networkName        = "inventory_test_network"
+	projectName         = "inventory"
+	partsCollectionName = "parts"
+
+	inventoryAppName    = "inventory-app"
+	inventoryDockerfile = "deploy/inventory/Dockerfile"
+
+	startupTimeout = 3 * time.Minute
 )
 
 type TestEnvironment struct {
-	Network      *test_containers_network.Network
-	Mongo        *test_containers_mongo.Container
-	App          *test_containers_app.Container
-	Closer       closer.Closer
-	CloserStatus chan closer.Status
+	Network *network.Network
+	Mongo   *mongo.Container
+	App     *app.Container
 }
 
+const testsTimeout = 5 * time.Minute
+
 var (
-	testEnv *TestEnvironment
+	env *TestEnvironment
 
 	suiteCtx    context.Context
 	suiteCancel context.CancelFunc
 )
 
 func TestIntegration(t *testing.T) {
-	gomega.RegisterFailHandler(Fail)
-	RunSpecs(t, "Integration tests")
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "UFO Service Integration Test Suite")
 }
 
 var _ = BeforeSuite(func() {
-	fmt.Println("Integration test _ 1")
-
-	if err := logger.Init(
+	err := logger.Init(
 		logger.WithLevel(logger.LevelDebug),
-	); err != nil {
-		panic(fmt.Errorf("failed to init logger: %w", err))
+	)
+	if err != nil {
+		panic(fmt.Sprintf("не удалось инициализировать логгер: %v", err))
 	}
 
-	suiteCtx, suiteCancel = context.WithCancel(context.Background())
+	suiteCtx, suiteCancel = context.WithTimeout(context.Background(), testsTimeout)
 
 	cfgPath := filepath.Join(
-		test_containers_path.GetProjectRoot(),
+		path.GetProjectRoot(),
 		"inventory",
 		".env",
 	)
-
 	if err := config.LoadConfig(
 		config.WithEnvPath(cfgPath),
 		config.WithIsTest(true),
 	); err != nil {
 		panic(fmt.Errorf("failed to load config: %w", err))
 	}
-	fmt.Println("Integration test _ 2")
 
-	testEnv = setUpTestEnvironment(suiteCtx)
+	logger.Logger().Info("Запуск тестового окружения...")
+	env = setupTestEnvironment(suiteCtx)
 })
 
 var _ = AfterSuite(func() {
-	logger.DefaultInfoLogger().Info("AfterSuite")
-	go testEnv.Closer.CloseAll(context.Background())
-	<-testEnv.CloserStatus
+	logger.Logger().Info("Завершение набора тестов")
+	if env != nil {
+		teardownTestEnvironment(suiteCtx, env)
+	}
 	suiteCancel()
 })
 
-func setUpTestEnvironment(ctx context.Context) *TestEnvironment {
-	logger.DefaultInfoLogger().Info("Setting up Inventory test environment")
-	closer, statusCh := closer.NewCloser(
-		ctx,
-		closer.WithLogger(logger.DefaultInfoLogger()),
-	)
+func setupTestEnvironment(ctx context.Context) *TestEnvironment {
+	logger.Logger().Info("🚀 Подготовка тестового окружения...")
 
-	go func() {
-		if r := recover(); r != nil {
-			go closer.CloseAll(context.Background())
-			<-statusCh
-		}
-	}()
-
-	network, err := test_containers_network.NewNetwork(
-		ctx,
-		networkName,
-	)
-	closer.AddNamed("network", func(ctx context.Context) error {
-		return network.Remove(ctx)
-	})
+	generatedNetwork, err := network.NewNetwork(ctx, projectName)
 	if err != nil {
-		panic(fmt.Errorf("failed to create network: %w", err))
+		logger.Logger().Fatal("не удалось создать общую сеть", zap.Error(err))
 	}
+	logger.Logger().Info("✅ Сеть успешно создана")
 
-	mongo, err := test_containers_mongo.NewContainer(
-		ctx,
-		test_containers_mongo.WithContainerName(mongoContainerName),
-		test_containers_mongo.WithNetworkName(networkName),
-		test_containers_mongo.WithUsername(config.Config.Mongo().Username()),
-		test_containers_mongo.WithPassword(config.Config.Mongo().Password()),
-		test_containers_mongo.WithDatabase(config.Config.Mongo().DBName()),
-		test_containers_mongo.WithLogger(logger.DefaultInfoLogger()),
-		test_containers_mongo.WithImageName(config.Config.Mongo().ImageName()),
+	mongoUsername := config.Config.Mongo().Username()
+	mongoPassword := config.Config.Mongo().Password()
+	mongoImageName := config.Config.Mongo().ImageName()
+	mongoDatabase := config.Config.Mongo().DBName()
+
+	grpcPort := config.Config.GRPC().Port()
+
+	generatedMongo, err := mongo.NewContainer(ctx,
+		mongo.WithNetworkName(generatedNetwork.Name()),
+		mongo.WithContainerName(testcontainers.GenerateMongoContainerName()),
+		mongo.WithImageName(mongoImageName),
+		mongo.WithDatabase(mongoDatabase),
+		mongo.WithAuth(mongoUsername, mongoPassword),
+		mongo.WithLogger(logger.DefaultInfoLogger()),
 	)
-	closer.AddNamed("mongo", func(ctx context.Context) error {
-		return mongo.Terminate(ctx)
-	})
 	if err != nil {
-		panic(fmt.Errorf("failed to create mongo container: %w", err))
+		cleanupTestEnvironment(ctx, &TestEnvironment{Network: generatedNetwork})
+		logger.Logger().Fatal("не удалось запустить контейнер MongoDB", zap.Error(err))
 	}
+	logger.Logger().Info("✅ Контейнер MongoDB успешно запущен")
 
-	app, err := test_containers_app.NewContainer(
-		ctx,
-		test_containers_app.WithContainerName(appContainerName),
-		test_containers_app.WithNetworks([]string{networkName}),
-		test_containers_app.WithLogOutput(os.Stdout),
-		test_containers_app.WithLogger(logger.DefaultInfoLogger()),
-		test_containers_app.WithDockerFileDir(test_containers_path.GetProjectRoot()),
-		test_containers_app.WithDockerFileName(filepath.Join("deploy", "inventory", "DockerFile")),
-		test_containers_app.WithEnv(map[string]string{
-			"GO_ENV": "production",
-			"mongo__uri": fmt.Sprintf("mongodb://%s:%s@%s:27017/%s?authSource=%s",
-				config.Config.Mongo().Username(),
-				config.Config.Mongo().Password(),
-				mongoContainerName,
-				config.Config.Mongo().DBName(),
-				config.Config.Mongo().AuthSource(),
-			),
-			"mongo__username":   config.Config.Mongo().Username(),
-			"mongo__password":   config.Config.Mongo().Password(),
-			"mongo__dbName":     config.Config.Mongo().DBName(),
-			"mongo__port":       strconv.Itoa(config.Config.Mongo().Port()),
-			"mongo__authSource": config.Config.Mongo().AuthSource(),
-			"mongo__imageName":  config.Config.Mongo().ImageName(),
-			"grpc__host":        config.Config.GRPC().Host(),
-			"grpc__port":        strconv.Itoa(config.Config.GRPC().Port()),
-			"logger__level":     "debug",
-			"logger__encoder":   "json",
+	projectRoot := path.GetProjectRoot()
+	waitStrategy := wait.ForListeningPort(nat.Port(strconv.Itoa(grpcPort) + "/tcp")).
+		WithStartupTimeout(startupTimeout)
+
+	uniqueAppName := fmt.Sprintf("%s-%d", inventoryAppName, time.Now().Unix())
+	appContainer, err := app.NewContainer(ctx,
+		app.WithName(uniqueAppName),
+		app.WithPort(strconv.Itoa(grpcPort)),
+		app.WithDockerfile(projectRoot, inventoryDockerfile),
+		app.WithNetwork(generatedNetwork.Name()),
+		app.WithEnv(map[string]string{
+			"GO_ENV": "prod",
+
+			"grpc__host": "0.0.0.0",
+			"grpc__port": strconv.Itoa(grpcPort),
+
+			"mongo__host":       generatedMongo.Config().Host,
+			"mongo__port":       generatedMongo.Config().Port,
+			"mongo__dbName":     generatedMongo.Config().Database,
+			"mongo__authSource": generatedMongo.Config().AuthDB,
+			"mongo__username":   generatedMongo.Config().Username,
+			"mongo__password":   generatedMongo.Config().Password,
+			"mongo__image":      generatedMongo.Config().ImageName,
+			"mongo__network":    generatedNetwork.Name(),
+
+			"logger__level":   "debug",
+			"logger__encoder": "json",
 		}),
+		app.WithLogOutput(os.Stdout),
+		app.WithStartupWait(waitStrategy),
+		app.WithLogger(logger.Logger()),
 	)
-	closer.AddNamed("app", func(ctx context.Context) error {
-		return app.Terminate(ctx)
-	})
 	if err != nil {
-		panic(fmt.Errorf("failed to create app container: %w", err))
+		cleanupTestEnvironment(ctx, &TestEnvironment{Network: generatedNetwork, Mongo: generatedMongo})
+		logger.Logger().Fatal("не удалось запустить контейнер приложения", zap.Error(err))
 	}
 
+	err = appContainer.Status(ctx)
+	if err != nil {
+		logger.Logger().Warn("не удалось получить статус контейнера приложения", zap.Error(err))
+	}
+
+	logger.Logger().Info("✅ Контейнер приложения успешно запущен")
+
+	logger.Logger().Info("🎉 Тестовое окружение готово")
 	return &TestEnvironment{
-		Network:      network,
-		Mongo:        mongo,
-		App:          app,
-		Closer:       closer,
-		CloserStatus: statusCh,
+		Network: generatedNetwork,
+		Mongo:   generatedMongo,
+		App:     appContainer,
+	}
+}
+
+func teardownTestEnvironment(ctx context.Context, env *TestEnvironment) {
+	logger.Logger().Info("🧹 Очистка тестового окружения...")
+
+	cleanupTestEnvironment(ctx, env)
+
+	logger.Logger().Info("✅ Тестовое окружение успешно очищено")
+}
+
+func cleanupTestEnvironment(ctx context.Context, env *TestEnvironment) {
+	if env.App != nil {
+		if err := env.App.Terminate(ctx); err != nil {
+			logger.Logger().Error("не удалось остановить контейнер приложения", zap.Error(err))
+		} else {
+			logger.Logger().Info("🛑 Контейнер приложения остановлен")
+		}
+	}
+
+	if env.Mongo != nil {
+		if err := env.Mongo.Terminate(ctx); err != nil {
+			logger.Logger().Error("не удалось остановить контейнер MongoDB", zap.Error(err))
+		} else {
+			logger.Logger().Info("🛑 Контейнер MongoDB остановлен")
+		}
+	}
+
+	if env.Network != nil {
+		if err := env.Network.Remove(ctx); err != nil {
+			logger.Logger().Error("не удалось удалить сеть", zap.Error(err))
+		} else {
+			logger.Logger().Info("🛑 Сеть удалена")
+		}
 	}
 }

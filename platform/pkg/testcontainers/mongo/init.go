@@ -1,10 +1,9 @@
-package test_containers_mongo
+package mongo
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/docker/docker/api/types/container"
 	"github.com/pkg/errors"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -23,10 +22,14 @@ func startMongoContainer(ctx context.Context, cfg *Config) (testcontainers.Conta
 		HostConfigModifier: defaultHostConfig(),
 	}
 
-	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
-	})
+	container, err := testcontainers.GenericContainer(
+		ctx,
+		testcontainers.GenericContainerRequest{
+			ContainerRequest: req,
+			Started:          true,
+		},
+	)
+
 	if err != nil {
 		return nil, errors.Errorf("failed to start mongo container: %v", err)
 	}
@@ -58,10 +61,4 @@ func buildMongoURI(cfg *Config) string {
 		cfg.Database,
 		cfg.AuthDB,
 	)
-}
-
-func defaultHostConfig() func(hc *container.HostConfig) {
-	return func(hc *container.HostConfig) {
-		hc.AutoRemove = true
-	}
 }

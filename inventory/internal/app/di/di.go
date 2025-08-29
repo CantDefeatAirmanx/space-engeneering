@@ -2,6 +2,7 @@ package di
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,6 +14,7 @@ import (
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -62,8 +64,15 @@ func (d *DiContainer) GetPartRepository(ctx context.Context) service_part.PartRe
 		return d.partRepository
 	}
 
+	client := d.GetMongoClient(ctx).Database(config.Config.Mongo().DBName())
+
+	err := client.Client().Ping(ctx, nil)
+	if err != nil {
+		logger.DefaultInfoLogger().Error(fmt.Sprintf("Failed to ping mongo client: %v", err))
+	}
+
 	params := repository_part_mongo.NewRepositoryPartMongoImplParams{
-		Db: d.GetMongoClient(ctx).Database(config.Config.Mongo().DBName()),
+		Db: client,
 	}
 	if config.Config.IsDev() {
 		params.InitialParts = test_data.GetInitialParts()

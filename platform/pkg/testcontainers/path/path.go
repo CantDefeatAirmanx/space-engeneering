@@ -1,10 +1,11 @@
-package test_containers_path
+package path
 
 import (
 	"os"
 	"path/filepath"
 )
 
+// GetProjectRoot ищет корневую директорию проекта по наличию go.work файла
 func GetProjectRoot() string {
 	dir, err := os.Getwd()
 	if err != nil {

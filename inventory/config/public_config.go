@@ -1,6 +1,10 @@
 package config
 
-import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+import (
+	"fmt"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+)
 
 var (
 	_ ConfigInterface       = (*ConfigType)(nil)
@@ -28,7 +32,7 @@ func NewConfig(configData ConfigData) *ConfigType {
 		},
 
 		mongo: &MongoConfigType{
-			uri:        configData.MongoConfig.URI,
+			host:       configData.MongoConfig.Host,
 			authSource: configData.MongoConfig.AuthSource,
 			dbName:     configData.MongoConfig.DBName,
 			password:   configData.MongoConfig.Password,
@@ -74,13 +78,17 @@ func (g *GRPCConfigType) Port() int {
 }
 
 type MongoConfigType struct {
-	uri        string
 	authSource string
 	dbName     string
 	password   string
+	host       string
 	port       int
 	username   string
 	imageName  string
+}
+
+func (m *MongoConfigType) Host() string {
+	return m.host
 }
 
 func (m *MongoConfigType) ImageName() string {
@@ -108,7 +116,14 @@ func (m *MongoConfigType) Username() string {
 }
 
 func (m *MongoConfigType) URI() string {
-	return m.uri
+	return fmt.Sprintf("mongodb://%s:%s@%s:%d/%s?authSource=%s",
+		m.username,
+		m.password,
+		m.host,
+		m.port,
+		m.dbName,
+		m.authSource,
+	)
 }
 
 type LoggerConfigType struct {

@@ -1,4 +1,4 @@
-package test_containers_mongo
+package mongo
 
 import (
 	"context"
@@ -7,8 +7,6 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
-
-	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 const (
@@ -26,19 +24,7 @@ type Container struct {
 }
 
 func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
-	cfg := &Config{
-		NetworkName:   "test-network",
-		ContainerName: "mongo-container",
-		ImageName:     "mongo:8.0",
-		Database:      "test",
-		Username:      "root",
-		Password:      "root",
-		AuthDB:        "admin",
-		Logger:        logger.DefaultInfoLogger(),
-	}
-	for _, opt := range opts {
-		opt(cfg)
-	}
+	cfg := buildConfig(opts...)
 
 	container, err := startMongoContainer(ctx, cfg)
 	if err != nil {
