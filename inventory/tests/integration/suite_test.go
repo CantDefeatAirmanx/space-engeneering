@@ -136,7 +136,7 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 			"grpc__host": "0.0.0.0",
 			"grpc__port": strconv.Itoa(grpcPort),
 
-			"mongo__host":       generatedMongo.Config().Host,
+			"mongo__host":       generatedMongo.Config().ContainerName,
 			"mongo__port":       generatedMongo.Config().Port,
 			"mongo__dbName":     generatedMongo.Config().Database,
 			"mongo__authSource": generatedMongo.Config().AuthDB,
@@ -161,6 +161,8 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	if err != nil {
 		logger.Logger().Warn("не удалось получить статус контейнера приложения", zap.Error(err))
 	}
+
+	time.Sleep(2 * time.Second)
 
 	logger.Logger().Info("✅ Контейнер приложения успешно запущен")
 

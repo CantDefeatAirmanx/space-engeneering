@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net"
 	"time"
@@ -100,9 +101,10 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 		return nil, errors.Errorf("failed to get genericContainer externalHost: %v", err)
 	}
 
-	go streamContainerLogs(ctx, genericContainer, cfg.LogOutput)
-
 	cfg.Logger.Info("App container started", zap.String("uri:", net.JoinHostPort(host, mappedPort.Port())))
+
+	prefixedWriter := NewPrefixedWriter(cfg.LogOutput, fmt.Sprintf("CONTAINER[%s]", cfg.Name))
+	streamContainerLogs(ctx, genericContainer, prefixedWriter)
 
 	return &Container{
 		container:    genericContainer,
@@ -138,21 +140,20 @@ func (a *Container) Status(ctx context.Context) error {
 }
 
 func streamContainerLogs(ctx context.Context, container testcontainers.Container, out io.Writer) {
-	logs, err := container.Logs(ctx)
-	if err != nil {
-		logger.Logger().Error("failed to get container logs", zap.Error(err))
-		return
-	}
-	defer func() {
-		err = logs.Close()
-		if err != nil {
-			logger.Logger().Error("failed to close container logs", zap.Error(err))
-		}
-	}()
-
 	go func() {
+		logs, err := container.Logs(ctx)
+		if err != nil {
+			logger.Logger().Error("failed to get container logs", zap.Error(err))
+			return
+		}
+		defer func() {
+			if closeErr := logs.Close(); closeErr != nil {
+				logger.Logger().Error("failed to close container logs", zap.Error(closeErr))
+			}
+		}()
+
 		_, err = io.Copy(out, logs)
-		if err != nil && !errors.Is(err, io.EOF) {
+		if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrClosedPipe) {
 			logger.Logger().Error("error copying container logs", zap.Error(err))
 		}
 	}()
