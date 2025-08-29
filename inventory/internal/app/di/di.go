@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -66,7 +67,11 @@ func (d *DiContainer) GetPartRepository(ctx context.Context) service_part.PartRe
 
 	client := d.GetMongoClient(ctx).Database(config.Config.Mongo().DBName())
 
-	err := client.Client().Ping(ctx, nil)
+	logger.DefaultInfoLogger().Info("Pinging mongo client")
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	err := client.Client().Ping(withTimeoutCtx, nil)
+	logger.DefaultInfoLogger().Info("Pinged mongo client")
 	if err != nil {
 		logger.DefaultInfoLogger().Error(fmt.Sprintf("Failed to ping mongo client: %v", err))
 	}
@@ -94,6 +99,10 @@ func (d *DiContainer) GetMongoClient(ctx context.Context) *mongo.Client {
 	mongoClient, err := mongo.Connect(
 		ctx,
 		options.Client().ApplyURI(config.Config.Mongo().URI()),
+	)
+	logger.DefaultInfoLogger().Info(fmt.Sprintf(
+		"Connected to MongoDB: %v, err: %v",
+		config.Config.Mongo().URI(), err),
 	)
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %v", err)

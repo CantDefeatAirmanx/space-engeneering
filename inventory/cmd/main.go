@@ -31,13 +31,11 @@ func main() {
 	app, err := app.NewApp(ctx, closer)
 	if err != nil {
 		message := fmt.Sprintf("Failed to initialize app: %v", err)
-		logger.DefaultInfoLogger().Error(message)
 		panic(message)
 	}
 
 	if err := app.Run(ctx); err != nil {
 		message := fmt.Sprintf("Failed to run app: %v", err)
-		logger.DefaultInfoLogger().Error(message)
 		panic(message)
 	}
 }
