@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/go-connections/nat"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -121,7 +120,7 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	logger.Logger().Info("✅ Контейнер MongoDB успешно запущен")
 
 	projectRoot := path.GetProjectRoot()
-	waitStrategy := wait.ForListeningPort(nat.Port(strconv.Itoa(grpcPort) + "/tcp")).
+	waitStrategy := wait.ForLog("running Inventory GRPC server").
 		WithStartupTimeout(startupTimeout)
 
 	uniqueAppName := fmt.Sprintf("%s-%d", inventoryAppName, time.Now().Unix())
@@ -162,7 +161,11 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 		logger.Logger().Warn("не удалось получить статус контейнера приложения", zap.Error(err))
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
+
+	// Проверяем доступность порта
+	address := appContainer.Address()
+	logger.Logger().Info("Проверка доступности GRPC порта", zap.String("address", address))
 
 	logger.Logger().Info("✅ Контейнер приложения успешно запущен")
 

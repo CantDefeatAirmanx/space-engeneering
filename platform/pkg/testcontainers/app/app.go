@@ -118,6 +118,10 @@ func (a *Container) Address() string {
 	return net.JoinHostPort(a.externalHost, a.externalPort)
 }
 
+func (a *Container) InternalAddress() string {
+	return net.JoinHostPort(a.externalHost, a.cfg.Port)
+}
+
 func (a *Container) Terminate(ctx context.Context) error {
 	return a.container.Terminate(ctx)
 }

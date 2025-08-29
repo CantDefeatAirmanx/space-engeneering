@@ -104,7 +104,7 @@ func (a *App) initLogger(_ context.Context) error {
 
 func (a *App) initListener(ctx context.Context) error {
 	listener, err := net.Listen(
-		"tcp",
+		"tcp4",
 		net.JoinHostPort(
 			config.Config.GRPC().Host(),
 			strconv.Itoa(config.Config.GRPC().Port()),
