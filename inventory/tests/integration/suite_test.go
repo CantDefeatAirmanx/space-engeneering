@@ -137,12 +137,12 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 			"grpc__port": strconv.Itoa(grpcPort),
 
 			"mongo__host":       generatedMongo.Config().ContainerName,
-			"mongo__port":       generatedMongo.Config().Port,
-			"mongo__dbName":     generatedMongo.Config().Database,
-			"mongo__authSource": generatedMongo.Config().AuthDB,
+			"mongo__port":       "27017",
 			"mongo__username":   generatedMongo.Config().Username,
 			"mongo__password":   generatedMongo.Config().Password,
-			"mongo__image":      generatedMongo.Config().ImageName,
+			"mongo__dbName":     generatedMongo.Config().Database,
+			"mongo__authSource": generatedMongo.Config().AuthDB,
+			"mongo__imageName":  generatedMongo.Config().ImageName,
 			"mongo__network":    generatedNetwork.Name(),
 
 			"logger__level":   "debug",

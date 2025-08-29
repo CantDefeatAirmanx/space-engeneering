@@ -42,6 +42,7 @@ func (d *DiContainer) GetInventoryAPI(ctx context.Context) inventory_v1.Inventor
 	d.inventoryAPI = api_inventory_v1.NewApi(
 		d.GetPartService(ctx),
 	)
+	logger.DefaultInfoLogger().Info("Inventory API created")
 
 	return d.inventoryAPI
 }
@@ -56,6 +57,7 @@ func (d *DiContainer) GetPartService(ctx context.Context) service_part.PartServi
 			Repository: d.GetPartRepository(ctx),
 		},
 	)
+	logger.DefaultInfoLogger().Info("Part service created")
 
 	return d.partService
 }
@@ -87,6 +89,7 @@ func (d *DiContainer) GetPartRepository(ctx context.Context) service_part.PartRe
 		ctx,
 		params,
 	)
+	logger.DefaultInfoLogger().Info("Part repository created")
 
 	return d.partRepository
 }
