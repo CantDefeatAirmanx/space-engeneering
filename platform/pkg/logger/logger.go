@@ -56,6 +56,7 @@ func Init(opts ...OptionFunc) error {
 	}
 
 	*params.Target = *newLogger
+	isGlobalInited = true
 
 	return nil
 }

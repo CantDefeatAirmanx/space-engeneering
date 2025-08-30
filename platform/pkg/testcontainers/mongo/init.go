@@ -29,7 +29,6 @@ func startMongoContainer(ctx context.Context, cfg *Config) (testcontainers.Conta
 			Started:          true,
 		},
 	)
-
 	if err != nil {
 		return nil, errors.Errorf("failed to start mongo container: %v", err)
 	}

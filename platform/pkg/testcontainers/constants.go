@@ -3,7 +3,6 @@ package testcontainers
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 // MongoDB constants
@@ -23,6 +22,5 @@ const (
 )
 
 func GenerateMongoContainerName() string {
-	rand.Seed(time.Now().UnixNano())
 	return fmt.Sprintf("%s-%d", MongoContainerNameBase, rand.Intn(100000))
 }

@@ -104,7 +104,7 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 	cfg.Logger.Info("App container started", zap.String("uri:", net.JoinHostPort(host, mappedPort.Port())))
 
 	prefixedWriter := NewPrefixedWriter(cfg.LogOutput, fmt.Sprintf("CONTAINER[%s]", cfg.Name))
-	streamContainerLogs(ctx, genericContainer, prefixedWriter)
+	go streamContainerLogs(ctx, genericContainer, prefixedWriter)
 
 	return &Container{
 		container:    genericContainer,
@@ -144,23 +144,16 @@ func (a *Container) Status(ctx context.Context) error {
 }
 
 func streamContainerLogs(ctx context.Context, container testcontainers.Container, out io.Writer) {
-	go func() {
-		logs, err := container.Logs(ctx)
-		if err != nil {
-			logger.Logger().Error("failed to get container logs", zap.Error(err))
-			return
-		}
-		defer func() {
-			if closeErr := logs.Close(); closeErr != nil {
-				logger.Logger().Error("failed to close container logs", zap.Error(closeErr))
-			}
-		}()
+	logs, err := container.Logs(ctx)
+	if err != nil {
+		logger.Logger().Error("failed to get container logs", zap.Error(err))
+		return
+	}
 
-		_, err = io.Copy(out, logs)
-		if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrClosedPipe) {
-			logger.Logger().Error("error copying container logs", zap.Error(err))
-		}
-	}()
+	_, err = io.Copy(out, logs)
+	if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrClosedPipe) {
+		logger.Logger().Error("error copying container logs", zap.Error(err))
+	}
 }
 
 func DefaultHostConfig() func(hc *container.HostConfig) {

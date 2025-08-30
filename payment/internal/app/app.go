@@ -105,7 +105,7 @@ func (a *App) initDiContainer(_ context.Context) error {
 }
 
 func (a *App) initListener(_ context.Context) error {
-	listener, err := net.Listen("tcp", net.JoinHostPort(
+	listener, err := net.Listen("tcp4", net.JoinHostPort(
 		config.Config.GRPC().Host(),
 		strconv.Itoa(config.Config.GRPC().Port()),
 	))

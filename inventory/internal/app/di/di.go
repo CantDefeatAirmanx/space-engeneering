@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
@@ -15,6 +13,7 @@ import (
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
+	platform_mongo "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/db/mongo"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
@@ -69,15 +68,6 @@ func (d *DiContainer) GetPartRepository(ctx context.Context) service_part.PartRe
 
 	client := d.GetMongoClient(ctx).Database(config.Config.Mongo().DBName())
 
-	logger.DefaultInfoLogger().Info("Pinging mongo client")
-	withTimeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
-	defer cancel()
-	err := client.Client().Ping(withTimeoutCtx, nil)
-	logger.DefaultInfoLogger().Info("Pinged mongo client")
-	if err != nil {
-		logger.DefaultInfoLogger().Error(fmt.Sprintf("Failed to ping mongo client: %v", err))
-	}
-
 	params := repository_part_mongo.NewRepositoryPartMongoImplParams{
 		Db: client,
 	}
@@ -99,11 +89,11 @@ func (d *DiContainer) GetMongoClient(ctx context.Context) *mongo.Client {
 		return d.mongoClient
 	}
 
-	mongoClient, err := mongo.Connect(
+	mongoClient, err := platform_mongo.Connect(
 		ctx,
-		options.Client().ApplyURI(config.Config.Mongo().URI()),
+		platform_mongo.WithURI(config.Config.Mongo().URI()),
 	)
-	logger.DefaultInfoLogger().Info(fmt.Sprintf(
+	logger.Logger().Debug(fmt.Sprintf(
 		"Connected to MongoDB: %v, err: %v",
 		config.Config.Mongo().URI(), err),
 	)
