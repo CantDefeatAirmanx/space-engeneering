@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	business_errors2 "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/business_errors"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/business_errors"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
@@ -44,27 +44,27 @@ func convertError(
 	logger Logger,
 	additionLogParams []zap.Field,
 ) error {
-	if businessErr := business_errors2.GetBusinessError(err); businessErr != nil {
-		grpcStatus := business_errors2.ConvertBusinessErrToGRPCStatus(businessErr)
+	if businessErr := business_errors.GetBusinessError(err); businessErr != nil {
+		grpcStatus := business_errors.ConvertBusinessErrToGRPCStatus(businessErr)
 		logBusinessError(businessErr, method, logger, grpcStatus, additionLogParams)
 
 		return grpcStatus.Err()
 	}
 
 	if statusErr, ok := status.FromError(err); ok {
-		businessErr := business_errors2.ConvertGRPCStatusToBusinessError(statusErr)
+		businessErr := business_errors.ConvertGRPCStatusToBusinessError(statusErr)
 		logBusinessError(businessErr, method, logger, statusErr, additionLogParams)
 		return err
 	}
 
-	businessErr := business_errors2.NewInternalError(err)
+	businessErr := business_errors.NewInternalError(err)
 	logBusinessError(businessErr, method, logger, nil, additionLogParams)
 
 	return status.Error(codes.Internal, internalServerErrorMessage)
 }
 
 func logBusinessError(
-	err *business_errors2.BusinessError,
+	err *business_errors.BusinessError,
 	method string,
 	logger Logger,
 	grpcStatus *status.Status,
