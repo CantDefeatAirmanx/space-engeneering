@@ -17,8 +17,10 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# env file
-.env
+# env files
+.env*
+!.env*.template
+!.env*.example
 /.idea
 .DS_Store
 

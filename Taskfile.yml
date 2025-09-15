@@ -52,7 +52,7 @@ vars:
   OPEN_API_ORDER_V1_BUNDLE: '{{.ROOT_DIR}}/shared/api/bundles/order.openapi.v1.bundle.yaml'
   OPEN_API_FILES: '{{.ROOT_DIR}}/shared/api/bundles'
 
-  MODULES: assembly inventory order payment platform iam notification
+  MODULES: assembly inventory order payment platform iam notification tools
 
 tasks:
   build:
@@ -116,6 +116,10 @@ tasks:
     cmds:
       - 'GO_ENV=dev {{.BUILD_DIR}}/payment'
 
+  run-kafka-setup:
+    deps: [ up-all ]
+    desc: "Запуск утилиты по настройке kafka"
+
   up-all: 
     desc: "Запуск всех зависимостей docker-compose"
     cmds:
@@ -133,6 +137,7 @@ tasks:
   up-core:
     desc: "Запуск общих зависимостей docker-compose"
     cmds:
+      - cp -r {{.ROOT_DIR}}/tools/kafka-setup/.env {{.ROOT_DIR}}/deploy/core/.env
       - echo "🚀 Запускаем общие зависимости..."
       - 'docker compose -f deploy/core/docker-compose.yaml up --build --detach'
   
