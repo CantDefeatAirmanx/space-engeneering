@@ -7,14 +7,13 @@ import (
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 
-	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interfaces"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
 var (
-	_ InventoryV1Client = (*inventoryV1GrpcClient)(nil)
-	_ interfaces.Closer = (*inventoryV1GrpcClient)(nil)
+	_ InventoryV1Client    = (*inventoryV1GrpcClient)(nil)
+	_ interfaces.WithClose = (*inventoryV1GrpcClient)(nil)
 )
 
 type inventoryV1GrpcClient struct {
@@ -24,10 +23,10 @@ type inventoryV1GrpcClient struct {
 
 func NewInventoryClient(
 	ctx context.Context,
+	url string,
 ) (*inventoryV1GrpcClient, error) {
-	//nolint:staticcheck
-	conn, err := grpc.Dial(
-		configs_order.InventoryServiceURL,
+	conn, err := grpc.NewClient(
+		url,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

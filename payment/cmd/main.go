@@ -1,61 +1,39 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net"
-	"os"
-	"os/signal"
-	"syscall"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-
-	api_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/api/payment/v1"
-	service_pay_order "github.com/CantDefeatAirmanx/space-engeneering/payment/internal/service/pay_order"
-	configs_payment "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/payment"
-	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interceptor"
-	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
+	"github.com/CantDefeatAirmanx/space-engeneering/payment/internal/app"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 func main() {
-	paymentService := service_pay_order.NewPayOrderServiceImpl()
-	api := api_payment_v1.NewApi(api_payment_v1.NewApiParams{
-		PayOrderService: paymentService,
-	})
-
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", configs_payment.Port))
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
+	ctx := context.Background()
+	closer, done := closer.NewCloser(ctx)
 
 	defer func() {
-		if err := listener.Close(); err != nil {
-			log.Fatalf("Failed to close listener: %v", err)
+		go func() {
+			if err := closer.CloseAll(ctx); err != nil {
+				logger.Logger().Error(fmt.Sprintf("Failed to close app: %v", err))
+			}
+		}()
+		<-done
+	}()
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Panic in main goroutine, closing. %v\n", r)
 		}
 	}()
 
-	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(
-			interceptor.UnaryErrorInterceptor(),
-			interceptor.ValidateInterceptor(),
-		),
-	)
-	reflection.Register(grpcServer)
+	app, err := app.NewApp(ctx, closer)
+	if err != nil {
+		panic(fmt.Sprintf("failed to create app: %v", err))
+	}
 
-	payment_v1.RegisterPaymentServiceServer(grpcServer, api)
-
-	go func() {
-		fmt.Println("Payment service started")
-		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("Failed to serve: %v", err)
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	grpcServer.GracefulStop()
-	log.Println("Payment service stopped")
+	if err := app.Run(ctx); err != nil {
+		panic(fmt.Sprintf("failed to run app: %v", err))
+	}
 }

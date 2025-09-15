@@ -23,19 +23,19 @@ type NewRepositoryPartMongoImplParams struct {
 	InitialParts []*model_part.Part
 }
 
-func NewRepositoryPartMongoImpl(params NewRepositoryPartMongoImplParams) *RepositoryPartMongoImpl {
+func NewRepositoryPartMongoImpl(ctx context.Context, params NewRepositoryPartMongoImplParams) *RepositoryPartMongoImpl {
 	repo := RepositoryPartMongoImpl{
 		collection: params.Db.Collection(partsCollectionName),
 	}
 
-	err := initIndexes(&repo)
+	err := initIndexes(ctx, &repo)
 	if err != nil {
 		log.Fatalf("Failed to create indexes: %v", err)
 	}
 
 	// ToDo: IS_DEV check
 	for _, part := range params.InitialParts {
-		err := repo.setTestPart(context.Background(), part)
+		err := repo.setTestPart(ctx, part)
 		if err != nil {
 			log.Fatalf("Failed to insert initial part: %v", err)
 		}
@@ -44,7 +44,7 @@ func NewRepositoryPartMongoImpl(params NewRepositoryPartMongoImplParams) *Reposi
 	return &repo
 }
 
-func initIndexes(repo *RepositoryPartMongoImpl) error {
+func initIndexes(ctx context.Context, repo *RepositoryPartMongoImpl) error {
 	indexModels := []mongo.IndexModel{
 		{
 			Keys: bson.D{
@@ -67,7 +67,7 @@ func initIndexes(repo *RepositoryPartMongoImpl) error {
 	}
 
 	_, err := repo.collection.Indexes().CreateMany(
-		context.Background(),
+		ctx,
 		indexModels,
 	)
 

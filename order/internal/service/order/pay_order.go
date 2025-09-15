@@ -45,7 +45,7 @@ func (s *OrderServiceImpl) PayOrder(ctx context.Context, params PayOrderParams) 
 		},
 	)
 	if err != nil {
-		return nil, model_order.ErrOrderInternal
+		return nil, err
 	}
 
 	newStatus := model_order.OrderStatusPaid
@@ -58,7 +58,7 @@ func (s *OrderServiceImpl) PayOrder(ctx context.Context, params PayOrderParams) 
 		},
 	)
 	if err != nil {
-		return nil, model_order.ErrOrderInternal
+		return nil, err
 	}
 
 	return &PayOrderResult{

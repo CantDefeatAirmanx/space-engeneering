@@ -21,7 +21,7 @@ func (client *inventoryV1GrpcClient) GetPart(
 		statusErr, ok := status.FromError(err)
 
 		if !ok {
-			return nil, model_part.ErrPartInternal
+			return nil, err
 		}
 
 		partUuid := params.Uuid
@@ -38,14 +38,14 @@ func (client *inventoryV1GrpcClient) GetPart(
 		case codes.Internal:
 			return nil, fmt.Errorf(
 				"%w: %s, partUuid: %s",
-				model_part.ErrPartInternal,
+				err,
 				statusErr.Message(),
 				partUuid,
 			)
 		default:
 			return nil, fmt.Errorf(
 				"%w: %s, partUuid: %s",
-				model_part.ErrPartInternal,
+				err,
 				statusErr.Message(),
 				partUuid,
 			)

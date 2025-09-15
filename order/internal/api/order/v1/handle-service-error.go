@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"go.uber.org/zap"
+
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
@@ -42,6 +45,10 @@ func handleServiceError[T any](err error) (T, error) {
 		Code:    http.StatusInternalServerError,
 		Message: fmt.Sprintf("%s: %s", internalServerErrorMessage, err.Error()),
 	}).(T); ok {
+		logger.Logger().Error(
+			internalServerErrorMessage,
+			zap.String("errDesc", err.Error()),
+		)
 		return errResp, nil
 	}
 

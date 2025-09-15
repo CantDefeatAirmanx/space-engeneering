@@ -1,0 +1,111 @@
+package logger
+
+import (
+	"os"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+var (
+	isGlobalInited = false
+	globalLogger   = &logger{}
+	dynamicLevel   zap.AtomicLevel
+)
+
+var _ LoggerInterface = (*logger)(nil)
+
+type logger struct {
+	zapLogger *zap.Logger
+}
+
+func Logger() *logger {
+	if !isGlobalInited {
+		res := DefaultInfoLogger()
+		res.Error("Logger is not initialed")
+		return res
+	}
+
+	return globalLogger
+}
+
+func Init(opts ...OptionFunc) error {
+	params := Options{
+		Level:   LevelInfo,
+		Env:     EnvProd,
+		Encoder: EncoderTypeJSON,
+		Target:  globalLogger,
+	}
+	for _, opt := range opts {
+		opt(&params)
+	}
+
+	dynamicLevel = zap.NewAtomicLevelAt(getZapLevel(params.Level))
+	encoder := getEncoder(params.Encoder, getEncoderConfig())
+
+	core := zapcore.NewCore(
+		encoder,
+		zapcore.AddSync(os.Stdout),
+		dynamicLevel,
+	)
+
+	zLogger := zap.New(core)
+
+	newLogger := &logger{
+		zapLogger: zLogger,
+	}
+
+	*params.Target = *newLogger
+	isGlobalInited = true
+
+	return nil
+}
+
+func SetLevel(level Level) {
+	dynamicLevel.SetLevel(getZapLevel(level))
+}
+
+func getEncoder(encoderType EncoderType, cfg zapcore.EncoderConfig) zapcore.Encoder {
+	switch encoderType {
+	case EncoderTypeJSON:
+		return zapcore.NewJSONEncoder(cfg)
+	case EncoderTypeConsole:
+		return zapcore.NewConsoleEncoder(cfg)
+	default:
+		return zapcore.NewJSONEncoder(cfg)
+	}
+}
+
+func getEncoderConfig() zapcore.EncoderConfig {
+	return zapcore.EncoderConfig{
+		TimeKey:        "timestamp",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		MessageKey:     "message",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+		EncodeName:     zapcore.FullNameEncoder,
+	}
+}
+
+func getZapLevel(level Level) zapcore.Level {
+	switch level {
+	case LevelDebug:
+		return zapcore.DebugLevel
+	case LevelInfo:
+		return zapcore.InfoLevel
+	case LevelWarn:
+		return zapcore.WarnLevel
+	case LevelError:
+		return zapcore.ErrorLevel
+	case LevelFatal:
+		return zapcore.FatalLevel
+	default:
+		return zapcore.InfoLevel
+	}
+}

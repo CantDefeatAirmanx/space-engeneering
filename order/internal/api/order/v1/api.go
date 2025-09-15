@@ -5,13 +5,13 @@ import (
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
-var _ order_v1.Handler = (*api)(nil)
+var _ order_v1.Handler = (*Api)(nil)
 
 const (
 	internalServerErrorMessage = "internal server error"
 )
 
-type api struct {
+type Api struct {
 	orderService service_order.OrderService
 }
 
@@ -19,8 +19,8 @@ type NewApiParams struct {
 	OrderService service_order.OrderService
 }
 
-func NewApi(params NewApiParams) *api {
-	return &api{
+func NewApi(params NewApiParams) *Api {
+	return &Api{
 		orderService: params.OrderService,
 	}
 }

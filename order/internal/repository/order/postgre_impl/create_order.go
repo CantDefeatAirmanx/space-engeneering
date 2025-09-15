@@ -42,7 +42,7 @@ func (o *OrderRepositoryPostgre) CreateOrder(
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	createdOrder := Order{
@@ -59,12 +59,12 @@ func (o *OrderRepositoryPostgre) CreateOrder(
 		&createdOrder.UpdatedAt,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	modelOrder, err := ToModel(createdOrder)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return nil, err
 	}
 
 	return modelOrder, nil

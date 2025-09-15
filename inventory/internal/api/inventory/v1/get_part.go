@@ -3,7 +3,10 @@ package api_inventory_v1
 import (
 	"context"
 
+	"go.uber.org/zap"
+
 	model_converter_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/model/part/converter"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/inventory/v1"
 )
 
@@ -11,6 +14,12 @@ func (api *api) GetPart(
 	ctx context.Context,
 	req *inventory_v1.GetPartRequest,
 ) (*inventory_v1.GetPartResponse, error) {
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(partUUIDLogKey, req.Uuid),
+		},
+	)
+
 	part, err := api.partService.GetPart(ctx, req.Uuid)
 	if err != nil {
 		return nil, err

@@ -2,12 +2,14 @@ package service_pay_order
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"math/rand/v2"
 	"time"
 
 	"github.com/google/uuid"
+	"go.uber.org/zap"
+
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 )
 
 func (s *PayOrderServiceImpl) PayOrder(
@@ -17,7 +19,7 @@ func (s *PayOrderServiceImpl) PayOrder(
 	randomDelay := math.Ceil(rand.Float64() * maxDelaySeconds)
 	time.Sleep(time.Duration(randomDelay) * time.Second)
 
-	fmt.Printf("Оплата прошла успешно, transaction_uuid: %s\n", params.OrderUUID)
+	logger.Logger().Info("Successfully paid order", zap.String("transaction_uuid", params.OrderUUID))
 	transactionUUID := uuid.New().String()
 
 	return &PayOrderMethodReturn{

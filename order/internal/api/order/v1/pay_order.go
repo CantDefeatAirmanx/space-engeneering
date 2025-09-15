@@ -4,8 +4,11 @@ import (
 	"context"
 	"net/http"
 
+	"go.uber.org/zap"
+
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
@@ -17,11 +20,18 @@ var paymentMethodMap = map[order_v1.PaymentMethod]model_order.PaymentMethod{
 	order_v1.PaymentMethodUNKNOWN:       model_order.PaymentMethodUnknown,
 }
 
-func (api *api) PayOrder(
+func (api *Api) PayOrder(
 	ctx context.Context,
 	req *order_v1.PayOrderRequestBody,
 	params order_v1.PayOrderParams,
 ) (order_v1.PayOrderRes, error) {
+	contexts.GetLogParamsSetterFunc(ctx)(
+		[]zap.Field{
+			zap.String(orderUUIDLogKey, params.OrderUUID),
+			zap.String(paymentMethodLogKey, string(req.PaymentMethod)),
+		},
+	)
+
 	payRes, err := api.orderService.PayOrder(ctx, service_order.PayOrderParams{
 		OrderUUID:     params.OrderUUID,
 		PaymentMethod: paymentMethodMap[req.PaymentMethod],

@@ -7,14 +7,13 @@ import (
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 
-	configs_order "github.com/CantDefeatAirmanx/space-engeneering/shared/configs/server/order"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interfaces"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
 var (
-	_ PaymentV1Client   = (*paymentV1GrpcClient)(nil)
-	_ interfaces.Closer = (*paymentV1GrpcClient)(nil)
+	_ PaymentV1Client      = (*paymentV1GrpcClient)(nil)
+	_ interfaces.WithClose = (*paymentV1GrpcClient)(nil)
 )
 
 type paymentV1GrpcClient struct {
@@ -22,10 +21,12 @@ type paymentV1GrpcClient struct {
 	conn       *grpc.ClientConn
 }
 
-func NewPaymentClient(ctx context.Context) (*paymentV1GrpcClient, error) {
-	//nolint:staticcheck
-	conn, err := grpc.Dial(
-		configs_order.PaymentServiceURL,
+func NewPaymentClient(
+	ctx context.Context,
+	url string,
+) (*paymentV1GrpcClient, error) {
+	conn, err := grpc.NewClient(
+		url,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

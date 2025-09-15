@@ -24,7 +24,7 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, orderUUID string) er
 		Status: &canceledStatus,
 	})
 	if err != nil {
-		return model_order.ErrOrderInternal
+		return err
 	}
 
 	return nil

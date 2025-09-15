@@ -27,12 +27,12 @@ func (o *OrderRepositoryPostgre) UpdateOrderFields(
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		return fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return err
 	}
 
 	result, err := o.db.Exec(ctx, query, args...)
 	if err != nil {
-		return fmt.Errorf("%w: %v", model_order.ErrOrderInternal, err)
+		return err
 	}
 
 	rowsAffected := result.RowsAffected()
