@@ -1,4 +1,4 @@
-package config
+package config_kafka
 
 type KafkaConfig struct {
 	Brokers        []string `env:"brokers,required"`

@@ -1,8 +1,11 @@
 package platform_kafka_client
 
 import (
-	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
+	"errors"
+
 	"github.com/IBM/sarama"
+
+	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 )
 
 type KafkaClient struct {
@@ -10,7 +13,7 @@ type KafkaClient struct {
 	admin  sarama.ClusterAdmin
 }
 
-func NewKafkaClient(brokers []string) (*KafkaClient, error) {
+func NewKafkaClient(brokers []string) (KafkaClientInterface, error) {
 	cfg := sarama.NewConfig()
 
 	cfg.Version = platform_kafka.KafkaVersion
@@ -22,7 +25,10 @@ func NewKafkaClient(brokers []string) (*KafkaClient, error) {
 
 	admin, err := sarama.NewClusterAdmin(brokers, cfg)
 	if err != nil {
-		client.Close()
+		closeErr := client.Close()
+		if closeErr != nil {
+			return nil, errors.Join(err, closeErr)
+		}
 		return nil, err
 	}
 

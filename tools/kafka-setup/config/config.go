@@ -3,12 +3,14 @@ package config
 import (
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
+
+	config_kafka "github.com/CantDefeatAirmanx/space-engeneering/tools/kafka-setup/config/kafka"
+	config_logger "github.com/CantDefeatAirmanx/space-engeneering/tools/kafka-setup/config/logger"
 )
 
-var Config *config
-
-type config struct {
-	Kafka KafkaConfig `envPrefix:"kafka__"`
+type ConfigData struct {
+	Kafka  config_kafka.KafkaConfig   `envPrefix:"kafka__"`
+	Logger config_logger.LoggerConfig `envPrefix:"logger__"`
 }
 
 func LoadConfig(options ...LoadConfigOption) error {
@@ -18,7 +20,7 @@ func LoadConfig(options ...LoadConfigOption) error {
 	for _, opt := range options {
 		opt(&opts)
 	}
-	cfg := &config{}
+	cfg := &ConfigData{}
 
 	if err := godotenv.Load(opts.EnvPath); err != nil {
 		return err
@@ -28,6 +30,6 @@ func LoadConfig(options ...LoadConfigOption) error {
 		return err
 	}
 
-	Config = cfg
+	Config = NewConfig(*cfg)
 	return nil
 }

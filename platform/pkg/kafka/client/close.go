@@ -2,10 +2,16 @@ package platform_kafka_client
 
 func (kc *KafkaClient) Close() error {
 	if kc.admin != nil {
-		kc.admin.Close()
+		err := kc.admin.Close()
+		if err != nil {
+			return err
+		}
 	}
 	if kc.client != nil {
-		return kc.client.Close()
+		err := kc.client.Close()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

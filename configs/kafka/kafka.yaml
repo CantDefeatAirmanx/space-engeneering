@@ -1,6 +1,6 @@
 default-topic-config:
   partitions: 8
-  replication-factor: 1
+  replication-factor: 3
   min-insync-replicas: 2
   retention-ms: 604800000 # 7 days
   cleanup-policy: delete

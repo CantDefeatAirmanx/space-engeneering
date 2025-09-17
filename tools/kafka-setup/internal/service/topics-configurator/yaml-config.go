@@ -1,4 +1,4 @@
-package config
+package service_topics_configurator
 
 type KafkaConfigYaml struct {
 	DefaultTopicConfig DefaultTopicConfig `yaml:"default-topic-config"`
