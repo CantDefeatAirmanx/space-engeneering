@@ -9,6 +9,7 @@
 package payment_v1
 
 import (
+	v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -23,67 +24,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// PaymentMethod описывает метод оплаты
-type PaymentMethod int32
-
-const (
-	// PAYMENT_METHOD_UNKNOWN_UNSPECIFIED неизвестный метод оплаты
-	PaymentMethod_PAYMENT_METHOD_UNKNOWN_UNSPECIFIED PaymentMethod = 0
-	// PAYMENT_METHOD_CARD оплата картой
-	PaymentMethod_PAYMENT_METHOD_CARD PaymentMethod = 1
-	// PAYMENT_METHOD_SPB оплата через СПБ
-	PaymentMethod_PAYMENT_METHOD_SPB PaymentMethod = 2
-	// PAYMENT_METHOD_CREDIT_CARD оплата кредитной картой
-	PaymentMethod_PAYMENT_METHOD_CREDIT_CARD PaymentMethod = 3
-	// PAYMENT_METHOD_INVESTOR_MONEY оплата инвестиционными деньгами
-	PaymentMethod_PAYMENT_METHOD_INVESTOR_MONEY PaymentMethod = 4
-)
-
-// Enum value maps for PaymentMethod.
-var (
-	PaymentMethod_name = map[int32]string{
-		0: "PAYMENT_METHOD_UNKNOWN_UNSPECIFIED",
-		1: "PAYMENT_METHOD_CARD",
-		2: "PAYMENT_METHOD_SPB",
-		3: "PAYMENT_METHOD_CREDIT_CARD",
-		4: "PAYMENT_METHOD_INVESTOR_MONEY",
-	}
-	PaymentMethod_value = map[string]int32{
-		"PAYMENT_METHOD_UNKNOWN_UNSPECIFIED": 0,
-		"PAYMENT_METHOD_CARD":                1,
-		"PAYMENT_METHOD_SPB":                 2,
-		"PAYMENT_METHOD_CREDIT_CARD":         3,
-		"PAYMENT_METHOD_INVESTOR_MONEY":      4,
-	}
-)
-
-func (x PaymentMethod) Enum() *PaymentMethod {
-	p := new(PaymentMethod)
-	*p = x
-	return p
-}
-
-func (x PaymentMethod) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (PaymentMethod) Descriptor() protoreflect.EnumDescriptor {
-	return file_payment_v1_payment_proto_enumTypes[0].Descriptor()
-}
-
-func (PaymentMethod) Type() protoreflect.EnumType {
-	return &file_payment_v1_payment_proto_enumTypes[0]
-}
-
-func (x PaymentMethod) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use PaymentMethod.Descriptor instead.
-func (PaymentMethod) EnumDescriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{0}
-}
-
 // PayOrderRequest описывает запрос на оплату заказа
 type PayOrderRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -92,7 +32,7 @@ type PayOrderRequest struct {
 	// user_uuid идентификатор пользователя
 	UserUuid string `protobuf:"bytes,2,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
 	// payment_method метод оплаты
-	PaymentMethod PaymentMethod `protobuf:"varint,3,opt,name=payment_method,json=paymentMethod,proto3,enum=payment.v1.PaymentMethod" json:"payment_method,omitempty"`
+	PaymentMethod v1.PaymentMethod `protobuf:"varint,3,opt,name=payment_method,json=paymentMethod,proto3,enum=common.v1.PaymentMethod" json:"payment_method,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -141,11 +81,11 @@ func (x *PayOrderRequest) GetUserUuid() string {
 	return ""
 }
 
-func (x *PayOrderRequest) GetPaymentMethod() PaymentMethod {
+func (x *PayOrderRequest) GetPaymentMethod() v1.PaymentMethod {
 	if x != nil {
 		return x.PaymentMethod
 	}
-	return PaymentMethod_PAYMENT_METHOD_UNKNOWN_UNSPECIFIED
+	return v1.PaymentMethod(0)
 }
 
 // PayOrderResponse описывает ответ на запрос на оплату заказа
@@ -199,20 +139,14 @@ var File_payment_v1_payment_proto protoreflect.FileDescriptor
 const file_payment_v1_payment_proto_rawDesc = "" +
 	"\n" +
 	"\x18payment/v1/payment.proto\x12\n" +
-	"payment.v1\"\x8f\x01\n" +
+	"payment.v1\x1a\x1ecommon/v1/payment_method.proto\"\x8e\x01\n" +
 	"\x0fPayOrderRequest\x12\x1d\n" +
 	"\n" +
 	"order_uuid\x18\x01 \x01(\tR\torderUuid\x12\x1b\n" +
-	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12@\n" +
-	"\x0epayment_method\x18\x03 \x01(\x0e2\x19.payment.v1.PaymentMethodR\rpaymentMethod\"=\n" +
+	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12?\n" +
+	"\x0epayment_method\x18\x03 \x01(\x0e2\x18.common.v1.PaymentMethodR\rpaymentMethod\"=\n" +
 	"\x10PayOrderResponse\x12)\n" +
-	"\x10transaction_uuid\x18\x01 \x01(\tR\x0ftransactionUuid*\xab\x01\n" +
-	"\rPaymentMethod\x12&\n" +
-	"\"PAYMENT_METHOD_UNKNOWN_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x16\n" +
-	"\x12PAYMENT_METHOD_SPB\x10\x02\x12\x1e\n" +
-	"\x1aPAYMENT_METHOD_CREDIT_CARD\x10\x03\x12!\n" +
-	"\x1dPAYMENT_METHOD_INVESTOR_MONEY\x10\x042W\n" +
+	"\x10transaction_uuid\x18\x01 \x01(\tR\x0ftransactionUuid2W\n" +
 	"\x0ePaymentService\x12E\n" +
 	"\bPayOrder\x12\x1b.payment.v1.PayOrderRequest\x1a\x1c.payment.v1.PayOrderResponseBSZQgithub.com/CantDefeatAirmanx/space-engeneering/shared/proto/payment/v1;payment_v1b\x06proto3"
 
@@ -228,17 +162,16 @@ func file_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payment_v1_payment_proto_rawDescData
 }
 
-var file_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_payment_v1_payment_proto_goTypes = []any{
-	(PaymentMethod)(0),       // 0: payment.v1.PaymentMethod
-	(*PayOrderRequest)(nil),  // 1: payment.v1.PayOrderRequest
-	(*PayOrderResponse)(nil), // 2: payment.v1.PayOrderResponse
+	(*PayOrderRequest)(nil),  // 0: payment.v1.PayOrderRequest
+	(*PayOrderResponse)(nil), // 1: payment.v1.PayOrderResponse
+	(v1.PaymentMethod)(0),    // 2: common.v1.PaymentMethod
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
-	0, // 0: payment.v1.PayOrderRequest.payment_method:type_name -> payment.v1.PaymentMethod
-	1, // 1: payment.v1.PaymentService.PayOrder:input_type -> payment.v1.PayOrderRequest
-	2, // 2: payment.v1.PaymentService.PayOrder:output_type -> payment.v1.PayOrderResponse
+	2, // 0: payment.v1.PayOrderRequest.payment_method:type_name -> common.v1.PaymentMethod
+	0, // 1: payment.v1.PaymentService.PayOrder:input_type -> payment.v1.PayOrderRequest
+	1, // 2: payment.v1.PaymentService.PayOrder:output_type -> payment.v1.PayOrderResponse
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -256,14 +189,13 @@ func file_payment_v1_payment_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_v1_payment_proto_rawDesc), len(file_payment_v1_payment_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_payment_v1_payment_proto_goTypes,
 		DependencyIndexes: file_payment_v1_payment_proto_depIdxs,
-		EnumInfos:         file_payment_v1_payment_proto_enumTypes,
 		MessageInfos:      file_payment_v1_payment_proto_msgTypes,
 	}.Build()
 	File_payment_v1_payment_proto = out.File

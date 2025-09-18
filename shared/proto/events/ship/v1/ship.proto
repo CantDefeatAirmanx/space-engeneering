@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package events.ship.v1;
+
+import "common/v1/payment_method.proto";
+
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/events/ship/v1;ship_events_v1";
+
+// ShipAssembledEvent описывает событие сборки корабля
+message ShipAssembledEvent {
+    // event_uuid идентификатор события 
+    string event_uuid = 1;
+    // order_uuid идентификатор заказа
+    string order_uuid = 2;
+    // user_uuid идентификатор пользователя
+    string user_uuid = 3;
+    // payment_method метод оплаты
+    common.v1.PaymentMethod payment_method = 4;
+}

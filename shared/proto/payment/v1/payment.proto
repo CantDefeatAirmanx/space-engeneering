@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "common/v1/payment_method.proto";
+
 // Package payment.v1 содержит API для работы с оплатой заказа
 package payment.v1;
 
@@ -18,7 +20,7 @@ message PayOrderRequest {
     // user_uuid идентификатор пользователя
     string user_uuid = 2;
     // payment_method метод оплаты
-    PaymentMethod payment_method = 3;
+    common.v1.PaymentMethod payment_method = 3;
 }
 
 // PayOrderResponse описывает ответ на запрос на оплату заказа
@@ -27,16 +29,3 @@ message PayOrderResponse {
     string transaction_uuid = 1;
 }
 
-// PaymentMethod описывает метод оплаты
-enum PaymentMethod {
-    // PAYMENT_METHOD_UNKNOWN_UNSPECIFIED неизвестный метод оплаты
-    PAYMENT_METHOD_UNKNOWN_UNSPECIFIED = 0;
-    // PAYMENT_METHOD_CARD оплата картой
-    PAYMENT_METHOD_CARD = 1;
-    // PAYMENT_METHOD_SPB оплата через СПБ
-    PAYMENT_METHOD_SPB = 2;
-    // PAYMENT_METHOD_CREDIT_CARD оплата кредитной картой
-    PAYMENT_METHOD_CREDIT_CARD = 3;
-    // PAYMENT_METHOD_INVESTOR_MONEY оплата инвестиционными деньгами
-    PAYMENT_METHOD_INVESTOR_MONEY = 4;
-}

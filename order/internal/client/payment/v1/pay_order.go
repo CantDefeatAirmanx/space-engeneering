@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	common_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1"
 	payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/payment/v1"
 )
 
@@ -19,7 +20,7 @@ func (client *paymentV1GrpcClient) PayOrder(
 		&payment_v1.PayOrderRequest{
 			OrderUuid:     params.OrderUUID,
 			UserUuid:      params.UserUUID,
-			PaymentMethod: payment_v1.PaymentMethod(params.PaymentMethod),
+			PaymentMethod: common_v1.PaymentMethod(params.PaymentMethod),
 		},
 	)
 	if err != nil {
