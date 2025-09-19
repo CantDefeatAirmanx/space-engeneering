@@ -7,3 +7,4 @@ default-topic-config:
 
 topics:
   - name: order
+  - name: assembly
