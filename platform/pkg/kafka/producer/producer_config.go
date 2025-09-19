@@ -18,6 +18,7 @@ type ProducerConfig struct {
 	RetryMax         int
 	RequiredAcks     int16
 	IdempotentWrites bool
+	MaxOpenRequests  int
 }
 
 type CompressionType string
@@ -38,8 +39,10 @@ func NewProducerConfig(
 		FlushFrequency:   10 * time.Millisecond,
 		BatchSize:        1000,
 		RetryMax:         10,
-		RequiredAcks:     1,
+		RequiredAcks:     -1, // WaitForAll
 		IdempotentWrites: true,
+		MaxOpenRequests:  1,                     // Строгий порядок для идемпотентности
+		MaxMessageBytes:  int(10 * 1024 * 1024), // 10MB
 
 		asyncSuccessesCallbacks: make([]func(success platform_kafka.ProducerMessage), 0),
 		asyncErrorsCallbacks:    make([]func(msg platform_kafka.ProducerMessage, error error), 0),
@@ -93,5 +96,11 @@ func WithRequiredAcks(requiredAcks int16) ProducerConfigOption {
 func WithIdempotentWrites(idempotentWrites bool) ProducerConfigOption {
 	return func(opts *ProducerConfig) {
 		opts.IdempotentWrites = idempotentWrites
+	}
+}
+
+func WithMaxOpenRequests(maxOpenRequests int) ProducerConfigOption {
+	return func(opts *ProducerConfig) {
+		opts.MaxOpenRequests = maxOpenRequests
 	}
 }

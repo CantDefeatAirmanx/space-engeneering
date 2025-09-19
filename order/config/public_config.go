@@ -9,6 +9,7 @@ var (
 	_ PaymentClientConfigInterface   = (*PaymentClientConfigType)(nil)
 	_ PostgresConfigInterface        = (*PostgresConfigType)(nil)
 	_ LoggerConfigInterface          = (*LoggerConfigType)(nil)
+	_ KafkaConfigInterface           = (*KafkaConfigType)(nil)
 )
 
 var Config = &ConfigImpl{}
@@ -20,6 +21,7 @@ type ConfigImpl struct {
 	paymentClient   PaymentClientConfigInterface
 	postgres        PostgresConfigInterface
 	logger          LoggerConfigInterface
+	kafka           KafkaConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigImpl {
@@ -55,6 +57,11 @@ func NewConfig(configData ConfigData) *ConfigImpl {
 			level:   configData.LoggerConfig.Level,
 			encoder: configData.LoggerConfig.Encoder,
 		},
+
+		kafka: &KafkaConfigType{
+			brokers:    configData.KafkaConfig.Brokers,
+			orderTopic: configData.KafkaConfig.OrderTopic,
+		},
 	}
 }
 
@@ -80,6 +87,10 @@ func (c *ConfigImpl) PaymentClient() PaymentClientConfigInterface {
 
 func (c *ConfigImpl) Postgres() PostgresConfigInterface {
 	return c.postgres
+}
+
+func (c *ConfigImpl) Kafka() KafkaConfigInterface {
+	return c.kafka
 }
 
 type HttpServerConfigType struct {
@@ -157,6 +168,19 @@ type PaymentClientConfigType struct {
 
 func (p *PaymentClientConfigType) Url() string {
 	return p.url
+}
+
+type KafkaConfigType struct {
+	brokers    []string
+	orderTopic string
+}
+
+func (k *KafkaConfigType) Brokers() []string {
+	return k.brokers
+}
+
+func (k *KafkaConfigType) OrderTopic() string {
+	return k.orderTopic
 }
 
 type LoggerConfigType struct {

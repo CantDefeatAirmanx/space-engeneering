@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250915142822-185e38c0df3b // indirect
 	github.com/IBM/sarama v1.46.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
@@ -26,11 +27,10 @@ require (
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 replace github.com/CantDefeatAirmanx/space-engeneering/platform => ../platform

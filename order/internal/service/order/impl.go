@@ -11,12 +11,14 @@ type OrderServiceImpl struct {
 	orderRepository OrderRepository
 	inventoryClient client_inventory_v1.InventoryV1Client
 	paymentClient   client_payment_v1.PaymentV1Client
+	orderProducer   OrderProducer
 }
 
 type NewOrderServiceParams struct {
 	OrderRepository OrderRepository
 	InventoryClient client_inventory_v1.InventoryV1Client
 	PaymentClient   client_payment_v1.PaymentV1Client
+	OrderProducer   OrderProducer
 }
 
 func NewOrderService(params NewOrderServiceParams) *OrderServiceImpl {
@@ -24,5 +26,6 @@ func NewOrderService(params NewOrderServiceParams) *OrderServiceImpl {
 		orderRepository: params.OrderRepository,
 		inventoryClient: params.InventoryClient,
 		paymentClient:   params.PaymentClient,
+		orderProducer:   params.OrderProducer,
 	}
 }

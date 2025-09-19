@@ -32,6 +32,7 @@ func NewKafkaProducer(
 	saramaCfg := sarama.NewConfig()
 
 	saramaCfg.Version = platform_kafka.KafkaVersion
+	saramaCfg.Metadata.AllowAutoTopicCreation = false
 
 	saramaCfg.Producer.Compression = compressionTypes[cfg.CompressionType]
 
@@ -42,7 +43,13 @@ func NewKafkaProducer(
 	saramaCfg.Producer.Retry.Max = cfg.RetryMax
 	saramaCfg.Producer.RequiredAcks = sarama.RequiredAcks(cfg.RequiredAcks)
 	saramaCfg.Producer.Idempotent = cfg.IdempotentWrites
+
 	saramaCfg.Producer.Return.Successes = true
+	saramaCfg.Producer.Return.Errors = true
+
+	// Устанавливаем MaxOpenRequests
+	// Для идемпотентности рекомендуется 1 для строгого порядка
+	saramaCfg.Net.MaxOpenRequests = cfg.MaxOpenRequests
 
 	syncProducer, err := sarama.NewSyncProducer(
 		cfg.Brokers,
