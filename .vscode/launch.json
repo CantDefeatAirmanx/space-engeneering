@@ -29,6 +29,16 @@
             "envFile": "${workspaceFolder}/payment/.env"
         },
         {
+            "name": "Debug Assembly Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/assembly/cmd/service/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/assembly/.env"
+        },
+
+        {
             "name": "Debug Kafka Setup",
             "type": "go",
             "request": "launch",
@@ -36,6 +46,16 @@
             "program": "${workspaceFolder}/tools/kafka-setup/cmd/main.go",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/tools/kafka-setup/.env"
+        },
+
+        {
+            "name": "Debug Assembly Migrator",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/assembly/cmd/migrator/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/assembly/.env"
         }
     ],
     "compounds": [
@@ -44,7 +64,8 @@
             "configurations": [
                 "Debug Inventory Service",
                 "Debug Order Service",
-                "Debug Payment Service"
+                "Debug Payment Service",
+                "Debug Assembly Service"
             ],
             "stopAll": true,
             "presentation": {

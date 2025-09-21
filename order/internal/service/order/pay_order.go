@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	kafka_events_order "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/order/v1"
-	"github.com/google/uuid"
 )
 
 const (

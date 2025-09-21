@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gogo/protobuf/proto"
+	"github.com/google/uuid"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	kafka_events_order "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/order/v1"
-	"github.com/gogo/protobuf/proto"
-	"github.com/google/uuid"
 )
 
 func (o *OrderProducerImpl) ProduceOrderPaid(

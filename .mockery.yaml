@@ -15,16 +15,22 @@ packages:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository|Client).*"
+      include-interface-regex: ".*(Service|Repository|Client|Producer|Consumer).*"
   
   github.com/CantDefeatAirmanx/space-engeneering/inventory:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository|Client).*"
+      include-interface-regex: ".*(Service|Repository|Client|Producer|Consumer).*"
   
   github.com/CantDefeatAirmanx/space-engeneering/payment:
     config:
       all: false
       recursive: true
-      include-interface-regex: ".*(Service|Repository|Client).*"
+      include-interface-regex: ".*(Service|Repository|Client|Producer|Consumer).*"
+
+  github.com/CantDefeatAirmanx/space-engeneering/assembly:
+    config:
+      all: false
+      recursive: true
+      include-interface-regex: ".*(Service|Repository|Client|Producer|Consumer).*"

@@ -3,10 +3,13 @@ package config
 import (
 	"os"
 
-	config_kafka "github.com/CantDefeatAirmanx/space-engeneering/assembly/config/kafka"
-	config_logger "github.com/CantDefeatAirmanx/space-engeneering/assembly/config/logger"
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
+
+	config_kafka "github.com/CantDefeatAirmanx/space-engeneering/assembly/config/kafka"
+	config_logger "github.com/CantDefeatAirmanx/space-engeneering/assembly/config/logger"
+	config_postgres "github.com/CantDefeatAirmanx/space-engeneering/assembly/config/postgres"
+	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
 )
 
 var (
@@ -15,8 +18,10 @@ var (
 )
 
 type ConfigData struct {
-	LoggerConfig config_logger.LoggerConfigData `envPrefix:"logger__"`
-	KafkaConfig  config_kafka.KafkaConfigData   `envPrefix:"kafka__"`
+	LoggerConfig   config_logger.LoggerConfigData     `envPrefix:"logger__"`
+	KafkaConfig    config_kafka.KafkaConfigData       `envPrefix:"kafka__"`
+	PostgresConfig config_postgres.PostgresConfigData `envPrefix:"postgres__"`
+	GRPCConfig     config_grpc.GRPCConfigData         `envPrefix:"grpc__"`
 }
 
 func LoadConfig(opts ...LoadConfigOption) error {

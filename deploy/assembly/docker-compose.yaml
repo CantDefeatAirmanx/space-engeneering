@@ -1,9 +1,9 @@
 services:
     postgres:
         image: postgres:15
-        container_name: order-postgres
+        container_name: assembly-postgres
         ports:
-            - 5432:5432
+            - 5433:5432
         env_file:
             - ./.env
         environment:
@@ -11,9 +11,9 @@ services:
             - POSTGRES_PASSWORD=${postgres__password}
             - POSTGRES_DB=${postgres__dbName}
         volumes:
-            - order-postgres-data:/var/lib/postgresql/data
+            - assembly-postgres-data:/var/lib/postgresql/data
         healthcheck:
-            test: ['CMD-SHELL', 'pg_isready -U $$postgres_user -d $$postgres_db']
+            test: ['CMD-SHELL', 'pg_isready -U ${postgres__user} -d ${postgres__dbName}']
             interval: 10s
             timeout: 5s
             retries: 5
@@ -24,4 +24,4 @@ networks:
     microservices-net:
         external: true
 volumes:
-    order-postgres-data:
+    assembly-postgres-data:

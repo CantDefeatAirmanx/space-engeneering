@@ -1,0 +1,11 @@
+-- +goose Up
+CREATE TABLE IF NOT EXISTS assemblies (
+    assembly_uuid UUID PRIMARY KEY,
+    order_uuid UUID NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- +goose Down
+DROP TABLE IF EXISTS assemblies;

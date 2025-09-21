@@ -20,6 +20,8 @@ func (s *TestingSuite) TestPayOrderSuccess() {
 		Status:    model_order.OrderStatusPendingPayment,
 	}
 
+	s.orderProducerMock.EXPECT().ProduceOrderPaid(s.ctx, mock.Anything).Return(nil)
+
 	s.repoMock.EXPECT().GetOrder(s.ctx, orderUUID).Return(
 		&modelOrder,
 		nil,

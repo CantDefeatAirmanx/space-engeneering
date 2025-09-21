@@ -6,6 +6,8 @@ type ConfigInterface interface {
 	Kafka() KafkaConfigInterface
 	Logger() LoggerConfigInterface
 	IsDev() bool
+	Postgres() PostgresConfigInterface
+	GRPC() GRPCConfigInterface
 }
 
 type KafkaConfigInterface interface {
@@ -17,4 +19,18 @@ type KafkaConfigInterface interface {
 type LoggerConfigInterface interface {
 	Level() logger.Level
 	Encoder() logger.EncoderType
+}
+
+type PostgresConfigInterface interface {
+	Port() int
+	User() string
+	Password() string
+	DbName() string
+	MigrationsDir() string
+	Uri() string
+}
+
+type GRPCConfigInterface interface {
+	Host() string
+	Port() int
 }

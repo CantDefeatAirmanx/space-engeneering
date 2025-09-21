@@ -83,6 +83,11 @@ tasks:
     cmds:
       - 'go build -o {{.BUILD_DIR}}/payment ./payment/cmd/main.go'
 
+  build:assembly:
+    desc: "Сборка assembly"
+    cmds:
+      - 'go build -o {{.BUILD_DIR}}/assembly ./assembly/cmd/service/main.go'
+
   run-order:
     desc: "Запуск order"
     cmds:
@@ -116,6 +121,27 @@ tasks:
     cmds:
       - 'GO_ENV=dev {{.BUILD_DIR}}/payment'
 
+  run-assembly:
+    desc: "Запуск assembly"
+    cmds:
+      - 'GO_ENV=production {{.BUILD_DIR}}/assembly'
+
+  run-assembly:dev:
+    deps: [ build:assembly ]
+    desc: "Запуск assembly в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/assembly'
+
+  run-assemlty:migrator:
+    desc: "Запуск assembly:migrator"
+    cmds:
+      - 'GO_ENV=production go run {{.BUILD_DIR}}/assembly/cmd/migrator/main.go'
+
+  run-assemlty:migrator:dev:
+    desc: "Запуск assembly:migrator в режиме dev"
+    cmds:
+      - 'GO_ENV=dev go run {{.BUILD_DIR}}/assembly/cmd/migrator/main.go'
+
   run-kafka-setup:
     deps: [ up-all ]
     desc: "Запуск утилиты по настройке kafka"
@@ -126,6 +152,7 @@ tasks:
       - task up-core
       - task up-order
       - task up-inventory
+      - task up-assembly
 
   down-all:
     desc: "Остановка всех зависимостей docker-compose, core должен быть последним"
@@ -154,6 +181,12 @@ tasks:
       - echo "🚀 Запускаем зависимости inventory..."
       - cp -r {{.ROOT_DIR}}/inventory/.env {{.ROOT_DIR}}/deploy/inventory
       - 'docker compose -f deploy/inventory/docker-compose.yaml up --build --detach'
+  up-assembly:
+    desc: "Запуск зависимостей assembly docker-compose"
+    cmds:
+      - echo "🚀 Запускаем зависимости assembly..."
+      - cp -r {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly
+      - 'docker compose -f deploy/assembly/docker-compose.yaml up --build --detach'
 
   down-core:
     desc: "Остановка общих зависимостей docker-compose"
@@ -174,6 +207,13 @@ tasks:
       - echo "🛑 Останавливаем зависимости inventory..."
       - cp {{.ROOT_DIR}}/inventory/.env {{.ROOT_DIR}}/deploy/inventory/.env
       - 'docker compose -f deploy/inventory/docker-compose.yaml down'
+
+  down-assembly:
+    desc: "Остановка зависимостей assembly docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем зависимости assembly..."
+      - cp {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly/.env
+      - 'docker compose -f deploy/assembly/docker-compose.yaml down'
 
   run-checks:
     desc: "Запуск всех проверок"
