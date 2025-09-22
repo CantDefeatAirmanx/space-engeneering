@@ -1,1 +1,0 @@
-package platform_kafka_consumer

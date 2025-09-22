@@ -9,8 +9,7 @@ import (
 type MessageHandler func(ctx context.Context, message Message) error
 
 type Consumer interface {
-	Subscribe(topics []string) error
-	Consume(ctx context.Context, handler MessageHandler) error
+	Consume(ctx context.Context, topics []string, handler MessageHandler) error
 	interfaces.WithClose
 }
 

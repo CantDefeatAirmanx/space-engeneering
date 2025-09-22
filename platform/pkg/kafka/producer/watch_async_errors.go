@@ -1,6 +1,10 @@
 package platform_kafka_producer
 
-import "context"
+import (
+	"context"
+
+	platform_kafka_converter "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/converter"
+)
 
 func (p *KafkaProducerImpl) watchAsyncErrors(ctx context.Context) {
 	for {
@@ -12,7 +16,7 @@ func (p *KafkaProducerImpl) watchAsyncErrors(ctx context.Context) {
 				return
 			}
 			for _, callback := range p.asyncErrorsCallbacks {
-				message, err := convertSaramaMessageToProducerMessage(
+				message, err := platform_kafka_converter.SaramaMessageToProducerMessage(
 					err.Msg,
 				)
 				if err != nil {
