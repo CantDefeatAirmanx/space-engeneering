@@ -6,7 +6,8 @@ type ShipAssembly struct {
 	AssemblyUUID string
 	OrderUUID    string
 
-	Status ShipAssemblyStatus
+	Status    ShipAssemblyStatus
+	StartTime *time.Time
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -18,7 +19,8 @@ type SelectShipAssemblyParams struct {
 }
 
 type UpdateShipAssemblyFields struct {
-	Status ShipAssemblyStatus
+	Status    ShipAssemblyStatus
+	StartTime *time.Time
 }
 
 type ShipAssemblyStatus string

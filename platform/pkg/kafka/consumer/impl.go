@@ -3,15 +3,17 @@ package platform_kafka_consumer
 import (
 	"time"
 
-	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	"github.com/IBM/sarama"
+
+	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 )
 
 var _ platform_kafka.Consumer = (*KafkaConsumerImpl)(nil)
 
 type KafkaConsumerImpl struct {
-	consumerGroup      sarama.ConsumerGroup
-	consumeErrHandlers []func(err error)
+	consumerGroup             sarama.ConsumerGroup
+	kafkaErrorsHandlers       []func(err error)
+	processMessageErrHandlers []func(err error)
 }
 
 func NewKafkaConsumer(
@@ -75,8 +77,9 @@ func NewKafkaConsumer(
 	}
 
 	return &KafkaConsumerImpl{
-		consumerGroup:      consumerGroup,
-		consumeErrHandlers: cfg.ConsumeErrHandlers,
+		consumerGroup:             consumerGroup,
+		kafkaErrorsHandlers:       cfg.KafkaErrorsHandlers,
+		processMessageErrHandlers: cfg.ProcessMessageErrHandlers,
 	}, nil
 }
 

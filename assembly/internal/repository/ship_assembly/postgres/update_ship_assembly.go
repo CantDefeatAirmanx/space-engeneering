@@ -16,9 +16,21 @@ func (s *ShipAssemblyRepositoryPostgres) UpdateShipAssembly(
 ) error {
 	updatedAt := time.Now()
 
-	query, args, err := squirrel.
-		Update(tableShipAssembly).
-		Set(columnStatus, shipAssembly.Status).
+	repoUpdate, err := AssemblyUpdateFieldsToRepo(&shipAssembly)
+	if err != nil {
+		return err
+	}
+
+	builder := squirrel.Update(tableShipAssembly)
+	if repoUpdate.StartTime != nil {
+		builder = builder.Set(columnStartTime, repoUpdate.StartTime)
+	}
+
+	if repoUpdate.Status != "" {
+		builder = builder.Set(columnStatus, repoUpdate.Status)
+	}
+
+	query, args, err := builder.
 		Set(columnUpdatedAt, updatedAt).
 		Where(getSquirelShipAssemblySelectParams(selectParams)).
 		PlaceholderFormat(squirrel.Dollar).

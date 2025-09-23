@@ -29,8 +29,6 @@ type ShipAssemblyService interface {
 	) (*model_ship_assembly.ShipAssembly, error)
 
 	interfaces.WithClose
-
-	watchOrderPaidEvent(ctx context.Context)
 }
 
 type CreateShipAssemblyParams struct {

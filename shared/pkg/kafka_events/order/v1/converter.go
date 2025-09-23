@@ -3,7 +3,7 @@ package kafka_events_order
 import (
 	common_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1"
 	order_events_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/order/v1"
-	"github.com/gogo/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 var paymentMethodsToModel = map[common_v1.PaymentMethod]PaymentMethod{

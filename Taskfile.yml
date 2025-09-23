@@ -132,19 +132,21 @@ tasks:
     cmds:
       - 'GO_ENV=dev {{.BUILD_DIR}}/assembly'
 
-  run-assemlty:migrator:
+  run-assembly:migrator:
     desc: "Запуск assembly:migrator"
     cmds:
-      - 'GO_ENV=production go run {{.BUILD_DIR}}/assembly/cmd/migrator/main.go'
+      - 'GO_ENV=production go run {{.ROOT_DIR}}/assembly/cmd/migrator/main.go'
 
-  run-assemlty:migrator:dev:
+  run-assembly:migrator:dev:
     desc: "Запуск assembly:migrator в режиме dev"
     cmds:
-      - 'GO_ENV=dev go run {{.BUILD_DIR}}/assembly/cmd/migrator/main.go'
+      - 'GO_ENV=dev go run {{.ROOT_DIR}}/assembly/cmd/migrator/main.go'
 
   run-kafka-setup:
     deps: [ up-all ]
     desc: "Запуск утилиты по настройке kafka"
+    cmds:
+      - 'GO_ENV=dev go run {{.ROOT_DIR}}/tools/kafka-setup/cmd/main.go'
 
   up-all: 
     desc: "Запуск всех зависимостей docker-compose"

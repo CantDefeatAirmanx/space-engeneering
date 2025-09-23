@@ -13,6 +13,11 @@ type ShipAssembly struct {
 	UpdatedAt pgtype.Timestamp `db:"updated_at"`
 }
 
+type ShipAssemblyUpdateFields struct {
+	Status    ShipAssemblyStatus `db:"status"`
+	StartTime *pgtype.Timestamp  `db:"assembly_start_time"`
+}
+
 type ShipAssemblyStatus string
 
 const (

@@ -70,7 +70,6 @@ func (s *OrderServiceImpl) PayOrder(ctx context.Context, params PayOrderParams) 
 		UserUUID:      order.UserUUID,
 		PaymentMethod: kafka_events_order.PaymentMethod(params.PaymentMethod),
 	}
-
 	if err = s.orderProducer.ProduceOrderPaid(ctx, paidEvent); err != nil {
 		return nil, err
 	}

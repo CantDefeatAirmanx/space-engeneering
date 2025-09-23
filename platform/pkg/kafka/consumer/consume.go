@@ -12,29 +12,40 @@ func (k *KafkaConsumerImpl) Consume(
 	topics []string,
 	handler platform_kafka.MessageHandler,
 ) error {
-	groupHandler := NewGroupHandler(topics, handler)
+	handlerErrCh := make(chan error)
+	groupHandler := NewGroupHandler(topics, handler, handlerErrCh)
 
 	for {
-		errCh := consumeWorker(func() error {
-			return k.consumerGroup.Consume(ctx, topics, groupHandler)
-		})
+		kafkaErrCh := consumeWorker(
+			func(handlerErrCh chan error) error {
+				return k.consumerGroup.Consume(ctx, topics, groupHandler)
+			},
+			handlerErrCh,
+		)
 
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case err := <-errCh:
-			for _, handler := range k.consumeErrHandlers {
-				handler(platform_kafka_converter.ConvertSaramaError(err))
+		case kafkaErr := <-kafkaErrCh:
+			for _, errHandler := range k.kafkaErrorsHandlers {
+				errHandler(platform_kafka_converter.ConvertSaramaError(kafkaErr))
+			}
+		case handlerErr := <-handlerErrCh:
+			for _, errHandler := range k.processMessageErrHandlers {
+				errHandler(handlerErr)
 			}
 		}
 	}
 }
 
-func consumeWorker(action func() error) <-chan error {
+func consumeWorker(
+	action func(handlerErrCh chan error) error,
+	handlerErrCh chan error,
+) <-chan error {
 	errCh := make(chan error)
 
 	go func() {
-		err := action()
+		err := action(handlerErrCh)
 		if err != nil {
 			errCh <- err
 		}

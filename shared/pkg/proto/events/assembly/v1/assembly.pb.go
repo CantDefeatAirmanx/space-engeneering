@@ -7,7 +7,6 @@
 package assembly_events_v1
 
 import (
-	v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,24 +21,163 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ShipAssemblyEventType тип события сборки корабля
+type ShipAssemblyEventType int32
+
+const (
+	// SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED неизвестный тип события
+	ShipAssemblyEventType_SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED ShipAssemblyEventType = 0
+	// SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED тип события сборки корабля
+	ShipAssemblyEventType_SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED ShipAssemblyEventType = 1
+)
+
+// Enum value maps for ShipAssemblyEventType.
+var (
+	ShipAssemblyEventType_name = map[int32]string{
+		0: "SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED",
+		1: "SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED",
+	}
+	ShipAssemblyEventType_value = map[string]int32{
+		"SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED": 0,
+		"SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED":   1,
+	}
+)
+
+func (x ShipAssemblyEventType) Enum() *ShipAssemblyEventType {
+	p := new(ShipAssemblyEventType)
+	*p = x
+	return p
+}
+
+func (x ShipAssemblyEventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ShipAssemblyEventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_events_assembly_v1_assembly_proto_enumTypes[0].Descriptor()
+}
+
+func (ShipAssemblyEventType) Type() protoreflect.EnumType {
+	return &file_events_assembly_v1_assembly_proto_enumTypes[0]
+}
+
+func (x ShipAssemblyEventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ShipAssemblyEventType.Descriptor instead.
+func (ShipAssemblyEventType) EnumDescriptor() ([]byte, []int) {
+	return file_events_assembly_v1_assembly_proto_rawDescGZIP(), []int{0}
+}
+
+// ShipAssemblyEventEnvelope описывает обертку для события сборки корабля
+type ShipAssemblyEventEnvelope struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// event_type тип события
+	EventType ShipAssemblyEventType `protobuf:"varint,1,opt,name=event_type,json=eventType,proto3,enum=events.assembly.v1.ShipAssemblyEventType" json:"event_type,omitempty"`
+	// event_uuid идентификатор события
+	EventUuid string `protobuf:"bytes,2,opt,name=event_uuid,json=eventUuid,proto3" json:"event_uuid,omitempty"`
+	// event событие
+	//
+	// Types that are valid to be assigned to Event:
+	//
+	//	*ShipAssemblyEventEnvelope_ShipAssembled
+	Event         isShipAssemblyEventEnvelope_Event `protobuf_oneof:"event"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ShipAssemblyEventEnvelope) Reset() {
+	*x = ShipAssemblyEventEnvelope{}
+	mi := &file_events_assembly_v1_assembly_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShipAssemblyEventEnvelope) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShipAssemblyEventEnvelope) ProtoMessage() {}
+
+func (x *ShipAssemblyEventEnvelope) ProtoReflect() protoreflect.Message {
+	mi := &file_events_assembly_v1_assembly_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ShipAssemblyEventEnvelope.ProtoReflect.Descriptor instead.
+func (*ShipAssemblyEventEnvelope) Descriptor() ([]byte, []int) {
+	return file_events_assembly_v1_assembly_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ShipAssemblyEventEnvelope) GetEventType() ShipAssemblyEventType {
+	if x != nil {
+		return x.EventType
+	}
+	return ShipAssemblyEventType_SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED
+}
+
+func (x *ShipAssemblyEventEnvelope) GetEventUuid() string {
+	if x != nil {
+		return x.EventUuid
+	}
+	return ""
+}
+
+func (x *ShipAssemblyEventEnvelope) GetEvent() isShipAssemblyEventEnvelope_Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+func (x *ShipAssemblyEventEnvelope) GetShipAssembled() *ShipAssembledEvent {
+	if x != nil {
+		if x, ok := x.Event.(*ShipAssemblyEventEnvelope_ShipAssembled); ok {
+			return x.ShipAssembled
+		}
+	}
+	return nil
+}
+
+type isShipAssemblyEventEnvelope_Event interface {
+	isShipAssemblyEventEnvelope_Event()
+}
+
+type ShipAssemblyEventEnvelope_ShipAssembled struct {
+	// ShipAssembledEvent описывает событие сборки корабля
+	ShipAssembled *ShipAssembledEvent `protobuf:"bytes,10,opt,name=ship_assembled,json=shipAssembled,proto3,oneof"`
+}
+
+func (*ShipAssemblyEventEnvelope_ShipAssembled) isShipAssemblyEventEnvelope_Event() {}
+
 // ShipAssembledEvent описывает событие сборки корабля
 type ShipAssembledEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// event_uuid идентификатор события
 	EventUuid string `protobuf:"bytes,1,opt,name=event_uuid,json=eventUuid,proto3" json:"event_uuid,omitempty"`
+	// assembly_uuid идентификатор сборки
+	AssemblyUuid string `protobuf:"bytes,2,opt,name=assembly_uuid,json=assemblyUuid,proto3" json:"assembly_uuid,omitempty"`
 	// order_uuid идентификатор заказа
-	OrderUuid string `protobuf:"bytes,2,opt,name=order_uuid,json=orderUuid,proto3" json:"order_uuid,omitempty"`
+	OrderUuid string `protobuf:"bytes,3,opt,name=order_uuid,json=orderUuid,proto3" json:"order_uuid,omitempty"`
 	// user_uuid идентификатор пользователя
-	UserUuid string `protobuf:"bytes,3,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
-	// payment_method метод оплаты
-	PaymentMethod v1.PaymentMethod `protobuf:"varint,4,opt,name=payment_method,json=paymentMethod,proto3,enum=common.v1.PaymentMethod" json:"payment_method,omitempty"`
+	UserUuid string `protobuf:"bytes,4,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
+	// build_time время сборки
+	BuildTimeSec  int64 `protobuf:"varint,5,opt,name=build_time_sec,json=buildTimeSec,proto3" json:"build_time_sec,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ShipAssembledEvent) Reset() {
 	*x = ShipAssembledEvent{}
-	mi := &file_events_assembly_v1_assembly_proto_msgTypes[0]
+	mi := &file_events_assembly_v1_assembly_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -51,7 +189,7 @@ func (x *ShipAssembledEvent) String() string {
 func (*ShipAssembledEvent) ProtoMessage() {}
 
 func (x *ShipAssembledEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_events_assembly_v1_assembly_proto_msgTypes[0]
+	mi := &file_events_assembly_v1_assembly_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -64,12 +202,19 @@ func (x *ShipAssembledEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ShipAssembledEvent.ProtoReflect.Descriptor instead.
 func (*ShipAssembledEvent) Descriptor() ([]byte, []int) {
-	return file_events_assembly_v1_assembly_proto_rawDescGZIP(), []int{0}
+	return file_events_assembly_v1_assembly_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ShipAssembledEvent) GetEventUuid() string {
 	if x != nil {
 		return x.EventUuid
+	}
+	return ""
+}
+
+func (x *ShipAssembledEvent) GetAssemblyUuid() string {
+	if x != nil {
+		return x.AssemblyUuid
 	}
 	return ""
 }
@@ -88,25 +233,37 @@ func (x *ShipAssembledEvent) GetUserUuid() string {
 	return ""
 }
 
-func (x *ShipAssembledEvent) GetPaymentMethod() v1.PaymentMethod {
+func (x *ShipAssembledEvent) GetBuildTimeSec() int64 {
 	if x != nil {
-		return x.PaymentMethod
+		return x.BuildTimeSec
 	}
-	return v1.PaymentMethod(0)
+	return 0
 }
 
 var File_events_assembly_v1_assembly_proto protoreflect.FileDescriptor
 
 const file_events_assembly_v1_assembly_proto_rawDesc = "" +
 	"\n" +
-	"!events/assembly/v1/assembly.proto\x12\x12events.assembly.v1\x1a\x1ecommon/v1/payment_method.proto\"\xb0\x01\n" +
+	"!events/assembly/v1/assembly.proto\x12\x12events.assembly.v1\"\xde\x01\n" +
+	"\x19ShipAssemblyEventEnvelope\x12H\n" +
+	"\n" +
+	"event_type\x18\x01 \x01(\x0e2).events.assembly.v1.ShipAssemblyEventTypeR\teventType\x12\x1d\n" +
+	"\n" +
+	"event_uuid\x18\x02 \x01(\tR\teventUuid\x12O\n" +
+	"\x0eship_assembled\x18\n" +
+	" \x01(\v2&.events.assembly.v1.ShipAssembledEventH\x00R\rshipAssembledB\a\n" +
+	"\x05event\"\xba\x01\n" +
 	"\x12ShipAssembledEvent\x12\x1d\n" +
 	"\n" +
-	"event_uuid\x18\x01 \x01(\tR\teventUuid\x12\x1d\n" +
+	"event_uuid\x18\x01 \x01(\tR\teventUuid\x12#\n" +
+	"\rassembly_uuid\x18\x02 \x01(\tR\fassemblyUuid\x12\x1d\n" +
 	"\n" +
-	"order_uuid\x18\x02 \x01(\tR\torderUuid\x12\x1b\n" +
-	"\tuser_uuid\x18\x03 \x01(\tR\buserUuid\x12?\n" +
-	"\x0epayment_method\x18\x04 \x01(\x0e2\x18.common.v1.PaymentMethodR\rpaymentMethodBcZagithub.com/CantDefeatAirmanx/space-engeneering/shared/proto/events/assembly/v1;assembly_events_v1b\x06proto3"
+	"order_uuid\x18\x03 \x01(\tR\torderUuid\x12\x1b\n" +
+	"\tuser_uuid\x18\x04 \x01(\tR\buserUuid\x12$\n" +
+	"\x0ebuild_time_sec\x18\x05 \x01(\x03R\fbuildTimeSec*i\n" +
+	"\x15ShipAssemblyEventType\x12(\n" +
+	"$SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED\x10\x00\x12&\n" +
+	"\"SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED\x10\x01BgZegithub.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/assembly/v1;assembly_events_v1b\x06proto3"
 
 var (
 	file_events_assembly_v1_assembly_proto_rawDescOnce sync.Once
@@ -120,18 +277,21 @@ func file_events_assembly_v1_assembly_proto_rawDescGZIP() []byte {
 	return file_events_assembly_v1_assembly_proto_rawDescData
 }
 
-var file_events_assembly_v1_assembly_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_events_assembly_v1_assembly_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_events_assembly_v1_assembly_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_events_assembly_v1_assembly_proto_goTypes = []any{
-	(*ShipAssembledEvent)(nil), // 0: events.assembly.v1.ShipAssembledEvent
-	(v1.PaymentMethod)(0),      // 1: common.v1.PaymentMethod
+	(ShipAssemblyEventType)(0),        // 0: events.assembly.v1.ShipAssemblyEventType
+	(*ShipAssemblyEventEnvelope)(nil), // 1: events.assembly.v1.ShipAssemblyEventEnvelope
+	(*ShipAssembledEvent)(nil),        // 2: events.assembly.v1.ShipAssembledEvent
 }
 var file_events_assembly_v1_assembly_proto_depIdxs = []int32{
-	1, // 0: events.assembly.v1.ShipAssembledEvent.payment_method:type_name -> common.v1.PaymentMethod
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: events.assembly.v1.ShipAssemblyEventEnvelope.event_type:type_name -> events.assembly.v1.ShipAssemblyEventType
+	2, // 1: events.assembly.v1.ShipAssemblyEventEnvelope.ship_assembled:type_name -> events.assembly.v1.ShipAssembledEvent
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_events_assembly_v1_assembly_proto_init() }
@@ -139,18 +299,22 @@ func file_events_assembly_v1_assembly_proto_init() {
 	if File_events_assembly_v1_assembly_proto != nil {
 		return
 	}
+	file_events_assembly_v1_assembly_proto_msgTypes[0].OneofWrappers = []any{
+		(*ShipAssemblyEventEnvelope_ShipAssembled)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_events_assembly_v1_assembly_proto_rawDesc), len(file_events_assembly_v1_assembly_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_events_assembly_v1_assembly_proto_goTypes,
 		DependencyIndexes: file_events_assembly_v1_assembly_proto_depIdxs,
+		EnumInfos:         file_events_assembly_v1_assembly_proto_enumTypes,
 		MessageInfos:      file_events_assembly_v1_assembly_proto_msgTypes,
 	}.Build()
 	File_events_assembly_v1_assembly_proto = out.File

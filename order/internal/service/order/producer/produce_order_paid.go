@@ -4,24 +4,33 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	kafka_events_order "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/order/v1"
+	order_events_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/order/v1"
 )
 
 func (o *OrderProducerImpl) ProduceOrderPaid(
 	ctx context.Context,
 	order kafka_events_order.OrderPaidEvent,
-) error {
+) (returnErr error) {
 	eventUUID := uuid.Must(uuid.NewV7()).String()
-	protoPayload := kafka_events_order.ConvertOrderPaidModelToProto(
+	orderPaidProto := kafka_events_order.ConvertOrderPaidModelToProto(
 		&order,
 	)
-	protoBytes, err := proto.Marshal(&protoPayload)
+	protoOrderPaidEnvelope := order_events_v1.OrderEventEnvelope{
+		EventType: order_events_v1.OrderEventType_ORDER_EVENT_TYPE_PAID,
+		EventUuid: eventUUID,
+		Event: &order_events_v1.OrderEventEnvelope_OrderPaid{
+			OrderPaid: &orderPaidProto,
+		},
+	}
+
+	protoBytes, err := proto.Marshal(&protoOrderPaidEnvelope)
 	if err != nil {
 		return fmt.Errorf("%w: %s", model_order.ErrOrderProducer, err.Error())
 	}

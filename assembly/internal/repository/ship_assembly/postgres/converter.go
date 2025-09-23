@@ -49,3 +49,23 @@ func AssemblyToRepo(model *model_ship_assembly.ShipAssembly) (*ShipAssembly, err
 
 	return res, nil
 }
+
+func AssemblyUpdateFieldsToRepo(
+	model *model_ship_assembly.UpdateShipAssemblyFields,
+) (*ShipAssemblyUpdateFields, error) {
+	res := ShipAssemblyUpdateFields{}
+
+	if model.StartTime != nil {
+		var startTime pgtype.Timestamp
+		if err := startTime.Scan(*model.StartTime); err != nil {
+			return nil, err
+		}
+		res.StartTime = &startTime
+	}
+
+	if model.Status != "" {
+		res.Status = ShipAssemblyStatus(model.Status)
+	}
+
+	return &res, nil
+}

@@ -2,6 +2,7 @@ package service_ship_assembly
 
 import (
 	"context"
+	"time"
 
 	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
 )
@@ -10,6 +11,7 @@ func (s *ShipAssemblyServiceImpl) AssemblyStarted(
 	ctx context.Context,
 	params AssemblyStartedParams,
 ) (*AssemblyStartedReturn, error) {
+	now := time.Now()
 	err := s.repository.UpdateShipAssembly(
 		ctx,
 
@@ -19,7 +21,8 @@ func (s *ShipAssemblyServiceImpl) AssemblyStarted(
 		},
 
 		model_ship_assembly.UpdateShipAssemblyFields{
-			Status: model_ship_assembly.ShipAssemblyStatusPending,
+			Status:    model_ship_assembly.ShipAssemblyStatusPending,
+			StartTime: &now,
 		},
 	)
 	if err != nil {

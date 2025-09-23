@@ -3,8 +3,9 @@ package platform_kafka_converter
 import (
 	"errors"
 
-	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	"github.com/IBM/sarama"
+
+	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 )
 
 func SaramaMessageToPlatformMessage(saramaMessage *sarama.ConsumerMessage) platform_kafka.Message {
@@ -65,8 +66,13 @@ func SaramaMessageToProducerMessage(
 	return &mess, nil
 }
 
+//nolint:cyclop
 func ConvertSaramaError(err error) platform_kafka.KafkaError {
 	switch {
+	// Consumer message handler errors
+	case errors.Is(err, platform_kafka.ErrConsumerMessageHandler): // Ошибка обработчика сообщений
+		return err
+
 	// Network errors
 	case errors.Is(err, sarama.ErrOutOfBrokers): // Все брокеры недоступны
 	case errors.Is(err, sarama.ErrNotConnected): // Соединение разорвано
@@ -130,7 +136,6 @@ func ConvertSaramaError(err error) platform_kafka.KafkaError {
 
 	// Encode/decode errors
 	case errors.Is(err, sarama.PacketDecodingError{}): // Ошибка кодирования пакета
-	case errors.Is(err, sarama.PacketDecodingError{}): // Ошибка декодирования пакета
 		return errors.Join(platform_kafka.ErrEncodeDecode, err)
 	}
 

@@ -12,6 +12,9 @@ import (
 	repository_ship_assembly_postgres "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly/postgres"
 	service_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
+	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
+	platform_kafka_consumer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/consumer"
+	platform_kafka_producer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/producer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	assembly_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/assembly/v1"
 )
@@ -22,6 +25,8 @@ type DiContainer struct {
 	assemblyApi            assembly_v1.AssemblyServiceServer
 	shipAssemblyService    service_ship_assembly.ShipAssemblyService
 	shipAssemblyRepository repository_ship_assembly.ShipAssemblyRepository
+	consumer               platform_kafka.Consumer
+	producer               platform_kafka.Producer
 	postgres               *pgxpool.Pool
 }
 
@@ -55,6 +60,8 @@ func (d *DiContainer) GetShipAssemblyService(
 	service := service_ship_assembly.NewShipAssemblyService(
 		ctx,
 		d.GetShipAssemblyRepository(ctx),
+		d.GetConsumer(ctx),
+		d.GetProducer(ctx),
 	)
 	d.shipAssemblyService = service
 
@@ -97,4 +104,44 @@ func (d *DiContainer) getPostgres(
 	})
 
 	return d.postgres
+}
+
+func (d *DiContainer) GetProducer(
+	ctx context.Context,
+) platform_kafka.Producer {
+	if d.producer != nil {
+		return d.producer
+	}
+
+	producer, err := platform_kafka_producer.NewKafkaProducer(
+		ctx,
+		config.Config.Kafka().Brokers(),
+	)
+	if err != nil {
+		logger.Logger().Error("Failed to create kafka producer", zap.Error(err))
+		panic(err)
+	}
+	d.producer = producer
+
+	return producer
+}
+
+func (d *DiContainer) GetConsumer(
+	ctx context.Context,
+) platform_kafka.Consumer {
+	if d.consumer != nil {
+		return d.consumer
+	}
+
+	consumer, err := platform_kafka_consumer.NewKafkaConsumer(
+		config.Config.Kafka().Brokers(),
+		"Assembly Consumer",
+	)
+	if err != nil {
+		logger.Logger().Error("Failed to create kafka consumer", zap.Error(err))
+		panic(err)
+	}
+	d.consumer = consumer
+
+	return consumer
 }

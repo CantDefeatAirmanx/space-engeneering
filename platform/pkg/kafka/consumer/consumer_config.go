@@ -5,7 +5,8 @@ import (
 )
 
 type ConsumerConfig struct {
-	ConsumeErrHandlers []func(err error)
+	KafkaErrorsHandlers       []func(err error)
+	ProcessMessageErrHandlers []func(err error)
 
 	Brokers []string
 	GroupID string
@@ -53,7 +54,8 @@ func NewConsumerConfig(
 	opts ...ConsumerConfigOption,
 ) ConsumerConfig {
 	cfg := ConsumerConfig{
-		ConsumeErrHandlers: make([]func(err error), 0),
+		KafkaErrorsHandlers:       make([]func(err error), 0),
+		ProcessMessageErrHandlers: make([]func(err error), 0),
 
 		Brokers:            brokers,
 		GroupID:            groupID,
@@ -172,8 +174,14 @@ func WithPartitionStrategy(partitionStrategy PartitionStrategy) ConsumerConfigOp
 	}
 }
 
-func WithConsumeErrHandler(consumeErrHandler func(err error)) ConsumerConfigOption {
+func WithKafkaErrorsHandler(kafkaErrHandler func(err error)) ConsumerConfigOption {
 	return func(opts *ConsumerConfig) {
-		opts.ConsumeErrHandlers = append(opts.ConsumeErrHandlers, consumeErrHandler)
+		opts.KafkaErrorsHandlers = append(opts.KafkaErrorsHandlers, kafkaErrHandler)
+	}
+}
+
+func WithProcessMessageErrHandler(processMessageErrHandler func(err error)) ConsumerConfigOption {
+	return func(opts *ConsumerConfig) {
+		opts.ProcessMessageErrHandlers = append(opts.ProcessMessageErrHandlers, processMessageErrHandler)
 	}
 }

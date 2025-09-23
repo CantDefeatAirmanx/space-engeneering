@@ -10,6 +10,8 @@ type MessageHandler func(ctx context.Context, message Message) error
 
 type Consumer interface {
 	Consume(ctx context.Context, topics []string, handler MessageHandler) error
+	SetKafkaErrorsHandlers(errHandlers []func(err error))
+	SetProcessMessageErrHandlers(errHandlers []func(err error))
 	interfaces.WithClose
 }
 
