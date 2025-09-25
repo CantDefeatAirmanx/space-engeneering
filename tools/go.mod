@@ -4,6 +4,7 @@ go 1.24.4
 
 require (
 	github.com/CantDefeatAirmanx/space-engeneering/platform v0.0.0
+	github.com/IBM/sarama v1.46.0
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/ghodss/yaml v1.0.0
 	github.com/joho/godotenv v1.5.1
@@ -12,7 +13,6 @@ require (
 
 require (
 	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250915142822-185e38c0df3b // indirect
-	github.com/IBM/sarama v1.46.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect

@@ -5,12 +5,11 @@ go 1.24.4
 require (
 	github.com/CantDefeatAirmanx/space-engeneering/inventory v0.0.0-20250814190328-0af679cc83ba
 	github.com/CantDefeatAirmanx/space-engeneering/platform v0.0.0-00010101000000-000000000000
-	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250814190328-0af679cc83ba
+	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250915142822-185e38c0df3b
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/brianvoe/gofakeit/v7 v7.3.0
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/go-chi/chi v1.5.5
-	github.com/gogo/protobuf v1.3.2
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/joho/godotenv v1.5.1

@@ -88,6 +88,11 @@ tasks:
     cmds:
       - 'go build -o {{.BUILD_DIR}}/assembly ./assembly/cmd/service/main.go'
 
+  build:notification:
+    desc: "Сборка notification"
+    cmds:
+      - 'go build -o {{.BUILD_DIR}}/notification ./notification/cmd/main.go'
+
   run-order:
     desc: "Запуск order"
     cmds:
@@ -132,6 +137,17 @@ tasks:
     cmds:
       - 'GO_ENV=dev {{.BUILD_DIR}}/assembly'
 
+  run-notification:
+    desc: "Запуск notification"
+    cmds:
+      - 'GO_ENV=production {{.BUILD_DIR}}/notification'
+
+  run-notification:dev:
+    deps: [ build:notification ]
+    desc: "Запуск notification в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/notification'
+     
   run-assembly:migrator:
     desc: "Запуск assembly:migrator"
     cmds:

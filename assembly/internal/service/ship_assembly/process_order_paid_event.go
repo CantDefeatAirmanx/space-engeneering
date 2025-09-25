@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	kafka_events_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/ship-assembly/v1"
 	order_events_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/order/v1"
-	"go.uber.org/zap"
 )
 
 func (s *ShipAssemblyServiceImpl) processOrderPaidEvent(

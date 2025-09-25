@@ -6,6 +6,7 @@ require (
 	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250915142822-185e38c0df3b
 	github.com/docker/docker v28.2.2+incompatible
 	github.com/docker/go-connections v0.5.0
+	github.com/go-telegram/bot v1.17.0
 	github.com/google/uuid v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.24.3

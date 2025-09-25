@@ -8,4 +8,5 @@ use (
 	./shared
 	./tools
     ./assembly
+    ./notification
 )

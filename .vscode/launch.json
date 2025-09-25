@@ -56,6 +56,15 @@
             "program": "${workspaceFolder}/assembly/cmd/migrator/main.go",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/assembly/.env"
+        },
+        {
+            "name": "Debug Notification Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/notification/cmd/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/notification/.env"
         }
     ],
     "compounds": [
@@ -65,7 +74,8 @@
                 "Debug Inventory Service",
                 "Debug Order Service",
                 "Debug Payment Service",
-                "Debug Assembly Service"
+                "Debug Assembly Service",
+                "Debug Notification Service"
             ],
             "stopAll": true,
             "presentation": {
