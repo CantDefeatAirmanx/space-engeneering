@@ -3,7 +3,6 @@ package service_ship_assembly
 import (
 	"context"
 
-	repository_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly"
 	service_ship_assembly_consumer "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly/consumer"
 	service_ship_assembly_producer "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly/producer"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
@@ -12,7 +11,7 @@ import (
 var _ ShipAssemblyService = (*ShipAssemblyServiceImpl)(nil)
 
 type ShipAssemblyServiceImpl struct {
-	repository repository_ship_assembly.ShipAssemblyRepository
+	repository ShipAssemblyRepository
 	cancel     context.CancelFunc
 
 	consumer service_ship_assembly_consumer.ShipAssemblyConsumer
@@ -21,7 +20,7 @@ type ShipAssemblyServiceImpl struct {
 
 func NewShipAssemblyService(
 	ctx context.Context,
-	repository repository_ship_assembly.ShipAssemblyRepository,
+	repository ShipAssemblyRepository,
 	consumer platform_kafka.Consumer,
 	producer platform_kafka.Producer,
 ) *ShipAssemblyServiceImpl {

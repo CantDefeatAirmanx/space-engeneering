@@ -61,3 +61,18 @@ type GetAssemblyInfoParams struct {
 	AssemblyUUID string
 	OrderUUID    string
 }
+
+type ShipAssemblyRepository interface {
+	CreateShipAssembly(ctx context.Context, shipAssembly *model_ship_assembly.ShipAssembly) error
+
+	GetShipAssembly(
+		ctx context.Context,
+		selectParams model_ship_assembly.SelectShipAssemblyParams,
+	) (*model_ship_assembly.ShipAssembly, error)
+
+	UpdateShipAssembly(
+		ctx context.Context,
+		selectParams model_ship_assembly.SelectShipAssemblyParams,
+		shipAssembly model_ship_assembly.UpdateShipAssemblyFields,
+	) error
+}
