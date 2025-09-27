@@ -4,6 +4,7 @@ import (
 	"context"
 
 	model_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/model/order"
+	kafka_events_order "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/order/v1"
 )
 
 type OrderService interface {
@@ -58,6 +59,10 @@ type OrderService interface {
 	//
 	// - ([model_order.ErrOrderInternal]): if the order payment fails
 	PayOrder(ctx context.Context, params PayOrderParams) (*PayOrderResult, error)
+}
+
+type OrderProducer interface {
+	ProduceOrderPaid(ctx context.Context, order kafka_events_order.OrderPaidEvent) error
 }
 
 type CreateOrderParams struct {

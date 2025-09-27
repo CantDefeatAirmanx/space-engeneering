@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package events.order.v1;
+
+import "common/v1/payment_method.proto";
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/order/v1;order_events_v1";
+
+// OrderEventEnvelope описывает обертку для события заказа
+message OrderEventEnvelope {
+    // event_type тип события
+    OrderEventType event_type = 1;
+    // event_uuid идентификатор события
+    string event_uuid = 2;
+    // event событие
+    oneof event {
+      // OrderPaidEvent описывает событие оплаты заказа
+      OrderPaidEvent order_paid = 10;
+    }
+}
+
+// OrderPaidEvent описывает событие оплаты заказа
+message OrderPaidEvent {
+    // event_uuid идентификатор события
+    string event_uuid = 1;
+    // order_uuid идентификатор заказа
+    string order_uuid = 2;
+    // user_uuid идентификатор пользователя
+    string user_uuid = 3;
+    // transaction_uuid идентификатор транзакции
+    string transaction_uuid = 4;
+    // payment_method метод оплаты
+    common.v1.PaymentMethod payment_method = 5;
+}
+
+// OrderEventType тип события заказа
+enum OrderEventType {
+    // ORDER_EVENT_TYPE_UNSPECIFIED неизвестный тип события
+    ORDER_EVENT_TYPE_UNSPECIFIED = 0;
+    // ORDER_EVENT_TYPE_PAID тип события оплаты заказа
+    ORDER_EVENT_TYPE_PAID = 1;
+}

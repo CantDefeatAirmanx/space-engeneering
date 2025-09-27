@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/CantDefeatAirmanx/space-engeneering/platform v0.0.0-00010101000000-000000000000
-	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250814190328-0af679cc83ba
+	github.com/CantDefeatAirmanx/space-engeneering/shared v0.0.0-20250915142822-185e38c0df3b
 	github.com/brianvoe/gofakeit/v7 v7.3.0
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/docker/go-connections v0.5.0
@@ -13,7 +13,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.25.1
 	github.com/onsi/gomega v1.38.1
 	github.com/samber/lo v1.51.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 	github.com/testcontainers/testcontainers-go v0.38.0
 	go.mongodb.org/mongo-driver v1.17.4
 	go.uber.org/zap v1.27.0

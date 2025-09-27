@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/zap"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	api_order_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/api/order/v1"
@@ -12,7 +13,10 @@ import (
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	repository_order_postgre "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/postgre_impl"
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
+	service_order_producer "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order/producer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
+	platform_kafka_producer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/producer"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
@@ -24,6 +28,7 @@ type DiContainer struct {
 	orderHandler    *api_order_v1.Api
 	orderService    service_order.OrderService
 	orderRepository service_order.OrderRepository
+	orderProducer   service_order.OrderProducer
 	inventoryClient client_inventory_v1.InventoryV1Client
 	paymentClient   client_payment_v1.PaymentV1Client
 }
@@ -39,6 +44,7 @@ func (d *DiContainer) GetOrderServer(ctx context.Context) http.Handler {
 		d.GetOrderHandler(ctx),
 	)
 	if err != nil {
+		logger.Logger().Error("Failed to create order server", zap.Error(err))
 		panic(err)
 	}
 
@@ -70,6 +76,7 @@ func (d *DiContainer) GetOrderService(ctx context.Context) service_order.OrderSe
 			OrderRepository: d.GetOrderRepository(ctx),
 			InventoryClient: d.GetInventoryClient(ctx),
 			PaymentClient:   d.GetPaymentClient(ctx),
+			OrderProducer:   d.GetOrderProducer(ctx),
 		},
 	)
 
@@ -106,6 +113,7 @@ func (d *DiContainer) GetDB(ctx context.Context) *pgxpool.Pool {
 		return nil
 	})
 	if err != nil {
+		logger.Logger().Error("Failed to create orders db", zap.Error(err))
 		panic(err)
 	}
 
@@ -125,6 +133,7 @@ func (d *DiContainer) GetInventoryClient(
 		return inventoryClient.Close()
 	})
 	if err != nil {
+		logger.Logger().Error("Failed to create inventory client", zap.Error(err))
 		panic(err)
 	}
 
@@ -144,10 +153,35 @@ func (d *DiContainer) GetPaymentClient(
 		return paymentClient.Close()
 	})
 	if err != nil {
+		logger.Logger().Error("Failed to create payment client", zap.Error(err))
 		panic(err)
 	}
 
 	d.paymentClient = paymentClient
 
 	return paymentClient
+}
+
+func (d *DiContainer) GetOrderProducer(
+	ctx context.Context,
+) service_order.OrderProducer {
+	if d.orderProducer != nil {
+		return d.orderProducer
+	}
+
+	kafkaProducer, err := platform_kafka_producer.NewKafkaProducer(
+		ctx,
+		config.Config.Kafka().Brokers(),
+	)
+	if err != nil {
+		logger.Logger().Error("Failed to create kafka producer", zap.Error(err))
+		panic(err)
+	}
+
+	orderProducer := service_order_producer.NewOrderProducer(
+		kafkaProducer,
+	)
+	d.orderProducer = orderProducer
+
+	return orderProducer
 }

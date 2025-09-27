@@ -9,6 +9,7 @@ import (
 
 	config_http "github.com/CantDefeatAirmanx/space-engeneering/order/config/http"
 	config_inventory_client "github.com/CantDefeatAirmanx/space-engeneering/order/config/inventory_client"
+	config_kafka "github.com/CantDefeatAirmanx/space-engeneering/order/config/kafka"
 	config_logger "github.com/CantDefeatAirmanx/space-engeneering/order/config/logger"
 	config_payment_client "github.com/CantDefeatAirmanx/space-engeneering/order/config/payment_client"
 	config_postgres "github.com/CantDefeatAirmanx/space-engeneering/order/config/postgres"
@@ -20,6 +21,7 @@ type ConfigData struct {
 	InventoryClient config_inventory_client.InventoryClientConfigData `envPrefix:"inventoryClient__"`
 	PaymentClient   config_payment_client.PaymentClientConfigData     `envPrefix:"paymentClient__"`
 	LoggerConfig    config_logger.LoggerConfigData                    `envPrefix:"logger__"`
+	KafkaConfig     config_kafka.KafkaConfigData                      `envPrefix:"kafka__"`
 	IsDev           bool
 }
 

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package events.assembly.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/assembly/v1;assembly_events_v1";
+
+// ShipAssemblyEventEnvelope описывает обертку для события сборки корабля
+message ShipAssemblyEventEnvelope {
+    // event_type тип события
+    ShipAssemblyEventType event_type = 1;
+    // event_uuid идентификатор события
+    string event_uuid = 2;
+    // event событие
+    oneof event {
+      // ShipAssembledEvent описывает событие сборки корабля
+      ShipAssembledEvent ship_assembled = 10;
+    }
+}
+
+// ShipAssembledEvent описывает событие сборки корабля
+message ShipAssembledEvent {
+    // event_uuid идентификатор события 
+    string event_uuid = 1;
+    // assembly_uuid идентификатор сборки
+    string assembly_uuid = 2;
+    // order_uuid идентификатор заказа
+    string order_uuid = 3;
+    // user_uuid идентификатор пользователя
+    string user_uuid = 4;
+    // build_time время сборки
+    int64 build_time_sec = 5;
+}
+
+// ShipAssemblyEventType тип события сборки корабля
+enum ShipAssemblyEventType {
+    // SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED неизвестный тип события
+    SHIP_ASSEMBLY_EVENT_TYPE_UNSPECIFIED = 0;
+    // SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED тип события сборки корабля
+    SHIP_ASSEMBLY_EVENT_TYPE_ASSEMBLED = 1;
+}
