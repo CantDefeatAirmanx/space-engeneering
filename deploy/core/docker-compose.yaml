@@ -191,6 +191,12 @@ services:
             KAFKA_CLUSTERS_0_NAME: 'local-cluster'
             KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka:${kafka__internalPort},kafka_2:${kafka2__internalPort},kafka_3:${kafka3__internalPort}'
 
+            KAFKA_CLUSTERS_0_SERDE_0_NAME: 'ProtobufFile'
+            KAFKA_CLUSTERS_0_SERDE_0_PROPERTIES_PROTOBUFFILESDIR: '/shared/proto'
+            KAFKA_CLUSTERS_0_SERDE_0_PROPERTIES_PROTOBUFMESSAGENAME: 'events.order.v1.OrderEventEnvelope'
+            KAFKA_CLUSTERS_0_SERDE_0_PROPERTIES_PROTOBUFMESSAGENAMEBYTOPIC_order: 'events.order.v1.OrderEventEnvelope'
+            KAFKA_CLUSTERS_0_SERDE_0_PROPERTIES_PROTOBUFMESSAGENAMEBYTOPIC_assembly: 'events.assembly.v1.ShipAssemblyEventEnvelope'
+
         depends_on:
             kafka:
                 condition: service_healthy
@@ -208,6 +214,9 @@ services:
             start_period: 20s
             # Проверяем состояние UI по HTTP endpoint /actuator/health.
             # UI будет считаться healthy только после успешного ответа от сервера.
+
+        volumes:
+            - ../../shared/proto:/shared/proto:ro
 
         restart: unless-stopped
         # Автоматически перезапускаем контейнер при сбоях, но не при ручной остановке
