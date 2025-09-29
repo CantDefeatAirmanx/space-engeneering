@@ -1,0 +1,131 @@
+package platform_redis_redisgo
+
+import (
+	"context"
+	"time"
+
+	"github.com/redis/go-redis/v9"
+)
+
+/*
+	Addr:       "localhost:6379",
+	Username:   "",
+	Password:   "",
+	ClientName: "Unknown Redis Client",
+	DB:         0,
+
+	PoolSize:    10,
+	PoolTimeout: time.Duration(10 * time.Second),
+
+	ReadTimeout:  time.Duration(10 * time.Second),
+	WriteTimeout: time.Duration(10 * time.Second),
+
+	MaxRetries: 3,
+	OnConnect:  func(ctx context.Context, cn *redis.Conn) error { return nil },
+
+	ConnMaxIdleTime: time.Duration(10 * time.Minute),
+	ConnMaxLifetime: 0,
+*/
+
+type CommonConfig struct {
+	Username   string
+	Password   string
+	ClientName string
+	DB         int
+
+	PoolSize    int
+	PoolTimeout time.Duration
+
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+
+	MaxRetries int
+	OnConnect  func(ctx context.Context, cn *redis.Conn) error
+
+	ConnMaxIdleTime time.Duration
+	ConnMaxLifetime time.Duration
+}
+
+type ClusterConfig struct {
+	Addrs []string
+	CommonConfig
+}
+
+type SingleConfig struct {
+	Addr string
+	CommonConfig
+}
+
+type OptionFunc func(config *CommonConfig)
+
+func WithUsername(username string) OptionFunc {
+	return func(config *CommonConfig) {
+		config.Username = username
+	}
+}
+
+func WithPassword(password string) OptionFunc {
+	return func(config *CommonConfig) {
+		config.Password = password
+	}
+}
+
+func WithClientName(clientName string) OptionFunc {
+	return func(config *CommonConfig) {
+		config.ClientName = clientName
+	}
+}
+
+func WithDB(db int) OptionFunc {
+	return func(config *CommonConfig) {
+		config.DB = db
+	}
+}
+
+func WithPoolSize(poolSize int) OptionFunc {
+	return func(config *CommonConfig) {
+		config.PoolSize = poolSize
+	}
+}
+
+func WithPoolTimeout(poolTimeout time.Duration) OptionFunc {
+	return func(config *CommonConfig) {
+		config.PoolTimeout = poolTimeout
+	}
+}
+
+func WithReadTimeout(readTimeout time.Duration) OptionFunc {
+	return func(config *CommonConfig) {
+		config.ReadTimeout = readTimeout
+	}
+}
+
+func WithWriteTimeout(writeTimeout time.Duration) OptionFunc {
+	return func(config *CommonConfig) {
+		config.WriteTimeout = writeTimeout
+	}
+}
+
+func WithMaxRetries(maxRetries int) OptionFunc {
+	return func(config *CommonConfig) {
+		config.MaxRetries = maxRetries
+	}
+}
+
+func WithOnConnect(onConnect func(ctx context.Context, cn *redis.Conn) error) OptionFunc {
+	return func(config *CommonConfig) {
+		config.OnConnect = onConnect
+	}
+}
+
+func WithConnMaxIdleTime(connMaxIdleTime time.Duration) OptionFunc {
+	return func(config *CommonConfig) {
+		config.ConnMaxIdleTime = connMaxIdleTime
+	}
+}
+
+func WithConnMaxLifetime(connMaxLifetime time.Duration) OptionFunc {
+	return func(config *CommonConfig) {
+		config.ConnMaxLifetime = connMaxLifetime
+	}
+}
