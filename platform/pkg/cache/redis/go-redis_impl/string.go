@@ -9,7 +9,19 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
-func (s *SingleNodeImpl) Get(
+var _ platform_redis.StringCache = (*StringCache)(nil)
+
+type StringCache struct {
+	client *redis.Client
+}
+
+func NewStringCache(client *redis.Client) platform_redis.StringCache {
+	return &StringCache{
+		client: client,
+	}
+}
+
+func (s *StringCache) Get(
 	ctx context.Context,
 	key string,
 ) (string, platform_redis.RedisError) {
@@ -26,7 +38,7 @@ func (s *SingleNodeImpl) Get(
 	return res, nil
 }
 
-func (s *SingleNodeImpl) MultiGet(
+func (s *StringCache) MultiGet(
 	ctx context.Context,
 	keys []string,
 ) ([]string, platform_redis.RedisError) {
@@ -49,7 +61,7 @@ func (s *SingleNodeImpl) MultiGet(
 	return stringsResult, nil
 }
 
-func (s *SingleNodeImpl) Set(
+func (s *StringCache) Set(
 	ctx context.Context,
 	key string,
 	value string,
@@ -65,7 +77,7 @@ func (s *SingleNodeImpl) Set(
 	return nil
 }
 
-func (s *SingleNodeImpl) MultiSet(
+func (s *StringCache) MultiSet(
 	ctx context.Context, valuesMap map[string]string,
 ) platform_redis.RedisError {
 	cmd := s.client.MSet(ctx, valuesMap)
@@ -78,7 +90,7 @@ func (s *SingleNodeImpl) MultiSet(
 	return nil
 }
 
-func (s *SingleNodeImpl) Delete(ctx context.Context, key string) platform_redis.RedisError {
+func (s *StringCache) Delete(ctx context.Context, key string) platform_redis.RedisError {
 	cmd := s.client.Del(ctx, key)
 
 	err := cmd.Err()

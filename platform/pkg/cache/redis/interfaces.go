@@ -1,5 +1,7 @@
 package platform_redis
 
 type RedisCache interface {
-	stringsCacheOperations
+	String() StringCache
+	Set() SetCache
+	Hash() HashCache
 }

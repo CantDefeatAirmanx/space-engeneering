@@ -11,10 +11,13 @@ import (
 var _ platform_redis.RedisCache = (*SingleNodeImpl)(nil)
 
 type SingleNodeImpl struct {
-	client *redis.Client
+	client      *redis.Client
+	stringCache platform_redis.StringCache
+	setCache    platform_redis.SetCache
+	hashCache   platform_redis.HashCache
 }
 
-func NewSignleNodeClient(
+func NewSingleNodeClient(
 	addr string,
 	options ...OptionFunc,
 ) (impl *SingleNodeImpl, err error) {
@@ -51,7 +54,26 @@ func NewSignleNodeClient(
 		Network: "tcp",
 	})
 
+	stringCache := NewStringCache(client)
+	setCache := NewSetCache(client)
+	hashCache := NewHashCache(client)
+
 	return &SingleNodeImpl{
-		client,
+		client:      client,
+		stringCache: stringCache,
+		setCache:    setCache,
+		hashCache:   hashCache,
 	}, nil
+}
+
+func (s *SingleNodeImpl) String() platform_redis.StringCache {
+	return s.stringCache
+}
+
+func (s *SingleNodeImpl) Set() platform_redis.SetCache {
+	return s.setCache
+}
+
+func (s *SingleNodeImpl) Hash() platform_redis.HashCache {
+	return s.hashCache
 }
