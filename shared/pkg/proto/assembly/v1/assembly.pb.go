@@ -172,7 +172,7 @@ func (x *CreateAssemblyResponse) GetAssemblyInfo() *AssemblyInfo {
 }
 
 // AssemblyCompletedRequest описывает запрос на завершение сборки корабля
-type AssemblyCompletedRequest struct {
+type SetAssemblyCompletedRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// order_uuid идентификатор заказа
 	OrderUuid string `protobuf:"bytes,1,opt,name=order_uuid,json=orderUuid,proto3" json:"order_uuid,omitempty"`
@@ -182,20 +182,20 @@ type AssemblyCompletedRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AssemblyCompletedRequest) Reset() {
-	*x = AssemblyCompletedRequest{}
+func (x *SetAssemblyCompletedRequest) Reset() {
+	*x = SetAssemblyCompletedRequest{}
 	mi := &file_assembly_v1_assembly_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AssemblyCompletedRequest) String() string {
+func (x *SetAssemblyCompletedRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AssemblyCompletedRequest) ProtoMessage() {}
+func (*SetAssemblyCompletedRequest) ProtoMessage() {}
 
-func (x *AssemblyCompletedRequest) ProtoReflect() protoreflect.Message {
+func (x *SetAssemblyCompletedRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_assembly_v1_assembly_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -207,19 +207,19 @@ func (x *AssemblyCompletedRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssemblyCompletedRequest.ProtoReflect.Descriptor instead.
-func (*AssemblyCompletedRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetAssemblyCompletedRequest.ProtoReflect.Descriptor instead.
+func (*SetAssemblyCompletedRequest) Descriptor() ([]byte, []int) {
 	return file_assembly_v1_assembly_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AssemblyCompletedRequest) GetOrderUuid() string {
+func (x *SetAssemblyCompletedRequest) GetOrderUuid() string {
 	if x != nil {
 		return x.OrderUuid
 	}
 	return ""
 }
 
-func (x *AssemblyCompletedRequest) GetAssemblyUuid() string {
+func (x *SetAssemblyCompletedRequest) GetAssemblyUuid() string {
 	if x != nil {
 		return x.AssemblyUuid
 	}
@@ -227,7 +227,7 @@ func (x *AssemblyCompletedRequest) GetAssemblyUuid() string {
 }
 
 // AssemblyCompletedResponse описывает ответ на запрос на завершение сборки корабля
-type AssemblyCompletedResponse struct {
+type SetAssemblyCompletedResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// assembly_uuid идентификатор сборки
 	AssemblyUuid  string `protobuf:"bytes,1,opt,name=assembly_uuid,json=assemblyUuid,proto3" json:"assembly_uuid,omitempty"`
@@ -235,20 +235,20 @@ type AssemblyCompletedResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AssemblyCompletedResponse) Reset() {
-	*x = AssemblyCompletedResponse{}
+func (x *SetAssemblyCompletedResponse) Reset() {
+	*x = SetAssemblyCompletedResponse{}
 	mi := &file_assembly_v1_assembly_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AssemblyCompletedResponse) String() string {
+func (x *SetAssemblyCompletedResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AssemblyCompletedResponse) ProtoMessage() {}
+func (*SetAssemblyCompletedResponse) ProtoMessage() {}
 
-func (x *AssemblyCompletedResponse) ProtoReflect() protoreflect.Message {
+func (x *SetAssemblyCompletedResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_assembly_v1_assembly_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -260,12 +260,12 @@ func (x *AssemblyCompletedResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssemblyCompletedResponse.ProtoReflect.Descriptor instead.
-func (*AssemblyCompletedResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetAssemblyCompletedResponse.ProtoReflect.Descriptor instead.
+func (*SetAssemblyCompletedResponse) Descriptor() ([]byte, []int) {
 	return file_assembly_v1_assembly_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AssemblyCompletedResponse) GetAssemblyUuid() string {
+func (x *SetAssemblyCompletedResponse) GetAssemblyUuid() string {
 	if x != nil {
 		return x.AssemblyUuid
 	}
@@ -273,7 +273,7 @@ func (x *AssemblyCompletedResponse) GetAssemblyUuid() string {
 }
 
 // AssemblyStartedRequest описывает запрос на начал сборки корабля
-type AssemblyStartedRequest struct {
+type SetAssemblyStartedRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// order_uuid идентификатор заказа
 	OrderUuid string `protobuf:"bytes,1,opt,name=order_uuid,json=orderUuid,proto3" json:"order_uuid,omitempty"`
@@ -283,20 +283,20 @@ type AssemblyStartedRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AssemblyStartedRequest) Reset() {
-	*x = AssemblyStartedRequest{}
+func (x *SetAssemblyStartedRequest) Reset() {
+	*x = SetAssemblyStartedRequest{}
 	mi := &file_assembly_v1_assembly_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AssemblyStartedRequest) String() string {
+func (x *SetAssemblyStartedRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AssemblyStartedRequest) ProtoMessage() {}
+func (*SetAssemblyStartedRequest) ProtoMessage() {}
 
-func (x *AssemblyStartedRequest) ProtoReflect() protoreflect.Message {
+func (x *SetAssemblyStartedRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_assembly_v1_assembly_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -308,19 +308,19 @@ func (x *AssemblyStartedRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssemblyStartedRequest.ProtoReflect.Descriptor instead.
-func (*AssemblyStartedRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetAssemblyStartedRequest.ProtoReflect.Descriptor instead.
+func (*SetAssemblyStartedRequest) Descriptor() ([]byte, []int) {
 	return file_assembly_v1_assembly_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AssemblyStartedRequest) GetOrderUuid() string {
+func (x *SetAssemblyStartedRequest) GetOrderUuid() string {
 	if x != nil {
 		return x.OrderUuid
 	}
 	return ""
 }
 
-func (x *AssemblyStartedRequest) GetAssemblyUuid() string {
+func (x *SetAssemblyStartedRequest) GetAssemblyUuid() string {
 	if x != nil {
 		return x.AssemblyUuid
 	}
@@ -328,7 +328,7 @@ func (x *AssemblyStartedRequest) GetAssemblyUuid() string {
 }
 
 // AssemblyStartedResponse описывает ответ на запрос на начал сборки корабля
-type AssemblyStartedResponse struct {
+type SetAssemblyStartedResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// assembly_uuid идентификатор сборки
 	AssemblyUuid  string `protobuf:"bytes,1,opt,name=assembly_uuid,json=assemblyUuid,proto3" json:"assembly_uuid,omitempty"`
@@ -336,20 +336,20 @@ type AssemblyStartedResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AssemblyStartedResponse) Reset() {
-	*x = AssemblyStartedResponse{}
+func (x *SetAssemblyStartedResponse) Reset() {
+	*x = SetAssemblyStartedResponse{}
 	mi := &file_assembly_v1_assembly_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AssemblyStartedResponse) String() string {
+func (x *SetAssemblyStartedResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AssemblyStartedResponse) ProtoMessage() {}
+func (*SetAssemblyStartedResponse) ProtoMessage() {}
 
-func (x *AssemblyStartedResponse) ProtoReflect() protoreflect.Message {
+func (x *SetAssemblyStartedResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_assembly_v1_assembly_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -361,12 +361,12 @@ func (x *AssemblyStartedResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssemblyStartedResponse.ProtoReflect.Descriptor instead.
-func (*AssemblyStartedResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetAssemblyStartedResponse.ProtoReflect.Descriptor instead.
+func (*SetAssemblyStartedResponse) Descriptor() ([]byte, []int) {
 	return file_assembly_v1_assembly_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *AssemblyStartedResponse) GetAssemblyUuid() string {
+func (x *SetAssemblyStartedResponse) GetAssemblyUuid() string {
 	if x != nil {
 		return x.AssemblyUuid
 	}
@@ -565,18 +565,18 @@ const file_assembly_v1_assembly_proto_rawDesc = "" +
 	"\n" +
 	"order_uuid\x18\x01 \x01(\tR\torderUuid\"X\n" +
 	"\x16CreateAssemblyResponse\x12>\n" +
-	"\rassembly_info\x18\x01 \x01(\v2\x19.assembly.v1.AssemblyInfoR\fassemblyInfo\"^\n" +
-	"\x18AssemblyCompletedRequest\x12\x1d\n" +
+	"\rassembly_info\x18\x01 \x01(\v2\x19.assembly.v1.AssemblyInfoR\fassemblyInfo\"a\n" +
+	"\x1bSetAssemblyCompletedRequest\x12\x1d\n" +
 	"\n" +
 	"order_uuid\x18\x01 \x01(\tR\torderUuid\x12#\n" +
-	"\rassembly_uuid\x18\x02 \x01(\tR\fassemblyUuid\"@\n" +
-	"\x19AssemblyCompletedResponse\x12#\n" +
-	"\rassembly_uuid\x18\x01 \x01(\tR\fassemblyUuid\"\\\n" +
-	"\x16AssemblyStartedRequest\x12\x1d\n" +
+	"\rassembly_uuid\x18\x02 \x01(\tR\fassemblyUuid\"C\n" +
+	"\x1cSetAssemblyCompletedResponse\x12#\n" +
+	"\rassembly_uuid\x18\x01 \x01(\tR\fassemblyUuid\"_\n" +
+	"\x19SetAssemblyStartedRequest\x12\x1d\n" +
 	"\n" +
 	"order_uuid\x18\x01 \x01(\tR\torderUuid\x12#\n" +
-	"\rassembly_uuid\x18\x02 \x01(\tR\fassemblyUuid\">\n" +
-	"\x17AssemblyStartedResponse\x12#\n" +
+	"\rassembly_uuid\x18\x02 \x01(\tR\fassemblyUuid\"A\n" +
+	"\x1aSetAssemblyStartedResponse\x12#\n" +
 	"\rassembly_uuid\x18\x01 \x01(\tR\fassemblyUuid\"\\\n" +
 	"\x16GetAssemblyInfoRequest\x12#\n" +
 	"\rassembly_uuid\x18\x01 \x01(\tR\fassemblyUuid\x12\x1d\n" +
@@ -597,11 +597,11 @@ const file_assembly_v1_assembly_proto_rawDesc = "" +
 	"\x1bASSEMBLY_STATUS_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bASSEMBLY_STATUS_NOT_STARTED\x10\x01\x12\x1b\n" +
 	"\x17ASSEMBLY_STATUS_PENDING\x10\x02\x12\x1d\n" +
-	"\x19ASSEMBLY_STATUS_COMPLETED\x10\x032\x8c\x03\n" +
+	"\x19ASSEMBLY_STATUS_COMPLETED\x10\x032\x9e\x03\n" +
 	"\x0fAssemblyService\x12Y\n" +
-	"\x0eCreateAssembly\x12\".assembly.v1.CreateAssemblyRequest\x1a#.assembly.v1.CreateAssemblyResponse\x12b\n" +
-	"\x11AssemblyCompleted\x12%.assembly.v1.AssemblyCompletedRequest\x1a&.assembly.v1.AssemblyCompletedResponse\x12\\\n" +
-	"\x0fAssemblyStarted\x12#.assembly.v1.AssemblyStartedRequest\x1a$.assembly.v1.AssemblyStartedResponse\x12\\\n" +
+	"\x0eCreateAssembly\x12\".assembly.v1.CreateAssemblyRequest\x1a#.assembly.v1.CreateAssemblyResponse\x12k\n" +
+	"\x14SetAssemblyCompleted\x12(.assembly.v1.SetAssemblyCompletedRequest\x1a).assembly.v1.SetAssemblyCompletedResponse\x12e\n" +
+	"\x12SetAssemblyStarted\x12&.assembly.v1.SetAssemblyStartedRequest\x1a'.assembly.v1.SetAssemblyStartedResponse\x12\\\n" +
 	"\x0fGetAssemblyInfo\x12#.assembly.v1.GetAssemblyInfoRequest\x1a$.assembly.v1.GetAssemblyInfoResponseBUZSgithub.com/CantDefeatAirmanx/space-engeneering/shared/proto/assembly/v1;assembly_v1b\x06proto3"
 
 var (
@@ -619,17 +619,17 @@ func file_assembly_v1_assembly_proto_rawDescGZIP() []byte {
 var file_assembly_v1_assembly_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_assembly_v1_assembly_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_assembly_v1_assembly_proto_goTypes = []any{
-	(AssemblyStatus)(0),               // 0: assembly.v1.AssemblyStatus
-	(*CreateAssemblyRequest)(nil),     // 1: assembly.v1.CreateAssemblyRequest
-	(*CreateAssemblyResponse)(nil),    // 2: assembly.v1.CreateAssemblyResponse
-	(*AssemblyCompletedRequest)(nil),  // 3: assembly.v1.AssemblyCompletedRequest
-	(*AssemblyCompletedResponse)(nil), // 4: assembly.v1.AssemblyCompletedResponse
-	(*AssemblyStartedRequest)(nil),    // 5: assembly.v1.AssemblyStartedRequest
-	(*AssemblyStartedResponse)(nil),   // 6: assembly.v1.AssemblyStartedResponse
-	(*GetAssemblyInfoRequest)(nil),    // 7: assembly.v1.GetAssemblyInfoRequest
-	(*GetAssemblyInfoResponse)(nil),   // 8: assembly.v1.GetAssemblyInfoResponse
-	(*AssemblyInfo)(nil),              // 9: assembly.v1.AssemblyInfo
-	(*timestamppb.Timestamp)(nil),     // 10: google.protobuf.Timestamp
+	(AssemblyStatus)(0),                  // 0: assembly.v1.AssemblyStatus
+	(*CreateAssemblyRequest)(nil),        // 1: assembly.v1.CreateAssemblyRequest
+	(*CreateAssemblyResponse)(nil),       // 2: assembly.v1.CreateAssemblyResponse
+	(*SetAssemblyCompletedRequest)(nil),  // 3: assembly.v1.SetAssemblyCompletedRequest
+	(*SetAssemblyCompletedResponse)(nil), // 4: assembly.v1.SetAssemblyCompletedResponse
+	(*SetAssemblyStartedRequest)(nil),    // 5: assembly.v1.SetAssemblyStartedRequest
+	(*SetAssemblyStartedResponse)(nil),   // 6: assembly.v1.SetAssemblyStartedResponse
+	(*GetAssemblyInfoRequest)(nil),       // 7: assembly.v1.GetAssemblyInfoRequest
+	(*GetAssemblyInfoResponse)(nil),      // 8: assembly.v1.GetAssemblyInfoResponse
+	(*AssemblyInfo)(nil),                 // 9: assembly.v1.AssemblyInfo
+	(*timestamppb.Timestamp)(nil),        // 10: google.protobuf.Timestamp
 }
 var file_assembly_v1_assembly_proto_depIdxs = []int32{
 	9,  // 0: assembly.v1.CreateAssemblyResponse.assembly_info:type_name -> assembly.v1.AssemblyInfo
@@ -638,12 +638,12 @@ var file_assembly_v1_assembly_proto_depIdxs = []int32{
 	10, // 3: assembly.v1.AssemblyInfo.created_at:type_name -> google.protobuf.Timestamp
 	10, // 4: assembly.v1.AssemblyInfo.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: assembly.v1.AssemblyService.CreateAssembly:input_type -> assembly.v1.CreateAssemblyRequest
-	3,  // 6: assembly.v1.AssemblyService.AssemblyCompleted:input_type -> assembly.v1.AssemblyCompletedRequest
-	5,  // 7: assembly.v1.AssemblyService.AssemblyStarted:input_type -> assembly.v1.AssemblyStartedRequest
+	3,  // 6: assembly.v1.AssemblyService.SetAssemblyCompleted:input_type -> assembly.v1.SetAssemblyCompletedRequest
+	5,  // 7: assembly.v1.AssemblyService.SetAssemblyStarted:input_type -> assembly.v1.SetAssemblyStartedRequest
 	7,  // 8: assembly.v1.AssemblyService.GetAssemblyInfo:input_type -> assembly.v1.GetAssemblyInfoRequest
 	2,  // 9: assembly.v1.AssemblyService.CreateAssembly:output_type -> assembly.v1.CreateAssemblyResponse
-	4,  // 10: assembly.v1.AssemblyService.AssemblyCompleted:output_type -> assembly.v1.AssemblyCompletedResponse
-	6,  // 11: assembly.v1.AssemblyService.AssemblyStarted:output_type -> assembly.v1.AssemblyStartedResponse
+	4,  // 10: assembly.v1.AssemblyService.SetAssemblyCompleted:output_type -> assembly.v1.SetAssemblyCompletedResponse
+	6,  // 11: assembly.v1.AssemblyService.SetAssemblyStarted:output_type -> assembly.v1.SetAssemblyStartedResponse
 	8,  // 12: assembly.v1.AssemblyService.GetAssemblyInfo:output_type -> assembly.v1.GetAssemblyInfoResponse
 	9,  // [9:13] is the sub-list for method output_type
 	5,  // [5:9] is the sub-list for method input_type

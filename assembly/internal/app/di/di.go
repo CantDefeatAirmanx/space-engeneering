@@ -8,14 +8,20 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/assembly/config"
 	api_v1 "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/api/v1"
+	model_consumer_order "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/consumer/order"
+	model_producer_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/producer/assembly"
 	repository_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly"
 	repository_ship_assembly_postgres "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly/postgres"
+	consumer_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/consumer/ship_assembly"
+	producer_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/producer/ship_assembly"
 	service_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	platform_kafka_consumer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/consumer"
 	platform_kafka_producer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/producer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
+	platform_transaction "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/transaction"
+	platform_transaction_postgres "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/transaction/postgres"
 	assembly_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/assembly/v1"
 )
 
@@ -25,9 +31,13 @@ type DiContainer struct {
 	assemblyApi            assembly_v1.AssemblyServiceServer
 	shipAssemblyService    service_ship_assembly.ShipAssemblyService
 	shipAssemblyRepository repository_ship_assembly.ShipAssemblyRepository
-	consumer               platform_kafka.Consumer
-	producer               platform_kafka.Producer
-	postgres               *pgxpool.Pool
+	shipAssemblyTxManager  platform_transaction.TxManager[platform_transaction.Executor]
+	assemblyOrderConsumer  model_consumer_order.OrderConsumer
+	shipAssemblyProducer   model_producer_assembly.ShipAssemblyProducer
+
+	consumer platform_kafka.Consumer
+	producer platform_kafka.Producer
+	postgres *pgxpool.Pool
 }
 
 func NewDiContainer(closer closer.Closer) *DiContainer {
@@ -60,8 +70,9 @@ func (d *DiContainer) GetShipAssemblyService(
 	service := service_ship_assembly.NewShipAssemblyService(
 		ctx,
 		d.GetShipAssemblyRepository(ctx),
-		d.GetConsumer(ctx),
-		d.GetProducer(ctx),
+		d.GetShipAssemblyTxManager(ctx),
+		d.GetShipAssemblyConsumer(ctx),
+		d.GetShipAssemblyProducer(ctx),
 	)
 	d.shipAssemblyService = service
 
@@ -81,6 +92,21 @@ func (d *DiContainer) GetShipAssemblyRepository(
 	d.shipAssemblyRepository = shipAssemblyRepository
 
 	return shipAssemblyRepository
+}
+
+func (d *DiContainer) GetShipAssemblyTxManager(
+	ctx context.Context,
+) platform_transaction.TxManager[platform_transaction.Executor] {
+	if d.shipAssemblyTxManager != nil {
+		return d.shipAssemblyTxManager
+	}
+
+	txManager := platform_transaction_postgres.NewTransactionManagerPostgres(
+		d.getPostgres(ctx),
+	)
+	d.shipAssemblyTxManager = txManager
+
+	return txManager
 }
 
 func (d *DiContainer) getPostgres(
@@ -104,6 +130,37 @@ func (d *DiContainer) getPostgres(
 	})
 
 	return d.postgres
+}
+
+func (d *DiContainer) GetShipAssemblyConsumer(
+	ctx context.Context,
+) model_consumer_order.OrderConsumer {
+	if d.assemblyOrderConsumer != nil {
+		return d.assemblyOrderConsumer
+	}
+
+	consumer := consumer_ship_assembly.NewShipAssemblyConsumer(
+		consumer_ship_assembly.InstanceParams{
+			KafkaConsumer: d.GetConsumer(ctx),
+		},
+	)
+	d.assemblyOrderConsumer = consumer
+
+	return consumer
+}
+
+func (d *DiContainer) GetShipAssemblyProducer(
+	ctx context.Context,
+) model_producer_assembly.ShipAssemblyProducer {
+	if d.shipAssemblyProducer != nil {
+		return d.shipAssemblyProducer
+	}
+	producer := producer_ship_assembly.NewShipAssemblyProducer(
+		d.GetProducer(ctx),
+	)
+	d.shipAssemblyProducer = producer
+
+	return producer
 }
 
 func (d *DiContainer) GetProducer(

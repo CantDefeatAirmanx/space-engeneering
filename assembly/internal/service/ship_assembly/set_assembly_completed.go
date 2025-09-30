@@ -6,7 +6,7 @@ import (
 	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
 )
 
-func (s *ShipAssemblyServiceImpl) AssemblyCompleted(
+func (s *ShipAssemblyServiceImpl) SetAssemblyCompleted(
 	ctx context.Context,
 	params AssemblyCompletedParams,
 ) (*AssemblyCompletedReturn, error) {

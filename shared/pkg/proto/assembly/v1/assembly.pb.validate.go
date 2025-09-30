@@ -270,22 +270,22 @@ var _ interface {
 	ErrorName() string
 } = CreateAssemblyResponseValidationError{}
 
-// Validate checks the field values on AssemblyCompletedRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on SetAssemblyCompletedRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AssemblyCompletedRequest) Validate() error {
+func (m *SetAssemblyCompletedRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AssemblyCompletedRequest with the
+// ValidateAll checks the field values on SetAssemblyCompletedRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// AssemblyCompletedRequestMultiError, or nil if none found.
-func (m *AssemblyCompletedRequest) ValidateAll() error {
+// SetAssemblyCompletedRequestMultiError, or nil if none found.
+func (m *SetAssemblyCompletedRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AssemblyCompletedRequest) validate(all bool) error {
+func (m *SetAssemblyCompletedRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -297,19 +297,19 @@ func (m *AssemblyCompletedRequest) validate(all bool) error {
 	// no validation rules for AssemblyUuid
 
 	if len(errors) > 0 {
-		return AssemblyCompletedRequestMultiError(errors)
+		return SetAssemblyCompletedRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// AssemblyCompletedRequestMultiError is an error wrapping multiple validation
-// errors returned by AssemblyCompletedRequest.ValidateAll() if the designated
-// constraints aren't met.
-type AssemblyCompletedRequestMultiError []error
+// SetAssemblyCompletedRequestMultiError is an error wrapping multiple
+// validation errors returned by SetAssemblyCompletedRequest.ValidateAll() if
+// the designated constraints aren't met.
+type SetAssemblyCompletedRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AssemblyCompletedRequestMultiError) Error() string {
+func (m SetAssemblyCompletedRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -318,11 +318,12 @@ func (m AssemblyCompletedRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AssemblyCompletedRequestMultiError) AllErrors() []error { return m }
+func (m SetAssemblyCompletedRequestMultiError) AllErrors() []error { return m }
 
-// AssemblyCompletedRequestValidationError is the validation error returned by
-// AssemblyCompletedRequest.Validate if the designated constraints aren't met.
-type AssemblyCompletedRequestValidationError struct {
+// SetAssemblyCompletedRequestValidationError is the validation error returned
+// by SetAssemblyCompletedRequest.Validate if the designated constraints
+// aren't met.
+type SetAssemblyCompletedRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -330,24 +331,24 @@ type AssemblyCompletedRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e AssemblyCompletedRequestValidationError) Field() string { return e.field }
+func (e SetAssemblyCompletedRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AssemblyCompletedRequestValidationError) Reason() string { return e.reason }
+func (e SetAssemblyCompletedRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AssemblyCompletedRequestValidationError) Cause() error { return e.cause }
+func (e SetAssemblyCompletedRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AssemblyCompletedRequestValidationError) Key() bool { return e.key }
+func (e SetAssemblyCompletedRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AssemblyCompletedRequestValidationError) ErrorName() string {
-	return "AssemblyCompletedRequestValidationError"
+func (e SetAssemblyCompletedRequestValidationError) ErrorName() string {
+	return "SetAssemblyCompletedRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e AssemblyCompletedRequestValidationError) Error() string {
+func (e SetAssemblyCompletedRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -359,14 +360,14 @@ func (e AssemblyCompletedRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAssemblyCompletedRequest.%s: %s%s",
+		"invalid %sSetAssemblyCompletedRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AssemblyCompletedRequestValidationError{}
+var _ error = SetAssemblyCompletedRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -374,24 +375,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AssemblyCompletedRequestValidationError{}
+} = SetAssemblyCompletedRequestValidationError{}
 
-// Validate checks the field values on AssemblyCompletedResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on SetAssemblyCompletedResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AssemblyCompletedResponse) Validate() error {
+func (m *SetAssemblyCompletedResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AssemblyCompletedResponse with the
+// ValidateAll checks the field values on SetAssemblyCompletedResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// AssemblyCompletedResponseMultiError, or nil if none found.
-func (m *AssemblyCompletedResponse) ValidateAll() error {
+// SetAssemblyCompletedResponseMultiError, or nil if none found.
+func (m *SetAssemblyCompletedResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AssemblyCompletedResponse) validate(all bool) error {
+func (m *SetAssemblyCompletedResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -401,19 +402,126 @@ func (m *AssemblyCompletedResponse) validate(all bool) error {
 	// no validation rules for AssemblyUuid
 
 	if len(errors) > 0 {
-		return AssemblyCompletedResponseMultiError(errors)
+		return SetAssemblyCompletedResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// AssemblyCompletedResponseMultiError is an error wrapping multiple validation
-// errors returned by AssemblyCompletedResponse.ValidateAll() if the
+// SetAssemblyCompletedResponseMultiError is an error wrapping multiple
+// validation errors returned by SetAssemblyCompletedResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SetAssemblyCompletedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetAssemblyCompletedResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetAssemblyCompletedResponseMultiError) AllErrors() []error { return m }
+
+// SetAssemblyCompletedResponseValidationError is the validation error returned
+// by SetAssemblyCompletedResponse.Validate if the designated constraints
+// aren't met.
+type SetAssemblyCompletedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetAssemblyCompletedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetAssemblyCompletedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetAssemblyCompletedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetAssemblyCompletedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetAssemblyCompletedResponseValidationError) ErrorName() string {
+	return "SetAssemblyCompletedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetAssemblyCompletedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetAssemblyCompletedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetAssemblyCompletedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetAssemblyCompletedResponseValidationError{}
+
+// Validate checks the field values on SetAssemblyStartedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetAssemblyStartedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetAssemblyStartedRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetAssemblyStartedRequestMultiError, or nil if none found.
+func (m *SetAssemblyStartedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetAssemblyStartedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OrderUuid
+
+	// no validation rules for AssemblyUuid
+
+	if len(errors) > 0 {
+		return SetAssemblyStartedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetAssemblyStartedRequestMultiError is an error wrapping multiple validation
+// errors returned by SetAssemblyStartedRequest.ValidateAll() if the
 // designated constraints aren't met.
-type AssemblyCompletedResponseMultiError []error
+type SetAssemblyStartedRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AssemblyCompletedResponseMultiError) Error() string {
+func (m SetAssemblyStartedRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -422,11 +530,11 @@ func (m AssemblyCompletedResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AssemblyCompletedResponseMultiError) AllErrors() []error { return m }
+func (m SetAssemblyStartedRequestMultiError) AllErrors() []error { return m }
 
-// AssemblyCompletedResponseValidationError is the validation error returned by
-// AssemblyCompletedResponse.Validate if the designated constraints aren't met.
-type AssemblyCompletedResponseValidationError struct {
+// SetAssemblyStartedRequestValidationError is the validation error returned by
+// SetAssemblyStartedRequest.Validate if the designated constraints aren't met.
+type SetAssemblyStartedRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -434,24 +542,24 @@ type AssemblyCompletedResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e AssemblyCompletedResponseValidationError) Field() string { return e.field }
+func (e SetAssemblyStartedRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AssemblyCompletedResponseValidationError) Reason() string { return e.reason }
+func (e SetAssemblyStartedRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AssemblyCompletedResponseValidationError) Cause() error { return e.cause }
+func (e SetAssemblyStartedRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AssemblyCompletedResponseValidationError) Key() bool { return e.key }
+func (e SetAssemblyStartedRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AssemblyCompletedResponseValidationError) ErrorName() string {
-	return "AssemblyCompletedResponseValidationError"
+func (e SetAssemblyStartedRequestValidationError) ErrorName() string {
+	return "SetAssemblyStartedRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e AssemblyCompletedResponseValidationError) Error() string {
+func (e SetAssemblyStartedRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -463,14 +571,14 @@ func (e AssemblyCompletedResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAssemblyCompletedResponse.%s: %s%s",
+		"invalid %sSetAssemblyStartedRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AssemblyCompletedResponseValidationError{}
+var _ error = SetAssemblyStartedRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -478,130 +586,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AssemblyCompletedResponseValidationError{}
+} = SetAssemblyStartedRequestValidationError{}
 
-// Validate checks the field values on AssemblyStartedRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on SetAssemblyStartedResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AssemblyStartedRequest) Validate() error {
+func (m *SetAssemblyStartedResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AssemblyStartedRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// AssemblyStartedRequestMultiError, or nil if none found.
-func (m *AssemblyStartedRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *AssemblyStartedRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for OrderUuid
-
-	// no validation rules for AssemblyUuid
-
-	if len(errors) > 0 {
-		return AssemblyStartedRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// AssemblyStartedRequestMultiError is an error wrapping multiple validation
-// errors returned by AssemblyStartedRequest.ValidateAll() if the designated
-// constraints aren't met.
-type AssemblyStartedRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m AssemblyStartedRequestMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m AssemblyStartedRequestMultiError) AllErrors() []error { return m }
-
-// AssemblyStartedRequestValidationError is the validation error returned by
-// AssemblyStartedRequest.Validate if the designated constraints aren't met.
-type AssemblyStartedRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e AssemblyStartedRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e AssemblyStartedRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e AssemblyStartedRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e AssemblyStartedRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e AssemblyStartedRequestValidationError) ErrorName() string {
-	return "AssemblyStartedRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e AssemblyStartedRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sAssemblyStartedRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = AssemblyStartedRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = AssemblyStartedRequestValidationError{}
-
-// Validate checks the field values on AssemblyStartedResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AssemblyStartedResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on AssemblyStartedResponse with the
+// ValidateAll checks the field values on SetAssemblyStartedResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// AssemblyStartedResponseMultiError, or nil if none found.
-func (m *AssemblyStartedResponse) ValidateAll() error {
+// SetAssemblyStartedResponseMultiError, or nil if none found.
+func (m *SetAssemblyStartedResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AssemblyStartedResponse) validate(all bool) error {
+func (m *SetAssemblyStartedResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -611,19 +613,19 @@ func (m *AssemblyStartedResponse) validate(all bool) error {
 	// no validation rules for AssemblyUuid
 
 	if len(errors) > 0 {
-		return AssemblyStartedResponseMultiError(errors)
+		return SetAssemblyStartedResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// AssemblyStartedResponseMultiError is an error wrapping multiple validation
-// errors returned by AssemblyStartedResponse.ValidateAll() if the designated
-// constraints aren't met.
-type AssemblyStartedResponseMultiError []error
+// SetAssemblyStartedResponseMultiError is an error wrapping multiple
+// validation errors returned by SetAssemblyStartedResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SetAssemblyStartedResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AssemblyStartedResponseMultiError) Error() string {
+func (m SetAssemblyStartedResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -632,11 +634,11 @@ func (m AssemblyStartedResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AssemblyStartedResponseMultiError) AllErrors() []error { return m }
+func (m SetAssemblyStartedResponseMultiError) AllErrors() []error { return m }
 
-// AssemblyStartedResponseValidationError is the validation error returned by
-// AssemblyStartedResponse.Validate if the designated constraints aren't met.
-type AssemblyStartedResponseValidationError struct {
+// SetAssemblyStartedResponseValidationError is the validation error returned
+// by SetAssemblyStartedResponse.Validate if the designated constraints aren't met.
+type SetAssemblyStartedResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -644,24 +646,24 @@ type AssemblyStartedResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e AssemblyStartedResponseValidationError) Field() string { return e.field }
+func (e SetAssemblyStartedResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AssemblyStartedResponseValidationError) Reason() string { return e.reason }
+func (e SetAssemblyStartedResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AssemblyStartedResponseValidationError) Cause() error { return e.cause }
+func (e SetAssemblyStartedResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AssemblyStartedResponseValidationError) Key() bool { return e.key }
+func (e SetAssemblyStartedResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AssemblyStartedResponseValidationError) ErrorName() string {
-	return "AssemblyStartedResponseValidationError"
+func (e SetAssemblyStartedResponseValidationError) ErrorName() string {
+	return "SetAssemblyStartedResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e AssemblyStartedResponseValidationError) Error() string {
+func (e SetAssemblyStartedResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -673,14 +675,14 @@ func (e AssemblyStartedResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAssemblyStartedResponse.%s: %s%s",
+		"invalid %sSetAssemblyStartedResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AssemblyStartedResponseValidationError{}
+var _ error = SetAssemblyStartedResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -688,7 +690,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AssemblyStartedResponseValidationError{}
+} = SetAssemblyStartedResponseValidationError{}
 
 // Validate checks the field values on GetAssemblyInfoRequest with the rules
 // defined in the proto definition for this message. If any rules are

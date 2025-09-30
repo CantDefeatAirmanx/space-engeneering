@@ -3,9 +3,9 @@ package service_ship_assembly
 import (
 	"context"
 
-	service_ship_assembly_consumer "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly/consumer"
-	service_ship_assembly_producer "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/service/ship_assembly/producer"
-	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
+	model_consumer_order "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/consumer/order"
+	model_producer_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/producer/assembly"
+	platform_transaction "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/transaction"
 )
 
 var _ ShipAssemblyService = (*ShipAssemblyServiceImpl)(nil)
@@ -13,31 +13,31 @@ var _ ShipAssemblyService = (*ShipAssemblyServiceImpl)(nil)
 type ShipAssemblyServiceImpl struct {
 	repository ShipAssemblyRepository
 	cancel     context.CancelFunc
+	txManager  platform_transaction.TxManager[platform_transaction.Executor]
 
-	consumer service_ship_assembly_consumer.ShipAssemblyConsumer
-	producer service_ship_assembly_producer.ShipAssemblyProducer
+	consumer model_consumer_order.OrderConsumer
+	producer model_producer_assembly.ShipAssemblyProducer
 }
 
 func NewShipAssemblyService(
 	ctx context.Context,
 	repository ShipAssemblyRepository,
-	consumer platform_kafka.Consumer,
-	producer platform_kafka.Producer,
+	txManager platform_transaction.TxManager[platform_transaction.Executor],
+	consumer model_consumer_order.OrderConsumer,
+	producer model_producer_assembly.ShipAssemblyProducer,
 ) *ShipAssemblyServiceImpl {
-	service := &ShipAssemblyServiceImpl{repository: repository}
+	service := &ShipAssemblyServiceImpl{
+		repository: repository,
+		txManager:  txManager,
+		consumer:   consumer,
+		producer:   producer,
+	}
 
 	withCancel, cancel := context.WithCancel(ctx)
 	service.cancel = cancel
+	service.consumer.SetOrderPaidProcessor(service)
 
-	shipAssemblyConsumer := service_ship_assembly_consumer.NewShipAssemblyConsumer(
-		consumer,
-		service.processOrderPaidEvent,
-	)
-	service.consumer = shipAssemblyConsumer
-	go shipAssemblyConsumer.WatchOrderPaidEvent(withCancel)
-
-	shipAssemblyProducer := service_ship_assembly_producer.NewShipAssemblyProducer(producer)
-	service.producer = shipAssemblyProducer
+	go service.consumer.WatchOrderPaidEvent(withCancel)
 
 	return service
 }

@@ -6,8 +6,10 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/notification/config"
+	model_notification_sender "github.com/CantDefeatAirmanx/space-engeneering/notification/internal/model/notification_sender"
 	service_assemblies_watcher "github.com/CantDefeatAirmanx/space-engeneering/notification/internal/service/assemblies_watcher"
 	service_orders_watcher "github.com/CantDefeatAirmanx/space-engeneering/notification/internal/service/orders_watcher"
+	"github.com/CantDefeatAirmanx/space-engeneering/notification/internal/service/telegram_notification_sender"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	platform_kafka_consumer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/consumer"
@@ -19,10 +21,12 @@ type DiContainer struct {
 	closer      closer.Closer
 	telegramBot platform_telegram.TelegramClient
 
-	assembliesWatcherService service_assemblies_watcher.AssembliesWatcherService
-	assembliesConsumer       platform_kafka.Consumer
-	ordersWatcherService     service_orders_watcher.OrdersWatcherService
-	ordersConsumer           platform_kafka.Consumer
+	assembliesWatcherService     service_assemblies_watcher.AssembliesWatcherService
+	assembliesNotificationSender model_notification_sender.NotificationSender
+	assembliesConsumer           platform_kafka.Consumer
+	ordersWatcherService         service_orders_watcher.OrdersWatcherService
+	ordersNotificationSender     model_notification_sender.NotificationSender
+	ordersConsumer               platform_kafka.Consumer
 }
 
 func NewDiContainer(closer closer.Closer) *DiContainer {
@@ -38,7 +42,7 @@ func (d *DiContainer) GetAssembliesWatcherService(ctx context.Context) service_a
 
 	assembliesWatcherService := service_assemblies_watcher.NewAssembliesWatcherServiceImpl(
 		d.GetAssembliesConsumer(ctx),
-		d.GetTelegramBot(ctx),
+		d.GetAssembliesNotificationSender(ctx),
 	)
 	d.assembliesWatcherService = assembliesWatcherService
 
@@ -52,11 +56,41 @@ func (d *DiContainer) GetOrdersWatcherService(ctx context.Context) service_order
 
 	ordersWatcherService := service_orders_watcher.NewOrdersWatcherServiceImpl(
 		d.GetOrdersConsumer(ctx),
-		d.GetTelegramBot(ctx),
+		d.GetOrdersNotificationSender(ctx),
 	)
 	d.ordersWatcherService = ordersWatcherService
 
 	return ordersWatcherService
+}
+
+func (d *DiContainer) GetAssembliesNotificationSender(ctx context.Context) model_notification_sender.NotificationSender {
+	if d.assembliesNotificationSender != nil {
+		return d.assembliesNotificationSender
+	}
+
+	assembliesNotificationSender := telegram_notification_sender.NewTelegramNotificationSender(
+		d.GetTelegramBot(ctx),
+		config.Config.Telegram().AssembliesNotificationsChatId(),
+		platform_telegram.WithThreadId(config.Config.Telegram().AssembliesNotificationsThreadId()),
+	)
+	d.assembliesNotificationSender = assembliesNotificationSender
+
+	return d.assembliesNotificationSender
+}
+
+func (d *DiContainer) GetOrdersNotificationSender(ctx context.Context) model_notification_sender.NotificationSender {
+	if d.ordersNotificationSender != nil {
+		return d.ordersNotificationSender
+	}
+
+	ordersNotificationSender := telegram_notification_sender.NewTelegramNotificationSender(
+		d.GetTelegramBot(ctx),
+		config.Config.Telegram().OrdersNotificationsChatId(),
+		platform_telegram.WithThreadId(config.Config.Telegram().OrdersNotificationsThreadId()),
+	)
+	d.ordersNotificationSender = ordersNotificationSender
+
+	return d.ordersNotificationSender
 }
 
 func (d *DiContainer) GetAssembliesConsumer(ctx context.Context) platform_kafka.Consumer {

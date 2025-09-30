@@ -7,7 +7,7 @@ import (
 	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
 )
 
-func (s *ShipAssemblyServiceImpl) AssemblyStarted(
+func (s *ShipAssemblyServiceImpl) SetAssemblyStarted(
 	ctx context.Context,
 	params AssemblyStartedParams,
 ) (*AssemblyStartedReturn, error) {

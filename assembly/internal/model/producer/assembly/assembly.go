@@ -1,4 +1,4 @@
-package service_ship_assembly_producer
+package model_producer_assembly
 
 import (
 	"context"

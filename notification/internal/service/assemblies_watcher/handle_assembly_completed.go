@@ -6,8 +6,6 @@ import (
 	"embed"
 	"html/template"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/notification/config"
-	platform_telegram "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/telegram"
 	kafka_events_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/ship-assembly/v1"
 )
 
@@ -33,14 +31,9 @@ func (a *AssembliesWatcherServiceImpl) handleAssemblyCompleted(
 		return err
 	}
 
-	_, err := a.telegramClient.SendMessage(
+	err := a.notificationSender.SendNotification(
 		ctx,
 		bytes.String(),
-		config.Config.Telegram().OrdersNotificationsChatId(),
-
-		platform_telegram.WithThreadId(
-			config.Config.Telegram().OrdersNotificationsThreadId(),
-		),
 	)
 	if err != nil {
 		return nil

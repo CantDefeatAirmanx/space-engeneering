@@ -1,4 +1,4 @@
-package service_ship_assembly_consumer
+package consumer_ship_assembly
 
 import (
 	"context"
@@ -8,31 +8,41 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/assembly/config"
+	model_consumer_order "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/consumer/order"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	order_events_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/order/v1"
 )
 
-var _ ShipAssemblyConsumer = (*ShipAssemblyConsumerImpl)(nil)
+var _ model_consumer_order.OrderConsumer = (*ShipAssemblyConsumerImpl)(nil)
 
 type ShipAssemblyConsumerImpl struct {
-	consumer              platform_kafka.Consumer
-	processOrderPaidEvent ProcessOrderPaidEvent
+	consumer           platform_kafka.Consumer
+	orderPaidProcessor model_consumer_order.WithProcessOrderPaidEvent
 }
-type ProcessOrderPaidEvent func(ctx context.Context, orderPaidEvent *order_events_v1.OrderPaidEvent) error
+
+type InstanceParams struct {
+	KafkaConsumer      platform_kafka.Consumer
+	OrderPaidProcessor model_consumer_order.WithProcessOrderPaidEvent
+}
 
 func NewShipAssemblyConsumer(
-	consumer platform_kafka.Consumer,
-	processOrderPaidEvent ProcessOrderPaidEvent,
-) *ShipAssemblyConsumerImpl {
-	consumer.SetProcessMessageErrHandlers([]func(err error){
+	params InstanceParams,
+) model_consumer_order.OrderConsumer {
+	params.KafkaConsumer.SetProcessMessageErrHandlers([]func(err error){
 		processKafkaErrorsHandler,
 	})
 
 	return &ShipAssemblyConsumerImpl{
-		consumer:              consumer,
-		processOrderPaidEvent: processOrderPaidEvent,
+		consumer:           params.KafkaConsumer,
+		orderPaidProcessor: params.OrderPaidProcessor,
 	}
+}
+
+func (s *ShipAssemblyConsumerImpl) SetOrderPaidProcessor(
+	orderPaidProcessor model_consumer_order.WithProcessOrderPaidEvent,
+) {
+	s.orderPaidProcessor = orderPaidProcessor
 }
 
 func (s *ShipAssemblyConsumerImpl) WatchOrderPaidEvent(ctx context.Context) {
@@ -47,7 +57,10 @@ func (s *ShipAssemblyConsumerImpl) WatchOrderPaidEvent(ctx context.Context) {
 	}
 }
 
-func (s *ShipAssemblyConsumerImpl) handleOrderMessage(ctx context.Context, message platform_kafka.Message) (returnErr error) {
+func (s *ShipAssemblyConsumerImpl) handleOrderMessage(
+	ctx context.Context,
+	message platform_kafka.Message,
+) (returnErr error) {
 	payload := message.Value
 
 	var orderEventEnvelope order_events_v1.OrderEventEnvelope
@@ -71,7 +84,7 @@ func (s *ShipAssemblyConsumerImpl) handleOrderMessage(ctx context.Context, messa
 				orderEventEnvelope.Event,
 			)
 		}
-		return s.processOrderPaidEvent(ctx, orderPaidEvent.OrderPaid)
+		return s.orderPaidProcessor.ProcessOrderPaidEvent(ctx, orderPaidEvent.OrderPaid)
 
 	default:
 		return nil

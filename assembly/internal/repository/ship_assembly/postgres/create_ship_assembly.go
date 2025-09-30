@@ -2,6 +2,7 @@ package repository_ship_assembly_postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 
@@ -11,14 +12,14 @@ import (
 func (s *ShipAssemblyRepositoryPostgres) CreateShipAssembly(
 	ctx context.Context,
 	shipAssembly *model_ship_assembly.ShipAssembly,
-) error {
+) (*model_ship_assembly.ShipAssembly, error) {
 	query, args, err := squirrel.Insert(tableShipAssembly).
 		Columns(columnAssemblyUUID, columnOrderUUID, columnStatus).
 		Values(shipAssembly.AssemblyUUID, shipAssembly.OrderUUID, shipAssembly.Status).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	_, err = s.db.Exec(
@@ -27,8 +28,17 @@ func (s *ShipAssemblyRepositoryPostgres) CreateShipAssembly(
 		args...,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	res := model_ship_assembly.ShipAssembly{
+		AssemblyUUID: shipAssembly.AssemblyUUID,
+		OrderUUID:    shipAssembly.OrderUUID,
+		Status:       shipAssembly.Status,
+
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	return &res, nil
 }
