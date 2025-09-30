@@ -1,4 +1,4 @@
-package service_ship_assembly_consumer
+package consumer_ship_assembly
 
 func (s *ShipAssemblyConsumerImpl) Close() error {
 	if err := s.consumer.Close(); err != nil {

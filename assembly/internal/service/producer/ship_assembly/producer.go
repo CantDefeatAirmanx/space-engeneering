@@ -1,4 +1,4 @@
-package service_ship_assembly_producer
+package producer_ship_assembly
 
 import (
 	"context"
@@ -8,13 +8,14 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/assembly/config"
+	model_producer_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/producer/assembly"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	kafka_events_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/ship-assembly/v1"
 	assembly_events_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/events/assembly/v1"
 )
 
-var _ ShipAssemblyProducer = (*ShipAssemblyProducerImpl)(nil)
+var _ model_producer_assembly.ShipAssemblyProducer = (*ShipAssemblyProducerImpl)(nil)
 
 type ShipAssemblyProducerImpl struct {
 	producer platform_kafka.Producer

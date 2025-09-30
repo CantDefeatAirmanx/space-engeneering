@@ -6,8 +6,6 @@ import (
 	"embed"
 	"text/template"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/notification/config"
-	platform_telegram "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/telegram"
 	kafka_events_order "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/kafka_events/order/v1"
 )
 
@@ -33,13 +31,9 @@ func (o *OrdersWatcherServiceImpl) handleOrderPaidMessage(
 		return err
 	}
 
-	_, err := o.telegramClient.SendMessage(
+	err := o.notificationSender.SendNotification(
 		ctx,
 		bytes.String(),
-		config.Config.Telegram().OrdersNotificationsChatId(),
-		platform_telegram.WithThreadId(
-			config.Config.Telegram().OrdersNotificationsThreadId(),
-		),
 	)
 	return err
 }

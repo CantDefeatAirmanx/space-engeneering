@@ -7,13 +7,15 @@ import (
 	assembly_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/assembly/v1"
 )
 
-func (a *Api) AssemblyStarted(
+func (a *Api) SetAssemblyCompleted(
 	ctx context.Context,
-	req *assembly_v1.AssemblyStartedRequest,
-) (*assembly_v1.AssemblyStartedResponse, error) {
-	res, err := a.shipAssemblyService.AssemblyStarted(
+	req *assembly_v1.SetAssemblyCompletedRequest,
+) (
+	*assembly_v1.SetAssemblyCompletedResponse, error,
+) {
+	res, err := a.shipAssemblyService.SetAssemblyCompleted(
 		ctx,
-		service_ship_assembly.AssemblyStartedParams{
+		service_ship_assembly.AssemblyCompletedParams{
 			OrderUUID:    req.OrderUuid,
 			AssemblyUUID: req.AssemblyUuid,
 		},
@@ -22,7 +24,7 @@ func (a *Api) AssemblyStarted(
 		return nil, err
 	}
 
-	return &assembly_v1.AssemblyStartedResponse{
+	return &assembly_v1.SetAssemblyCompletedResponse{
 		AssemblyUuid: res.AssemblyUUID,
 	}, nil
 }

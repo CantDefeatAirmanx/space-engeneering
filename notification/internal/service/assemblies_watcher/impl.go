@@ -1,25 +1,25 @@
 package service_assemblies_watcher
 
 import (
+	model_notification_sender "github.com/CantDefeatAirmanx/space-engeneering/notification/internal/model/notification_sender"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
-	platform_telegram "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/telegram"
 )
 
 var _ AssembliesWatcherService = (*AssembliesWatcherServiceImpl)(nil)
 
 type AssembliesWatcherServiceImpl struct {
 	assembliesConsumer platform_kafka.Consumer
-	telegramClient     platform_telegram.TelegramClient
+	notificationSender model_notification_sender.NotificationSender
 	serviceConsumer    *AssembliesWatcherConsumer
 }
 
 func NewAssembliesWatcherServiceImpl(
 	assembliesConsumer platform_kafka.Consumer,
-	telegramClient platform_telegram.TelegramClient,
+	notificationSender model_notification_sender.NotificationSender,
 ) *AssembliesWatcherServiceImpl {
 	service := AssembliesWatcherServiceImpl{
 		assembliesConsumer: assembliesConsumer,
-		telegramClient:     telegramClient,
+		notificationSender: notificationSender,
 	}
 
 	serviceConsumer := NewAssembliesWatcherConsumer(

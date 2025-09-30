@@ -3,7 +3,10 @@ package service_ship_assembly
 import (
 	"context"
 
+	model_consumer_order "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/consumer/order"
 	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
+	repository_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly"
+	platform_transaction "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/transaction"
 	"github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/interfaces"
 )
 
@@ -13,12 +16,12 @@ type ShipAssemblyService interface {
 		params CreateShipAssemblyParams,
 	) (*model_ship_assembly.ShipAssembly, error)
 
-	AssemblyStarted(
+	SetAssemblyStarted(
 		ctx context.Context,
 		params AssemblyStartedParams,
 	) (*AssemblyStartedReturn, error)
 
-	AssemblyCompleted(
+	SetAssemblyCompleted(
 		ctx context.Context,
 		params AssemblyCompletedParams,
 	) (*AssemblyCompletedReturn, error)
@@ -28,6 +31,7 @@ type ShipAssemblyService interface {
 		params GetAssemblyInfoParams,
 	) (*model_ship_assembly.ShipAssembly, error)
 
+	model_consumer_order.WithProcessOrderPaidEvent
 	interfaces.WithClose
 }
 
@@ -63,7 +67,7 @@ type GetAssemblyInfoParams struct {
 }
 
 type ShipAssemblyRepository interface {
-	CreateShipAssembly(ctx context.Context, shipAssembly *model_ship_assembly.ShipAssembly) error
+	CreateShipAssembly(ctx context.Context, shipAssembly *model_ship_assembly.ShipAssembly) (*model_ship_assembly.ShipAssembly, error)
 
 	GetShipAssembly(
 		ctx context.Context,
@@ -75,4 +79,11 @@ type ShipAssemblyRepository interface {
 		selectParams model_ship_assembly.SelectShipAssemblyParams,
 		shipAssembly model_ship_assembly.UpdateShipAssemblyFields,
 	) error
+	SetShipAssemblyStatusPending(ctx context.Context, selectParams model_ship_assembly.SelectShipAssemblyParams) error
+	SetShipAssemblyStatusCompleted(ctx context.Context, selectParams model_ship_assembly.SelectShipAssemblyParams) error
+
+	platform_transaction.WithExecutor[
+		repository_ship_assembly.ShipAssemblyRepository,
+		platform_transaction.Executor,
+	]
 }

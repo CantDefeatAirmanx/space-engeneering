@@ -1,25 +1,25 @@
 package service_orders_watcher
 
 import (
+	model_notification_sender "github.com/CantDefeatAirmanx/space-engeneering/notification/internal/model/notification_sender"
 	platform_kafka "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka"
-	platform_telegram "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/telegram"
 )
 
 var _ OrdersWatcherService = (*OrdersWatcherServiceImpl)(nil)
 
 type OrdersWatcherServiceImpl struct {
-	ordersConsumer  platform_kafka.Consumer
-	serviceConsumer *OrdersWatcherConsumer
-	telegramClient  platform_telegram.TelegramClient
+	ordersConsumer     platform_kafka.Consumer
+	serviceConsumer    *OrdersWatcherConsumer
+	notificationSender model_notification_sender.NotificationSender
 }
 
 func NewOrdersWatcherServiceImpl(
 	ordersConsumer platform_kafka.Consumer,
-	telegramClient platform_telegram.TelegramClient,
+	notificationSender model_notification_sender.NotificationSender,
 ) *OrdersWatcherServiceImpl {
 	service := OrdersWatcherServiceImpl{
-		ordersConsumer: ordersConsumer,
-		telegramClient: telegramClient,
+		ordersConsumer:     ordersConsumer,
+		notificationSender: notificationSender,
 	}
 
 	consumer := NewOrdersWatcherConsumer(

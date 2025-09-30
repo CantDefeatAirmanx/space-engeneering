@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssemblyService_CreateAssembly_FullMethodName    = "/assembly.v1.AssemblyService/CreateAssembly"
-	AssemblyService_AssemblyCompleted_FullMethodName = "/assembly.v1.AssemblyService/AssemblyCompleted"
-	AssemblyService_AssemblyStarted_FullMethodName   = "/assembly.v1.AssemblyService/AssemblyStarted"
-	AssemblyService_GetAssemblyInfo_FullMethodName   = "/assembly.v1.AssemblyService/GetAssemblyInfo"
+	AssemblyService_CreateAssembly_FullMethodName       = "/assembly.v1.AssemblyService/CreateAssembly"
+	AssemblyService_SetAssemblyCompleted_FullMethodName = "/assembly.v1.AssemblyService/SetAssemblyCompleted"
+	AssemblyService_SetAssemblyStarted_FullMethodName   = "/assembly.v1.AssemblyService/SetAssemblyStarted"
+	AssemblyService_GetAssemblyInfo_FullMethodName      = "/assembly.v1.AssemblyService/GetAssemblyInfo"
 )
 
 // AssemblyServiceClient is the client API for AssemblyService service.
@@ -32,8 +32,8 @@ const (
 // AssemblyService предоставляет API для работы с сборкой корабля
 type AssemblyServiceClient interface {
 	CreateAssembly(ctx context.Context, in *CreateAssemblyRequest, opts ...grpc.CallOption) (*CreateAssemblyResponse, error)
-	AssemblyCompleted(ctx context.Context, in *AssemblyCompletedRequest, opts ...grpc.CallOption) (*AssemblyCompletedResponse, error)
-	AssemblyStarted(ctx context.Context, in *AssemblyStartedRequest, opts ...grpc.CallOption) (*AssemblyStartedResponse, error)
+	SetAssemblyCompleted(ctx context.Context, in *SetAssemblyCompletedRequest, opts ...grpc.CallOption) (*SetAssemblyCompletedResponse, error)
+	SetAssemblyStarted(ctx context.Context, in *SetAssemblyStartedRequest, opts ...grpc.CallOption) (*SetAssemblyStartedResponse, error)
 	GetAssemblyInfo(ctx context.Context, in *GetAssemblyInfoRequest, opts ...grpc.CallOption) (*GetAssemblyInfoResponse, error)
 }
 
@@ -55,20 +55,20 @@ func (c *assemblyServiceClient) CreateAssembly(ctx context.Context, in *CreateAs
 	return out, nil
 }
 
-func (c *assemblyServiceClient) AssemblyCompleted(ctx context.Context, in *AssemblyCompletedRequest, opts ...grpc.CallOption) (*AssemblyCompletedResponse, error) {
+func (c *assemblyServiceClient) SetAssemblyCompleted(ctx context.Context, in *SetAssemblyCompletedRequest, opts ...grpc.CallOption) (*SetAssemblyCompletedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AssemblyCompletedResponse)
-	err := c.cc.Invoke(ctx, AssemblyService_AssemblyCompleted_FullMethodName, in, out, cOpts...)
+	out := new(SetAssemblyCompletedResponse)
+	err := c.cc.Invoke(ctx, AssemblyService_SetAssemblyCompleted_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assemblyServiceClient) AssemblyStarted(ctx context.Context, in *AssemblyStartedRequest, opts ...grpc.CallOption) (*AssemblyStartedResponse, error) {
+func (c *assemblyServiceClient) SetAssemblyStarted(ctx context.Context, in *SetAssemblyStartedRequest, opts ...grpc.CallOption) (*SetAssemblyStartedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AssemblyStartedResponse)
-	err := c.cc.Invoke(ctx, AssemblyService_AssemblyStarted_FullMethodName, in, out, cOpts...)
+	out := new(SetAssemblyStartedResponse)
+	err := c.cc.Invoke(ctx, AssemblyService_SetAssemblyStarted_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +92,8 @@ func (c *assemblyServiceClient) GetAssemblyInfo(ctx context.Context, in *GetAsse
 // AssemblyService предоставляет API для работы с сборкой корабля
 type AssemblyServiceServer interface {
 	CreateAssembly(context.Context, *CreateAssemblyRequest) (*CreateAssemblyResponse, error)
-	AssemblyCompleted(context.Context, *AssemblyCompletedRequest) (*AssemblyCompletedResponse, error)
-	AssemblyStarted(context.Context, *AssemblyStartedRequest) (*AssemblyStartedResponse, error)
+	SetAssemblyCompleted(context.Context, *SetAssemblyCompletedRequest) (*SetAssemblyCompletedResponse, error)
+	SetAssemblyStarted(context.Context, *SetAssemblyStartedRequest) (*SetAssemblyStartedResponse, error)
 	GetAssemblyInfo(context.Context, *GetAssemblyInfoRequest) (*GetAssemblyInfoResponse, error)
 	mustEmbedUnimplementedAssemblyServiceServer()
 }
@@ -108,11 +108,11 @@ type UnimplementedAssemblyServiceServer struct{}
 func (UnimplementedAssemblyServiceServer) CreateAssembly(context.Context, *CreateAssemblyRequest) (*CreateAssemblyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAssembly not implemented")
 }
-func (UnimplementedAssemblyServiceServer) AssemblyCompleted(context.Context, *AssemblyCompletedRequest) (*AssemblyCompletedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssemblyCompleted not implemented")
+func (UnimplementedAssemblyServiceServer) SetAssemblyCompleted(context.Context, *SetAssemblyCompletedRequest) (*SetAssemblyCompletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAssemblyCompleted not implemented")
 }
-func (UnimplementedAssemblyServiceServer) AssemblyStarted(context.Context, *AssemblyStartedRequest) (*AssemblyStartedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssemblyStarted not implemented")
+func (UnimplementedAssemblyServiceServer) SetAssemblyStarted(context.Context, *SetAssemblyStartedRequest) (*SetAssemblyStartedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAssemblyStarted not implemented")
 }
 func (UnimplementedAssemblyServiceServer) GetAssemblyInfo(context.Context, *GetAssemblyInfoRequest) (*GetAssemblyInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAssemblyInfo not implemented")
@@ -156,38 +156,38 @@ func _AssemblyService_CreateAssembly_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssemblyService_AssemblyCompleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssemblyCompletedRequest)
+func _AssemblyService_SetAssemblyCompleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAssemblyCompletedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssemblyServiceServer).AssemblyCompleted(ctx, in)
+		return srv.(AssemblyServiceServer).SetAssemblyCompleted(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssemblyService_AssemblyCompleted_FullMethodName,
+		FullMethod: AssemblyService_SetAssemblyCompleted_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssemblyServiceServer).AssemblyCompleted(ctx, req.(*AssemblyCompletedRequest))
+		return srv.(AssemblyServiceServer).SetAssemblyCompleted(ctx, req.(*SetAssemblyCompletedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssemblyService_AssemblyStarted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssemblyStartedRequest)
+func _AssemblyService_SetAssemblyStarted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAssemblyStartedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssemblyServiceServer).AssemblyStarted(ctx, in)
+		return srv.(AssemblyServiceServer).SetAssemblyStarted(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssemblyService_AssemblyStarted_FullMethodName,
+		FullMethod: AssemblyService_SetAssemblyStarted_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssemblyServiceServer).AssemblyStarted(ctx, req.(*AssemblyStartedRequest))
+		return srv.(AssemblyServiceServer).SetAssemblyStarted(ctx, req.(*SetAssemblyStartedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -222,12 +222,12 @@ var AssemblyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssemblyService_CreateAssembly_Handler,
 		},
 		{
-			MethodName: "AssemblyCompleted",
-			Handler:    _AssemblyService_AssemblyCompleted_Handler,
+			MethodName: "SetAssemblyCompleted",
+			Handler:    _AssemblyService_SetAssemblyCompleted_Handler,
 		},
 		{
-			MethodName: "AssemblyStarted",
-			Handler:    _AssemblyService_AssemblyStarted_Handler,
+			MethodName: "SetAssemblyStarted",
+			Handler:    _AssemblyService_SetAssemblyStarted_Handler,
 		},
 		{
 			MethodName: "GetAssemblyInfo",

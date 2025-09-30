@@ -9,8 +9,8 @@ import "google/protobuf/timestamp.proto";
 // AssemblyService предоставляет API для работы с сборкой корабля
 service AssemblyService {
     rpc CreateAssembly(CreateAssemblyRequest) returns (CreateAssemblyResponse);
-    rpc AssemblyCompleted(AssemblyCompletedRequest) returns (AssemblyCompletedResponse);
-    rpc AssemblyStarted(AssemblyStartedRequest) returns (AssemblyStartedResponse);
+    rpc SetAssemblyCompleted(SetAssemblyCompletedRequest) returns (SetAssemblyCompletedResponse);
+    rpc SetAssemblyStarted(SetAssemblyStartedRequest) returns (SetAssemblyStartedResponse);
     rpc GetAssemblyInfo(GetAssemblyInfoRequest) returns (GetAssemblyInfoResponse);
 }
 
@@ -29,7 +29,7 @@ message CreateAssemblyResponse {
 // CreateAssemblyResponse описывает ответ на запрос на создание сборки корабля
 
 // AssemblyCompletedRequest описывает запрос на завершение сборки корабля
-message AssemblyCompletedRequest {
+message SetAssemblyCompletedRequest {
     // order_uuid идентификатор заказа
     string order_uuid = 1;
     // assembly_uuid идентификатор сборки
@@ -37,13 +37,13 @@ message AssemblyCompletedRequest {
 }
 
 // AssemblyCompletedResponse описывает ответ на запрос на завершение сборки корабля
-message AssemblyCompletedResponse {
+message SetAssemblyCompletedResponse {
     // assembly_uuid идентификатор сборки
     string assembly_uuid = 1;
 }
 
 // AssemblyStartedRequest описывает запрос на начал сборки корабля
-message AssemblyStartedRequest {
+message SetAssemblyStartedRequest {
     // order_uuid идентификатор заказа
     string order_uuid = 1;
     // assembly_uuid идентификатор сборки
@@ -51,7 +51,7 @@ message AssemblyStartedRequest {
 }
 
 // AssemblyStartedResponse описывает ответ на запрос на начал сборки корабля
-message AssemblyStartedResponse {
+message SetAssemblyStartedResponse {
     // assembly_uuid идентификатор сборки
     string assembly_uuid = 1;
 }
