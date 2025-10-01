@@ -71,7 +71,6 @@ func (d *DiContainer) GetShipAssemblyService(
 		ctx,
 		d.GetShipAssemblyRepository(ctx),
 		d.GetShipAssemblyTxManager(ctx),
-		d.GetShipAssemblyConsumer(ctx),
 		d.GetShipAssemblyProducer(ctx),
 	)
 	d.shipAssemblyService = service
@@ -141,7 +140,8 @@ func (d *DiContainer) GetShipAssemblyConsumer(
 
 	consumer := consumer_ship_assembly.NewShipAssemblyConsumer(
 		consumer_ship_assembly.InstanceParams{
-			KafkaConsumer: d.GetConsumer(ctx),
+			KafkaConsumer:      d.GetConsumer(ctx),
+			OrderPaidProcessor: d.GetShipAssemblyService(ctx).(model_consumer_order.WithProcessOrderPaidEvent),
 		},
 	)
 	d.assemblyOrderConsumer = consumer
