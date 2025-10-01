@@ -39,6 +39,8 @@ func NewApp(ctx context.Context, closer closer.Closer) (*App, error) {
 }
 
 func (a *App) Run(ctx context.Context) error {
+	go a.runOrdersWatcherConsumer(ctx)
+
 	if err := a.runGRPCServer(ctx); err != nil {
 		return err
 	}
@@ -54,6 +56,10 @@ func (a *App) runGRPCServer(_ context.Context) error {
 	}
 
 	return nil
+}
+
+func (a *App) runOrdersWatcherConsumer(ctx context.Context) {
+	a.diContainer.GetShipAssemblyConsumer(ctx).WatchOrderPaidEvent(ctx)
 }
 
 func (a *App) initDeps(ctx context.Context) error {

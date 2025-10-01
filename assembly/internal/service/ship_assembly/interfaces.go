@@ -3,7 +3,6 @@ package service_ship_assembly
 import (
 	"context"
 
-	model_consumer_order "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/consumer/order"
 	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
 	repository_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/repository/ship_assembly"
 	platform_transaction "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/transaction"
@@ -31,7 +30,6 @@ type ShipAssemblyService interface {
 		params GetAssemblyInfoParams,
 	) (*model_ship_assembly.ShipAssembly, error)
 
-	model_consumer_order.WithProcessOrderPaidEvent
 	interfaces.WithClose
 }
 
