@@ -7,13 +7,16 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/CantDefeatAirmanx/space-engeneering/iam/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/iam/internal/app/di"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	auth_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/auth/v1"
+	user_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/user/v1"
 )
 
 type App struct {
@@ -102,8 +105,8 @@ func (a *App) initGrpcServer(ctx context.Context) error {
 	})
 	reflection.Register(grpcServer)
 
-	// auth_v1.RegisterAuthServiceServer(grpcServer, a.diContainer.GetAuthV1API(ctx))
-	// user_v1.RegisterUserServiceServer(grpcServer, a.diContainer.GetUserV1API(ctx))
+	auth_v1.RegisterAuthServiceServer(grpcServer, a.diContainer.GetAuthV1API(ctx))
+	user_v1.RegisterUserServiceServer(grpcServer, a.diContainer.GetUserV1API(ctx))
 
 	a.grpcServer = grpcServer
 

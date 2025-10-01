@@ -200,15 +200,15 @@ tasks:
       - task up-order
       - task up-inventory
       - task up-assembly
-      - task up-notification
+      - task up-iam
 
   down-all:
     desc: "Остановка всех зависимостей docker-compose, core должен быть последним"
     cmds:
       - task down-order
       - task down-inventory
-      - task down-notification
       - task down-assembly
+      - task down-iam
       - task down-core
 
   up-core:
@@ -224,7 +224,7 @@ tasks:
       - echo "🚀 Запускаем зависимости order..."
       - cp -r {{.ROOT_DIR}}/order/.env {{.ROOT_DIR}}/deploy/order
       - 'docker compose -f deploy/order/docker-compose.yaml up --build --detach'
-  
+
   up-inventory:
     desc: "Запуск зависимостей inventory docker-compose"
     cmds:
@@ -239,12 +239,12 @@ tasks:
       - cp -r {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly
       - 'docker compose -f deploy/assembly/docker-compose.yaml up --build --detach'
 
-  up-notification:
-    desc: "Запуск зависимостей notification docker-compose"
+  up-iam:
+    desc: "Запуск зависимостей iam docker-compose"
     cmds:
-      - echo "🚀 Запускаем зависимости notification..."
-      - cp -r {{.ROOT_DIR}}/notification/.env {{.ROOT_DIR}}/deploy/notification
-      - 'docker compose -f deploy/notification/docker-compose.yaml up --build --detach'
+      - echo "🚀 Запускаем зависимости iam..."
+      - cp -r {{.ROOT_DIR}}/iam/.env {{.ROOT_DIR}}/deploy/iam
+      - 'docker compose -f deploy/iam/docker-compose.yaml up --build --detach'
 
   down-core:
     desc: "Остановка общих зависимостей docker-compose"
@@ -272,6 +272,13 @@ tasks:
       - echo "🛑 Останавливаем зависимости assembly..."
       - cp {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly/.env
       - 'docker compose -f deploy/assembly/docker-compose.yaml down'
+  
+  down-iam:
+    desc: "Остановка зависимостей iam docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем зависимости iam..."
+      - cp {{.ROOT_DIR}}/iam/.env {{.ROOT_DIR}}/deploy/iam/.env
+      - 'docker compose -f deploy/iam/docker-compose.yaml down'
 
   run-checks:
     desc: "Запуск всех проверок"

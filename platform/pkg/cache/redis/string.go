@@ -25,7 +25,7 @@ type StringCache interface {
 	// If the key already exists, it will be overwritten.
 	// Possible errors: [ErrReadOnly], [ErrTimeout], [ErrConnectionLost],
 	// [ErrPoolTimeout], [ErrPoolExhausted], [ErrClientClosed], [ErrTooManyClients].
-	Set(ctx context.Context, key string, value string, ttl time.Duration) RedisError
+	Set(ctx context.Context, key, value string, ttl time.Duration) RedisError
 
 	// MultiSet sets the string values of the keys.
 	//

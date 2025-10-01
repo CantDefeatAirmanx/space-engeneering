@@ -5,8 +5,9 @@ import (
 	"errors"
 	"time"
 
-	platform_redis "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/cache/redis"
 	redis "github.com/redis/go-redis/v9"
+
+	platform_redis "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/cache/redis"
 )
 
 var _ platform_redis.StringCache = (*StringCache)(nil)
@@ -27,7 +28,6 @@ func (s *StringCache) Get(
 ) (string, platform_redis.RedisError) {
 	cmd := s.client.Get(ctx, key)
 	res, err := cmd.Result()
-
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return "", platform_redis.ErrNotFound
@@ -44,7 +44,6 @@ func (s *StringCache) MultiGet(
 ) ([]string, platform_redis.RedisError) {
 	cmd := s.client.MGet(ctx, keys...)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return nil, convertRedisError(err)
 	}

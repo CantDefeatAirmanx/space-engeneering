@@ -2,9 +2,7 @@ package config
 
 import "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 
-var (
-	Config *configType
-)
+var Config *configType
 
 var (
 	_ ConfigInterface = (*configType)(nil)

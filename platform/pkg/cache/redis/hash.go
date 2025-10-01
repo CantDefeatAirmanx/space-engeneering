@@ -18,7 +18,7 @@ type HashCache interface {
 	// If the key or field is not found, returns empty string and [ErrNotFound].
 	// Possible errors: [ErrNotFound], [ErrWrongType], [ErrTimeout], [ErrConnectionLost],
 	// [ErrPoolTimeout], [ErrPoolExhausted], [ErrClientClosed].
-	HGet(ctx context.Context, key string, field string) (string, RedisError)
+	HGet(ctx context.Context, key, field string) (string, RedisError)
 
 	// HGetAll returns all field-value pairs in the hash.
 	//
@@ -49,7 +49,7 @@ type HashCache interface {
 	// If the key or field does not exist, returns false.
 	// Possible errors: [ErrWrongType], [ErrTimeout], [ErrConnectionLost],
 	// [ErrPoolTimeout], [ErrPoolExhausted], [ErrClientClosed].
-	HExists(ctx context.Context, key string, field string) (bool, RedisError)
+	HExists(ctx context.Context, key, field string) (bool, RedisError)
 
 	// HLen returns the number of fields in the hash.
 	//

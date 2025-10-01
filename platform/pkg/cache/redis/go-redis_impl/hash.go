@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
-	platform_redis "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/cache/redis"
 	"github.com/redis/go-redis/v9"
+
+	platform_redis "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/cache/redis"
 )
 
 var _ platform_redis.HashCache = (*HashCache)(nil)
@@ -27,7 +28,6 @@ func (h *HashCache) HSet(
 ) (int64, platform_redis.RedisError) {
 	cmd := h.client.HSet(ctx, key, values)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return 0, convertRedisError(err)
 	}
@@ -42,7 +42,6 @@ func (h *HashCache) HGet(
 ) (string, platform_redis.RedisError) {
 	cmd := h.client.HGet(ctx, key, field)
 	res, err := cmd.Result()
-
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return "", platform_redis.ErrNotFound
@@ -59,7 +58,6 @@ func (h *HashCache) HGetAll(
 ) (map[string]string, platform_redis.RedisError) {
 	cmd := h.client.HGetAll(ctx, key)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return nil, convertRedisError(err)
 	}
@@ -74,7 +72,6 @@ func (h *HashCache) HMGet(
 ) ([]string, platform_redis.RedisError) {
 	cmd := h.client.HMGet(ctx, key, fields...)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return nil, convertRedisError(err)
 	}
@@ -98,7 +95,6 @@ func (h *HashCache) HDel(
 ) (int64, platform_redis.RedisError) {
 	cmd := h.client.HDel(ctx, key, fields...)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return 0, convertRedisError(err)
 	}
@@ -113,7 +109,6 @@ func (h *HashCache) HExists(
 ) (bool, platform_redis.RedisError) {
 	cmd := h.client.HExists(ctx, key, field)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return false, convertRedisError(err)
 	}
@@ -127,7 +122,6 @@ func (h *HashCache) HLen(
 ) (int64, platform_redis.RedisError) {
 	cmd := h.client.HLen(ctx, key)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return 0, convertRedisError(err)
 	}
@@ -149,7 +143,6 @@ func (h *HashCache) HScan(
 		match,
 		count,
 	).Result()
-
 	if err != nil {
 		return nil, 0, convertRedisError(err)
 	}
@@ -163,7 +156,6 @@ func (h *HashCache) HKeys(
 ) ([]string, platform_redis.RedisError) {
 	cmd := h.client.HKeys(ctx, key)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return nil, convertRedisError(err)
 	}
@@ -177,7 +169,6 @@ func (h *HashCache) HVals(
 ) ([]string, platform_redis.RedisError) {
 	cmd := h.client.HVals(ctx, key)
 	res, err := cmd.Result()
-
 	if err != nil {
 		return nil, convertRedisError(err)
 	}

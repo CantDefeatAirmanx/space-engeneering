@@ -3,12 +3,13 @@ package config
 import (
 	"os"
 
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
+
 	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/iam/config/grpc"
 	config_logger "github.com/CantDefeatAirmanx/space-engeneering/iam/config/logger"
 	config_postgres "github.com/CantDefeatAirmanx/space-engeneering/iam/config/postgres"
 	config_redis "github.com/CantDefeatAirmanx/space-engeneering/iam/config/redis"
-	"github.com/caarlos0/env/v11"
-	"github.com/joho/godotenv"
 )
 
 type configData struct {
@@ -18,9 +19,7 @@ type configData struct {
 	RedisConfig    config_redis.RedisConfigData       `envPrefix:"redis__"`
 }
 
-var (
-	isDev = os.Getenv("GO_ENV") == "dev"
-)
+var isDev = os.Getenv("GO_ENV") == "dev"
 
 func LoadConfig(opts ...LoadConfigOption) error {
 	cfg := LoadConfigOptions{

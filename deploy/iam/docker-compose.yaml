@@ -1,15 +1,15 @@
 services: # Раздел, в котором описываются все контейнеры, необходимые для IAM-сервиса
 
   postgres-iam: # Сервис с PostgreSQL, используемый IAM-сервисом для хранения данных пользователей
-    image: postgres:17.0-alpine3.20 # Используем официальный образ PostgreSQL 17 на базе Alpine — он лёгкий и быстрый
+    image: postgres:17 # Используем официальный образ PostgreSQL 17 — он лёгкий и быстрый
     container_name: postgres-iam # Устанавливаем читаемое имя контейнера — удобно при отладке и работе в CLI
 
     env_file:
-      - .env
+      - ./.env
     environment:
-      - POSTGRES_USER=${postgres__user}
-      - POSTGRES_PASSWORD=${postgres__password}
-      - POSTGRES_DB=${postgres__dbName}
+        - POSTGRES_USER=${postgres__user}
+        - POSTGRES_PASSWORD=${postgres__password}
+        - POSTGRES_DB=${postgres__dbName}
 
     volumes:
       - postgres_iam_data:/var/lib/postgresql/data
@@ -17,12 +17,12 @@ services: # Раздел, в котором описываются все кон
       # Это позволяет не потерять данные при перезапуске контейнера
 
     ports:
-      - "${EXTERNAL_POSTGRES_PORT}:5432"
+      - "5434:5432"
       # Пробрасываем внутренний порт PostgreSQL (5432) на порт хоста, указанный в переменной EXTERNAL_POSTGRES_PORT
       # Это нужно, чтобы можно было подключиться к базе извне, например, из DBeaver или другого сервиса
 
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${postgres__user} -d ${postgres__dbName}" ]
       # Проверяем готовность базы с помощью встроенной команды pg_isready, используя логин из .env
       interval: 10s # Периодичность проверок — каждые 10 секунд
       timeout: 5s # Таймаут на выполнение одной проверки
@@ -40,12 +40,12 @@ services: # Раздел, в котором описываются все кон
     container_name: redis-iam # Явное имя контейнера Redis
 
     env_file:
-      - .env
+      - ./.env
     environment:
-      - EXTERNAL_REDIS_PORT=${redis__externalPort}
       - REDIS_PASSWORD=${redis__password}
+      - EXTERNAL_REDIS_PORT=${redis__externalPort}
 
-    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    command: redis-server --requirepass ${redis__password} --appendonly yes
     # --requirepass: устанавливаем пароль для подключения к Redis
     # --appendonly yes: включаем AOF (Append Only File) для персистентности данных
 
@@ -55,12 +55,12 @@ services: # Раздел, в котором описываются все кон
       # Данные сохраняются между перезапусками контейнера
 
     ports:
-      - "${EXTERNAL_REDIS_PORT}:6379"
+      - "${redis__externalPort}:6379"
       # Пробрасываем внутренний порт Redis на внешний, указанный в .env (например, 6380)
       # Это позволяет IAM-сервису обращаться к Redis по порту хоста
 
     healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      test: [ "CMD", "redis-cli", "-a", "${redis__password}", "ping" ]
       # Проверка с авторизацией: передаём пароль через флаг -a
       interval: 10s # Проверяем Redis каждые 10 секунд
       timeout: 5s # Ждём ответа до 5 секунд

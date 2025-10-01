@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 
-	"github.com/CantDefeatAirmanx/space-engeneering/assembly/config"
+	"github.com/CantDefeatAirmanx/space-engeneering/iam/config"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/closer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/migrator"
@@ -37,11 +37,13 @@ func main() {
 		return
 	}
 
-	conn, err := pgx.Connect(ctx, config.Config.Postgres().Uri())
+	uri := config.Config.Postgres().Uri()
+	conn, err := pgx.Connect(ctx, uri)
 	if err != nil {
 		logger.DefaultInfoLogger().Error(fmt.Sprintf("Failed to create db: %v", err))
 		return
 	}
+
 	closer.AddNamed("IAM Postgres Db", func(ctx context.Context) error {
 		if err := conn.Close(ctx); err != nil {
 			return err

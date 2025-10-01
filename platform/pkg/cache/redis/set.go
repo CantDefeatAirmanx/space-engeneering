@@ -26,7 +26,7 @@ type SetCache interface {
 	// If the key does not exist, it is a noop.
 	// Possible errors: [ErrWrongType], [ErrTimeout], [ErrConnectionLost],
 	// [ErrPoolTimeout], [ErrPoolExhausted], [ErrClientClosed].
-	SIsMember(ctx context.Context, key string, value string) (bool, RedisError)
+	SIsMember(ctx context.Context, key, value string) (bool, RedisError)
 
 	// SInter returns the intersection of the sets.
 	//

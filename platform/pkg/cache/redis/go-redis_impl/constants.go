@@ -12,6 +12,4 @@ const (
 	defaultConnMaxLifetime = 0
 )
 
-var (
-	defaultPoolTimeout = defaultReadTimeout + 1*time.Second
-)
+var defaultPoolTimeout = defaultReadTimeout + 1*time.Second
