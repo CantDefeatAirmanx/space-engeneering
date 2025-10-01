@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+// Package user.v1 содержит API для работы с пользователем
+package user.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/user/v1;user_v1";
+
+import "common/v1/user_info.proto";
+import "common/v1/notification_method.proto";
+
+// UserService предоставляет API для работы с пользователем
+service UserService {
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// RegisterRequest описывает запрос на регистрацию пользователя
+message RegisterRequest {
+    // info информация о пользователе
+    RegisterUserInfo info = 1;
+    // email электронная почта пользователя
+    string email = 2;
+    // password пароль пользователя
+    string password = 3;
+}
+
+// RegisterUserInfo описывает информацию о пользователе необходимую для регистрации
+message RegisterUserInfo {
+    // login логин пользователя
+    string login = 1;
+    // email электронная почта пользователя
+    string email = 2;
+    // notification_methods метод уведомления
+    repeated common.v1.NotificationMethod notification_methods = 3;
+}
+
+// RegisterResponse описывает ответ на запрос на регистрацию пользователя
+message RegisterResponse {
+    // user_uuid идентификатор пользователя
+    string user_uuid = 1;
+}
+
+// GetUserRequest описывает запрос на получение информации о пользователе
+message GetUserRequest {
+    // user_uuid идентификатор пользователя
+    string user_uuid = 1;
+}
+
+// GetUserResponse описывает ответ на запрос на получение информации о пользователе
+message GetUserResponse {
+    // user информация о пользователе
+    common.v1.UserInfo user = 1;
+}

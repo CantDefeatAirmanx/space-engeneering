@@ -65,6 +65,15 @@
             "program": "${workspaceFolder}/notification/cmd/main.go",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/notification/.env"
+        },
+        {
+            "name": "Debug IAM Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/iam/cmd/service/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/iam/.env"
         }
     ],
     "compounds": [
@@ -75,7 +84,8 @@
                 "Debug Order Service",
                 "Debug Payment Service",
                 "Debug Assembly Service",
-                "Debug Notification Service"
+                "Debug Notification Service",
+                "Debug IAM Service"
             ],
             "stopAll": true,
             "presentation": {
