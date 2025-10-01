@@ -6,6 +6,10 @@ services:
             - 5432:5432
         env_file:
             - ./.env
+        environment:
+            - POSTGRES_USER=${postgres__user}
+            - POSTGRES_PASSWORD=${postgres__password}
+            - POSTGRES_DB=${postgres__dbName}
         volumes:
             - order-postgres-data:/var/lib/postgresql/data
         healthcheck:

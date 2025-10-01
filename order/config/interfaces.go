@@ -9,6 +9,7 @@ type ConfigInterface interface {
 	InventoryClient() InventoryClientConfigInterface
 	PaymentClient() PaymentClientConfigInterface
 	Logger() LoggerConfigInterface
+	Kafka() KafkaConfigInterface
 }
 
 type HttpServerConfigInterface interface {
@@ -34,6 +35,11 @@ type InventoryClientConfigInterface interface {
 
 type PaymentClientConfigInterface interface {
 	Url() string
+}
+
+type KafkaConfigInterface interface {
+	Brokers() []string
+	OrderTopic() string
 }
 
 type LoggerConfigInterface interface {

@@ -6,4 +6,7 @@ use (
 	./payment
 	./platform
 	./shared
+	./tools
+    ./assembly
+    ./notification
 )

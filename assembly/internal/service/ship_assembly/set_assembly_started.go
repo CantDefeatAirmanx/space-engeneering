@@ -1,0 +1,35 @@
+package service_ship_assembly
+
+import (
+	"context"
+	"time"
+
+	model_ship_assembly "github.com/CantDefeatAirmanx/space-engeneering/assembly/internal/model/ship_assembly"
+)
+
+func (s *ShipAssemblyServiceImpl) SetAssemblyStarted(
+	ctx context.Context,
+	params AssemblyStartedParams,
+) (*AssemblyStartedReturn, error) {
+	now := time.Now()
+	err := s.repository.UpdateShipAssembly(
+		ctx,
+
+		model_ship_assembly.SelectShipAssemblyParams{
+			AssemblyUUID: params.AssemblyUUID,
+			OrderUUID:    params.OrderUUID,
+		},
+
+		model_ship_assembly.UpdateShipAssemblyFields{
+			Status:    model_ship_assembly.ShipAssemblyStatusPending,
+			StartTime: &now,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AssemblyStartedReturn{
+		AssemblyUUID: params.AssemblyUUID,
+	}, nil
+}
