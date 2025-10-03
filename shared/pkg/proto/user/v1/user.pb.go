@@ -27,12 +27,10 @@ const (
 // RegisterRequest описывает запрос на регистрацию пользователя
 type RegisterRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// info информация о пользователе
-	Info *RegisterUserInfo `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
-	// email электронная почта пользователя
-	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	// password пароль пользователя
-	Password      string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	// info информация о пользователе
+	Info          *RegisterUserInfo `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,25 +65,18 @@ func (*RegisterRequest) Descriptor() ([]byte, []int) {
 	return file_user_v1_user_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RegisterRequest) GetInfo() *RegisterUserInfo {
-	if x != nil {
-		return x.Info
-	}
-	return nil
-}
-
-func (x *RegisterRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
 func (x *RegisterRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
 	return ""
+}
+
+func (x *RegisterRequest) GetInfo() *RegisterUserInfo {
+	if x != nil {
+		return x.Info
+	}
+	return nil
 }
 
 // RegisterUserInfo описывает информацию о пользователе необходимую для регистрации
@@ -294,11 +285,10 @@ var File_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_user_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x12user/v1/user.proto\x12\auser.v1\x1a\x19common/v1/user_info.proto\x1a#common/v1/notification_method.proto\"r\n" +
-	"\x0fRegisterRequest\x12-\n" +
-	"\x04info\x18\x01 \x01(\v2\x19.user.v1.RegisterUserInfoR\x04info\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\"\x90\x01\n" +
+	"\x12user/v1/user.proto\x12\auser.v1\x1a\x19common/v1/user_info.proto\x1a#common/v1/notification_method.proto\"\\\n" +
+	"\x0fRegisterRequest\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\x12-\n" +
+	"\x04info\x18\x01 \x01(\v2\x19.user.v1.RegisterUserInfoR\x04info\"\x90\x01\n" +
 	"\x10RegisterUserInfo\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12P\n" +

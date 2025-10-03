@@ -44,6 +44,8 @@ type CommonConfig struct {
 
 	ConnMaxIdleTime time.Duration
 	ConnMaxLifetime time.Duration
+
+	SingleNodeClient *redis.Client
 }
 
 type ClusterConfig struct {
@@ -54,6 +56,31 @@ type ClusterConfig struct {
 type SingleConfig struct {
 	Addr string
 	CommonConfig
+}
+
+func NewSingleNodeConfig(options ...OptionFunc) *CommonConfig {
+	cfg := &CommonConfig{
+		Username:   "",
+		Password:   "",
+		ClientName: defaultClientName,
+		DB:         0,
+
+		PoolSize:    defaultPoolSize,
+		PoolTimeout: defaultPoolTimeout,
+
+		ReadTimeout:  defaultReadTimeout,
+		WriteTimeout: defaultWriteTimeout,
+
+		MaxRetries: defaultMaxRetries,
+		OnConnect:  func(ctx context.Context, cn *redis.Conn) error { return nil },
+
+		ConnMaxIdleTime: defaultConnMaxIdleTime,
+		ConnMaxLifetime: defaultConnMaxLifetime,
+	}
+	for _, option := range options {
+		option(cfg)
+	}
+	return cfg
 }
 
 type OptionFunc func(config *CommonConfig)
@@ -127,5 +154,11 @@ func WithConnMaxIdleTime(connMaxIdleTime time.Duration) OptionFunc {
 func WithConnMaxLifetime(connMaxLifetime time.Duration) OptionFunc {
 	return func(config *CommonConfig) {
 		config.ConnMaxLifetime = connMaxLifetime
+	}
+}
+
+func WithSingleNodeClient(singleNodeClient *redis.Client) OptionFunc {
+	return func(config *CommonConfig) {
+		config.SingleNodeClient = singleNodeClient
 	}
 }

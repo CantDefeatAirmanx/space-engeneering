@@ -41,6 +41,7 @@ func newConfig(configData configData) *configType {
 		},
 
 		redis: &redisConfigType{
+			host:         configData.RedisConfig.Host,
 			password:     configData.RedisConfig.Password,
 			externalPort: configData.RedisConfig.ExternalPort,
 		},
@@ -109,8 +110,13 @@ func (p *postgresConfigType) User() string {
 }
 
 type redisConfigType struct {
+	host         string
 	password     string
 	externalPort int
+}
+
+func (r *redisConfigType) Host() string {
+	return r.host
 }
 
 func (r *redisConfigType) ExternalPort() int {

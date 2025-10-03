@@ -57,6 +57,8 @@ func (m *RegisterRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Password
+
 	if all {
 		switch v := interface{}(m.GetInfo()).(type) {
 		case interface{ ValidateAll() error }:
@@ -85,10 +87,6 @@ func (m *RegisterRequest) validate(all bool) error {
 			}
 		}
 	}
-
-	// no validation rules for Email
-
-	// no validation rules for Password
 
 	if len(errors) > 0 {
 		return RegisterRequestMultiError(errors)

@@ -1,7 +1,6 @@
 package platform_redis_redisgo
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
@@ -16,6 +15,9 @@ type SingleNodeImpl struct {
 	stringCache platform_redis.StringCache
 	setCache    platform_redis.SetCache
 	hashCache   platform_redis.HashCache
+
+	addr    string
+	options []OptionFunc
 }
 
 func NewSingleNodeClient(
@@ -32,28 +34,30 @@ func NewSingleNodeClient(
 	if addr == "" {
 		return nil, fmt.Errorf("%w: addr is required", platform_redis.ErrConfigError)
 	}
+	cfg := NewSingleNodeConfig(options...)
 
-	client := redis.NewClient(&redis.Options{
+	redisOptions := &redis.Options{
 		Addr:       addr,
-		Username:   "",
-		Password:   "",
-		ClientName: defaultClientName,
-		DB:         0,
+		Username:   cfg.Username,
+		Password:   cfg.Password,
+		ClientName: cfg.ClientName,
+		DB:         cfg.DB,
 
-		PoolSize:    defaultPoolSize,
-		PoolTimeout: defaultPoolTimeout,
+		PoolSize:    cfg.PoolSize,
+		PoolTimeout: cfg.PoolTimeout,
 
-		ReadTimeout:  defaultReadTimeout,
-		WriteTimeout: defaultWriteTimeout,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
 
-		MaxRetries: defaultMaxRetries,
-		OnConnect:  func(ctx context.Context, cn *redis.Conn) error { return nil },
+		MaxRetries: cfg.MaxRetries,
+		OnConnect:  cfg.OnConnect,
 
-		ConnMaxIdleTime: defaultConnMaxIdleTime,
-		ConnMaxLifetime: defaultConnMaxLifetime,
+		ConnMaxIdleTime: cfg.ConnMaxIdleTime,
+		ConnMaxLifetime: cfg.ConnMaxLifetime,
 
 		Network: "tcp",
-	})
+	}
+	client := redis.NewClient(redisOptions)
 
 	stringCache := NewStringCache(client)
 	setCache := NewSetCache(client)
@@ -64,6 +68,9 @@ func NewSingleNodeClient(
 		stringCache: stringCache,
 		setCache:    setCache,
 		hashCache:   hashCache,
+
+		addr:    addr,
+		options: options,
 	}, nil
 }
 

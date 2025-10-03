@@ -23,11 +23,60 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// NotificationMethodProviderName имя провайдера (telegram, email, etc.)
+type NotificationMethodProviderName int32
+
+const (
+	// NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED неизвестный провайдер
+	NotificationMethodProviderName_NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED NotificationMethodProviderName = 0
+	// TELEGRAM telegram
+	NotificationMethodProviderName_NOTIFICATION_METHOD_PROVIDER_NAME_TELEGRAM NotificationMethodProviderName = 1
+)
+
+// Enum value maps for NotificationMethodProviderName.
+var (
+	NotificationMethodProviderName_name = map[int32]string{
+		0: "NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED",
+		1: "NOTIFICATION_METHOD_PROVIDER_NAME_TELEGRAM",
+	}
+	NotificationMethodProviderName_value = map[string]int32{
+		"NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED": 0,
+		"NOTIFICATION_METHOD_PROVIDER_NAME_TELEGRAM":            1,
+	}
+)
+
+func (x NotificationMethodProviderName) Enum() *NotificationMethodProviderName {
+	p := new(NotificationMethodProviderName)
+	*p = x
+	return p
+}
+
+func (x NotificationMethodProviderName) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NotificationMethodProviderName) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_v1_notification_method_proto_enumTypes[0].Descriptor()
+}
+
+func (NotificationMethodProviderName) Type() protoreflect.EnumType {
+	return &file_common_v1_notification_method_proto_enumTypes[0]
+}
+
+func (x NotificationMethodProviderName) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NotificationMethodProviderName.Descriptor instead.
+func (NotificationMethodProviderName) EnumDescriptor() ([]byte, []int) {
+	return file_common_v1_notification_method_proto_rawDescGZIP(), []int{0}
+}
+
 // NotificationMethod описывает метод уведомления
 type NotificationMethod struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// provider_name имя провайдера (telegram, email, etc.)
-	ProviderName string `protobuf:"bytes,1,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	ProviderName NotificationMethodProviderName `protobuf:"varint,1,opt,name=provider_name,json=providerName,proto3,enum=common.v1.NotificationMethodProviderName" json:"provider_name,omitempty"`
 	// target целевой идентификатор (chat_id:thread_id, email, etc.)
 	Target        string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -64,11 +113,11 @@ func (*NotificationMethod) Descriptor() ([]byte, []int) {
 	return file_common_v1_notification_method_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *NotificationMethod) GetProviderName() string {
+func (x *NotificationMethod) GetProviderName() NotificationMethodProviderName {
 	if x != nil {
 		return x.ProviderName
 	}
-	return ""
+	return NotificationMethodProviderName_NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED
 }
 
 func (x *NotificationMethod) GetTarget() string {
@@ -82,10 +131,13 @@ var File_common_v1_notification_method_proto protoreflect.FileDescriptor
 
 const file_common_v1_notification_method_proto_rawDesc = "" +
 	"\n" +
-	"#common/v1/notification_method.proto\x12\tcommon.v1\"Q\n" +
-	"\x12NotificationMethod\x12#\n" +
-	"\rprovider_name\x18\x01 \x01(\tR\fproviderName\x12\x16\n" +
-	"\x06target\x18\x02 \x01(\tR\x06targetBUZSgithub.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1;common_v1b\x06proto3"
+	"#common/v1/notification_method.proto\x12\tcommon.v1\"|\n" +
+	"\x12NotificationMethod\x12N\n" +
+	"\rprovider_name\x18\x01 \x01(\x0e2).common.v1.NotificationMethodProviderNameR\fproviderName\x12\x16\n" +
+	"\x06target\x18\x02 \x01(\tR\x06target*\x8b\x01\n" +
+	"\x1eNotificationMethodProviderName\x129\n" +
+	"5NOTIFICATION_METHOD_PROVIDER_NAME_UNKNOWN_UNSPECIFIED\x10\x00\x12.\n" +
+	"*NOTIFICATION_METHOD_PROVIDER_NAME_TELEGRAM\x10\x01BUZSgithub.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1;common_v1b\x06proto3"
 
 var (
 	file_common_v1_notification_method_proto_rawDescOnce sync.Once
@@ -99,16 +151,19 @@ func file_common_v1_notification_method_proto_rawDescGZIP() []byte {
 	return file_common_v1_notification_method_proto_rawDescData
 }
 
+var file_common_v1_notification_method_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_common_v1_notification_method_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_common_v1_notification_method_proto_goTypes = []any{
-	(*NotificationMethod)(nil), // 0: common.v1.NotificationMethod
+	(NotificationMethodProviderName)(0), // 0: common.v1.NotificationMethodProviderName
+	(*NotificationMethod)(nil),          // 1: common.v1.NotificationMethod
 }
 var file_common_v1_notification_method_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: common.v1.NotificationMethod.provider_name:type_name -> common.v1.NotificationMethodProviderName
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_common_v1_notification_method_proto_init() }
@@ -121,13 +176,14 @@ func file_common_v1_notification_method_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_v1_notification_method_proto_rawDesc), len(file_common_v1_notification_method_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_common_v1_notification_method_proto_goTypes,
 		DependencyIndexes: file_common_v1_notification_method_proto_depIdxs,
+		EnumInfos:         file_common_v1_notification_method_proto_enumTypes,
 		MessageInfos:      file_common_v1_notification_method_proto_msgTypes,
 	}.Build()
 	File_common_v1_notification_method_proto = out.File

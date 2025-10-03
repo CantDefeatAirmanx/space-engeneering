@@ -24,6 +24,7 @@ type PostgresConfigInterface interface {
 }
 
 type RedisConfigInterface interface {
+	Host() string
 	Password() string
 	ExternalPort() int
 }
