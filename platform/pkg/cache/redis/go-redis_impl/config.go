@@ -7,26 +7,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-/*
-	Addr:       "localhost:6379",
-	Username:   "",
-	Password:   "",
-	ClientName: "Unknown Redis Client",
-	DB:         0,
-
-	PoolSize:    10,
-	PoolTimeout: time.Duration(10 * time.Second),
-
-	ReadTimeout:  time.Duration(10 * time.Second),
-	WriteTimeout: time.Duration(10 * time.Second),
-
-	MaxRetries: 3,
-	OnConnect:  func(ctx context.Context, cn *redis.Conn) error { return nil },
-
-	ConnMaxIdleTime: time.Duration(10 * time.Minute),
-	ConnMaxLifetime: 0,
-*/
-
 type CommonConfig struct {
 	Username   string
 	Password   string
