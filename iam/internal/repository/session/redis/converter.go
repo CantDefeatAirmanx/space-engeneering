@@ -14,29 +14,35 @@ func convertSessionToModel(
 		UserUUID: session[sessionHashUserUUIDPropKey],
 	}
 
-	dateKeys := []string{
-		sessionHashCreatedAtPropKey,
-		sessionHashUpdatedAtPropKey,
-		sessionHashExpiresAtPropKey,
+	createdAt, err := parseTime(session[sessionHashCreatedAtPropKey])
+	if err != nil {
+		return nil, err
 	}
-	for _, dateKey := range dateKeys {
-		err := parseTimeWithUpdateResult(&res, session[dateKey])
-		if err != nil {
-			return nil, err
-		}
+	res.CreatedAt = createdAt
+
+	updatedAt, err := parseTime(session[sessionHashUpdatedAtPropKey])
+	if err != nil {
+		return nil, err
 	}
+	res.UpdatedAt = updatedAt
+
+	expiresAt, err := parseTime(session[sessionHashExpiresAtPropKey])
+	if err != nil {
+		return nil, err
+	}
+	res.ExpiresAt = expiresAt
 
 	return &res, nil
 }
 
-func parseTimeWithUpdateResult(result *model_session.Session, dateString string) error {
+func parseTime(dateString string) (time.Time, error) {
 	date, err := time.Parse(
 		dateFormat,
 		dateString,
 	)
 	if err != nil {
-		return err
+		return time.Time{}, err
 	}
-	result.CreatedAt = date
-	return nil
+
+	return date, nil
 }
