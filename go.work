@@ -9,4 +9,5 @@ use (
 	./tools
     ./assembly
     ./notification
+    ./iam
 )

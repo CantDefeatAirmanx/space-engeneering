@@ -67,6 +67,9 @@ tasks:
       - task build:order
       - task build:inventory
       - task build:payment
+      - task build:assembly
+      - task build:notification
+      - task build:iam
 
   build:order:
     desc: "Сборка order"
@@ -92,6 +95,11 @@ tasks:
     desc: "Сборка notification"
     cmds:
       - 'go build -o {{.BUILD_DIR}}/notification ./notification/cmd/main.go'
+
+  build:iam:
+    desc: "Сборка iam"
+    cmds:
+      - 'go build -o {{.BUILD_DIR}}/iam ./iam/cmd/service/main.go'
 
   run-order:
     desc: "Запуск order"
@@ -148,6 +156,17 @@ tasks:
     cmds:
       - 'GO_ENV=dev {{.BUILD_DIR}}/notification'
      
+  run-iam:
+    desc: "Запуск iam"
+    cmds:
+      - 'GO_ENV=production {{.BUILD_DIR}}/iam'
+
+  run-iam:dev:
+    deps: [ build:iam ]
+    desc: "Запуск iam в режиме dev"
+    cmds:
+      - 'GO_ENV=dev {{.BUILD_DIR}}/iam'
+
   run-assembly:migrator:
     desc: "Запуск assembly:migrator"
     cmds:
@@ -157,6 +176,16 @@ tasks:
     desc: "Запуск assembly:migrator в режиме dev"
     cmds:
       - 'GO_ENV=dev go run {{.ROOT_DIR}}/assembly/cmd/migrator/main.go'
+
+  run-iam:migrator:
+    desc: "Запуск iam:migrator"
+    cmds:
+      - 'GO_ENV=production go run {{.ROOT_DIR}}/iam/cmd/migrator/main.go'
+
+  run-iam:migrator:dev:
+    desc: "Запуск iam:migrator в режиме dev"
+    cmds:
+      - 'GO_ENV=dev go run {{.ROOT_DIR}}/iam/cmd/migrator/main.go'
 
   run-kafka-setup:
     deps: [ up-all ]
@@ -171,12 +200,15 @@ tasks:
       - task up-order
       - task up-inventory
       - task up-assembly
+      - task up-iam
 
   down-all:
     desc: "Остановка всех зависимостей docker-compose, core должен быть последним"
     cmds:
       - task down-order
       - task down-inventory
+      - task down-assembly
+      - task down-iam
       - task down-core
 
   up-core:
@@ -192,19 +224,27 @@ tasks:
       - echo "🚀 Запускаем зависимости order..."
       - cp -r {{.ROOT_DIR}}/order/.env {{.ROOT_DIR}}/deploy/order
       - 'docker compose -f deploy/order/docker-compose.yaml up --build --detach'
-  
+
   up-inventory:
     desc: "Запуск зависимостей inventory docker-compose"
     cmds:
       - echo "🚀 Запускаем зависимости inventory..."
       - cp -r {{.ROOT_DIR}}/inventory/.env {{.ROOT_DIR}}/deploy/inventory
       - 'docker compose -f deploy/inventory/docker-compose.yaml up --build --detach'
+
   up-assembly:
     desc: "Запуск зависимостей assembly docker-compose"
     cmds:
       - echo "🚀 Запускаем зависимости assembly..."
       - cp -r {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly
       - 'docker compose -f deploy/assembly/docker-compose.yaml up --build --detach'
+
+  up-iam:
+    desc: "Запуск зависимостей iam docker-compose"
+    cmds:
+      - echo "🚀 Запускаем зависимости iam..."
+      - cp -r {{.ROOT_DIR}}/iam/.env {{.ROOT_DIR}}/deploy/iam
+      - 'docker compose -f deploy/iam/docker-compose.yaml up --build --detach'
 
   down-core:
     desc: "Остановка общих зависимостей docker-compose"
@@ -232,6 +272,13 @@ tasks:
       - echo "🛑 Останавливаем зависимости assembly..."
       - cp {{.ROOT_DIR}}/assembly/.env {{.ROOT_DIR}}/deploy/assembly/.env
       - 'docker compose -f deploy/assembly/docker-compose.yaml down'
+  
+  down-iam:
+    desc: "Остановка зависимостей iam docker-compose"
+    cmds:
+      - echo "🛑 Останавливаем зависимости iam..."
+      - cp {{.ROOT_DIR}}/iam/.env {{.ROOT_DIR}}/deploy/iam/.env
+      - 'docker compose -f deploy/iam/docker-compose.yaml down'
 
   run-checks:
     desc: "Запуск всех проверок"

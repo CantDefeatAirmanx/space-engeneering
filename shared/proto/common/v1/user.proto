@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// Package common.v1 содержит общие типы данных
+package common.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1;common_v1";
+
+import "common/v1/user_info.proto";
+import "google/protobuf/timestamp.proto";
+
+// User описывает пользователя
+message User {
+    // uuid идентификатор пользователя
+    string uuid = 1;
+    // info информация о пользователе
+    UserInfo info = 2;
+    // created_at дата создания пользователя
+    google.protobuf.Timestamp created_at = 3;
+    // updated_at дата обновления пользователя
+    google.protobuf.Timestamp updated_at = 4;
+}

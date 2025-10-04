@@ -22,6 +22,7 @@ COPY payment/go.mod payment/go.sum ./payment/
 COPY assembly/go.mod assembly/go.sum ./assembly/
 COPY tools/go.mod tools/go.sum ./tools/
 COPY notification/go.mod notification/go.sum ./notification/
+COPY iam/go.mod iam/go.sum ./iam/
 
 # Загружаем все зависимости, указанные в модульных файлах
 RUN go mod download
