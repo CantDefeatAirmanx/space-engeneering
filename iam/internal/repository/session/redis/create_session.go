@@ -52,6 +52,16 @@ func (s *SessionRepositoryRedisImpl) CreateUserSession(
 	if err != nil {
 		return nil, err
 	}
+	err = s.redisCache.
+		Key().
+		Expire(
+			ctx,
+			fmt.Sprintf(sessionDataKeyV1, sessionUUID.String()),
+			s.ttl,
+		)
+	if err != nil {
+		return nil, err
+	}
 
 	return &session, nil
 }

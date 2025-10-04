@@ -15,6 +15,7 @@ type SingleNodeImpl struct {
 	stringCache platform_redis.StringCache
 	setCache    platform_redis.SetCache
 	hashCache   platform_redis.HashCache
+	keyCache    platform_redis.KeyCache
 
 	addr    string
 	options []OptionFunc
@@ -62,12 +63,14 @@ func NewSingleNodeClient(
 	stringCache := NewStringCache(client)
 	setCache := NewSetCache(client)
 	hashCache := NewHashCache(client)
+	keyCache := NewKeyCache(client)
 
 	return &SingleNodeImpl{
 		client:      client,
 		stringCache: stringCache,
 		setCache:    setCache,
 		hashCache:   hashCache,
+		keyCache:    keyCache,
 
 		addr:    addr,
 		options: options,
@@ -84,4 +87,8 @@ func (s *SingleNodeImpl) Set() platform_redis.SetCache {
 
 func (s *SingleNodeImpl) Hash() platform_redis.HashCache {
 	return s.hashCache
+}
+
+func (s *SingleNodeImpl) Key() platform_redis.KeyCache {
+	return s.keyCache
 }
