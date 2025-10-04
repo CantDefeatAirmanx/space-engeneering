@@ -11,6 +11,7 @@ var (
 	_ GRPCConfigInterface     = (*grpcConfigType)(nil)
 	_ PostgresConfigInterface = (*postgresConfigType)(nil)
 	_ RedisConfigInterface    = (*redisConfigType)(nil)
+	_ AuthConfigInterface     = (*authConfigType)(nil)
 )
 
 type configType struct {
@@ -18,6 +19,11 @@ type configType struct {
 	grpc     GRPCConfigInterface
 	postgres PostgresConfigInterface
 	redis    RedisConfigInterface
+	auth     AuthConfigInterface
+}
+
+func (c *configType) Auth() AuthConfigInterface {
+	return c.auth
 }
 
 func newConfig(configData configData) *configType {
@@ -44,6 +50,10 @@ func newConfig(configData configData) *configType {
 			host:         configData.RedisConfig.Host,
 			password:     configData.RedisConfig.Password,
 			externalPort: configData.RedisConfig.ExternalPort,
+		},
+
+		auth: &authConfigType{
+			sessionTTLHours: configData.AuthConfig.SessionTTLHours,
 		},
 	}
 }
@@ -138,4 +148,12 @@ func (l *loggerConfigType) Encoder() logger.EncoderType {
 
 func (l *loggerConfigType) Level() logger.Level {
 	return l.level
+}
+
+type authConfigType struct {
+	sessionTTLHours int
+}
+
+func (a *authConfigType) SessionTTLHours() int {
+	return a.sessionTTLHours
 }

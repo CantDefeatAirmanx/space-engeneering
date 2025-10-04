@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"strconv"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
@@ -144,6 +145,7 @@ func (d *DiContainer) GetSessionRepository(ctx context.Context) repository_sessi
 
 	repository := repository_session_redis.NewSessionRepositoryRedisImpl(
 		d.GetRedis(ctx),
+		time.Duration(config.Config.Auth().SessionTTLHours())*time.Hour,
 	)
 	d.sessionRepository = repository
 
@@ -195,6 +197,8 @@ func (d *DiContainer) GetRedis(ctx context.Context) platform_redis.RedisCache {
 			config.Config.Redis().Host(),
 			strconv.Itoa(config.Config.Redis().ExternalPort()),
 		),
+		platform_redis_redisgo.WithPassword(config.Config.Redis().Password()),
+		platform_redis_redisgo.WithClientName("IAM_Redis_Client"),
 	)
 	if err != nil {
 		logger.Logger().Error("Failed to create redis", zap.Error(err))

@@ -11,6 +11,7 @@ const (
 	sessionDataKeyV1  = namespace + ":session:%s"
 
 	sessionHashUUIDPropKey      SessionRedisTypeKey = "uuid"
+	sessionHashUserUUIDPropKey  SessionRedisTypeKey = "user_uuid"
 	sessionHashCreatedAtPropKey SessionRedisTypeKey = "created_at"
 	sessionHashUpdatedAtPropKey SessionRedisTypeKey = "updated_at"
 	sessionHashExpiresAtPropKey SessionRedisTypeKey = "expires_at"

@@ -6,6 +6,7 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 
+	config_auth "github.com/CantDefeatAirmanx/space-engeneering/iam/config/auth"
 	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/iam/config/grpc"
 	config_logger "github.com/CantDefeatAirmanx/space-engeneering/iam/config/logger"
 	config_postgres "github.com/CantDefeatAirmanx/space-engeneering/iam/config/postgres"
@@ -17,6 +18,7 @@ type configData struct {
 	GRPCConfig     config_grpc.GRPCConfigData         `envPrefix:"grpc__"`
 	PostgresConfig config_postgres.PostgresConfigData `envPrefix:"postgres__"`
 	RedisConfig    config_redis.RedisConfigData       `envPrefix:"redis__"`
+	AuthConfig     config_auth.AuthConfigData         `envPrefix:"auth__"`
 }
 
 var isDev = os.Getenv("GO_ENV") == "dev"

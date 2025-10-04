@@ -18,6 +18,7 @@ func (s *SessionRepositoryRedisImpl) CreateUserSession(
 
 	session := model_session.Session{
 		UUID:      sessionUUID.String(),
+		UserUUID:  params.UserUUID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		ExpiresAt: params.ExpiresAt,
@@ -42,6 +43,7 @@ func (s *SessionRepositoryRedisImpl) CreateUserSession(
 			fmt.Sprintf(sessionDataKeyV1, sessionUUID.String()),
 			map[string]string{
 				sessionHashUUIDPropKey:      session.UUID,
+				sessionHashUserUUIDPropKey:  session.UserUUID,
 				sessionHashCreatedAtPropKey: session.CreatedAt.Format(dateFormat),
 				sessionHashUpdatedAtPropKey: session.UpdatedAt.Format(dateFormat),
 				sessionHashExpiresAtPropKey: session.ExpiresAt.Format(dateFormat),

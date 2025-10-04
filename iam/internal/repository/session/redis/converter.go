@@ -10,7 +10,8 @@ func convertSessionToModel(
 	session SessionInfoRedisType,
 ) (*model_session.Session, error) {
 	res := model_session.Session{
-		UUID: session[sessionHashUUIDPropKey],
+		UUID:     session[sessionHashUUIDPropKey],
+		UserUUID: session[sessionHashUserUUIDPropKey],
 	}
 
 	dateKeys := []string{

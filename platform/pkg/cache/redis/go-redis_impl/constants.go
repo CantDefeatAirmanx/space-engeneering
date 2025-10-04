@@ -3,7 +3,7 @@ package platform_redis_redisgo
 import "time"
 
 const (
-	defaultClientName      = "Unknown Redis Client"
+	defaultClientName      = "Unknown_Redis_Client"
 	defaultPoolSize        = 10
 	defaultReadTimeout     = 10 * time.Second
 	defaultWriteTimeout    = 10 * time.Second

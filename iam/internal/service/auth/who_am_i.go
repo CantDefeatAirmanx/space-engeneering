@@ -22,7 +22,7 @@ func (a *AuthServiceImpl) WhoAmI(
 	user, err := a.userRepository.GetUserShortInfoWithHashPwd(
 		ctx,
 		model_user.UserFilter{
-			UUID: session.UUID,
+			UUID: session.UserUUID,
 		},
 	)
 	if err != nil {

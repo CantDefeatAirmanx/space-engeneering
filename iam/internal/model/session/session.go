@@ -3,7 +3,8 @@ package model_session
 import "time"
 
 type Session struct {
-	UUID string
+	UUID     string
+	UserUUID string
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

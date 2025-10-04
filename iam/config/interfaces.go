@@ -8,6 +8,7 @@ type ConfigInterface interface {
 	GRPC() GRPCConfigInterface
 	Postgres() PostgresConfigInterface
 	Redis() RedisConfigInterface
+	Auth() AuthConfigInterface
 }
 
 type GRPCConfigInterface interface {
@@ -32,4 +33,8 @@ type RedisConfigInterface interface {
 type LoggerConfigInterface interface {
 	Level() logger.Level
 	Encoder() logger.EncoderType
+}
+
+type AuthConfigInterface interface {
+	SessionTTLHours() int
 }

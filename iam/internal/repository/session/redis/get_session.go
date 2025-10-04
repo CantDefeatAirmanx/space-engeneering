@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	model_session "github.com/CantDefeatAirmanx/space-engeneering/iam/internal/model/session"
+	platform_redis "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/cache/redis"
 )
 
 func (s *SessionRepositoryRedisImpl) GetSession(
@@ -18,6 +19,9 @@ func (s *SessionRepositoryRedisImpl) GetSession(
 			fmt.Sprintf(sessionDataKeyV1, sessionUUID),
 		)
 	if err != nil {
+		if err == platform_redis.ErrNotFound {
+			return nil, model_session.ErrSessionExpired
+		}
 		return nil, err
 	}
 
