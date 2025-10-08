@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+// Package common.v1 содержит общие типы данных
+package common.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/common/v1;common_v1";
+
+import "common/v1/notification_method.proto";
+
+// UserInfo описывает информацию о пользователе
+message UserInfo {
+    // login логин пользователя
+    string login = 2;
+    // email электронная почта пользователя
+    string email = 3;
+    // notification_methods метод уведомления
+    repeated NotificationMethod notification_methods = 4;
+}

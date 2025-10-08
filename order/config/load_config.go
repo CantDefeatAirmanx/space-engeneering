@@ -7,6 +7,7 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 
+	config_auth_client "github.com/CantDefeatAirmanx/space-engeneering/order/config/auth_client"
 	config_http "github.com/CantDefeatAirmanx/space-engeneering/order/config/http"
 	config_inventory_client "github.com/CantDefeatAirmanx/space-engeneering/order/config/inventory_client"
 	config_kafka "github.com/CantDefeatAirmanx/space-engeneering/order/config/kafka"
@@ -16,6 +17,7 @@ import (
 )
 
 type ConfigData struct {
+	AuthClient      config_auth_client.AuthClientConfigData           `envPrefix:"authClient__"`
 	Postgres        config_postgres.PostgresConfigData                `envPrefix:"postgres__"`
 	HttpServer      config_http.HttpServerConfigData                  `envPrefix:"httpServer__"`
 	InventoryClient config_inventory_client.InventoryClientConfigData `envPrefix:"inventoryClient__"`

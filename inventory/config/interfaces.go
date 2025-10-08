@@ -7,6 +7,7 @@ type ConfigInterface interface {
 	GRPC() GRPCConfigInterface
 	Logger() LoggerConfigInterface
 	IsDev() bool
+	AuthClient() AuthClientConfigInterface
 }
 
 type MongoConfigInterface interface {
@@ -28,4 +29,8 @@ type GRPCConfigInterface interface {
 type LoggerConfigInterface interface {
 	Level() logger.Level
 	Encoder() logger.EncoderType
+}
+
+type AuthClientConfigInterface interface {
+	Url() string
 }

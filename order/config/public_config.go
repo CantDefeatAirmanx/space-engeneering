@@ -10,6 +10,7 @@ var (
 	_ PostgresConfigInterface        = (*PostgresConfigType)(nil)
 	_ LoggerConfigInterface          = (*LoggerConfigType)(nil)
 	_ KafkaConfigInterface           = (*KafkaConfigType)(nil)
+	_ AuthClientConfigInterface      = (*AuthClientConfigType)(nil)
 )
 
 var Config = &ConfigImpl{}
@@ -22,6 +23,7 @@ type ConfigImpl struct {
 	postgres        PostgresConfigInterface
 	logger          LoggerConfigInterface
 	kafka           KafkaConfigInterface
+	authClient      AuthClientConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigImpl {
@@ -42,6 +44,10 @@ func NewConfig(configData ConfigData) *ConfigImpl {
 
 		paymentClient: &PaymentClientConfigType{
 			url: configData.PaymentClient.Url,
+		},
+
+		authClient: &AuthClientConfigType{
+			url: configData.AuthClient.Url,
 		},
 
 		postgres: &PostgresConfigType{
@@ -83,6 +89,10 @@ func (c *ConfigImpl) InventoryClient() InventoryClientConfigInterface {
 
 func (c *ConfigImpl) PaymentClient() PaymentClientConfigInterface {
 	return c.paymentClient
+}
+
+func (c *ConfigImpl) AuthClient() AuthClientConfigInterface {
+	return c.authClient
 }
 
 func (c *ConfigImpl) Postgres() PostgresConfigInterface {
@@ -168,6 +178,14 @@ type PaymentClientConfigType struct {
 
 func (p *PaymentClientConfigType) Url() string {
 	return p.url
+}
+
+type AuthClientConfigType struct {
+	url string
+}
+
+func (a *AuthClientConfigType) Url() string {
+	return a.url
 }
 
 type KafkaConfigType struct {

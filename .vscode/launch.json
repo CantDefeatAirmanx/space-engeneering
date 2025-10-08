@@ -37,7 +37,6 @@
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/assembly/.env"
         },
-
         {
             "name": "Debug Kafka Setup",
             "type": "go",
@@ -46,6 +45,25 @@
             "program": "${workspaceFolder}/tools/kafka-setup/cmd/main.go",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/tools/kafka-setup/.env"
+        },
+
+        {
+            "name": "Debug Notification Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/notification/cmd/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/notification/.env"
+        },
+        {
+            "name": "Debug IAM Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/iam/cmd/service/main.go",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/iam/.env"
         },
 
         {
@@ -58,13 +76,13 @@
             "envFile": "${workspaceFolder}/assembly/.env"
         },
         {
-            "name": "Debug Notification Service",
+            "name": "Debug IAM Migrator",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/notification/cmd/main.go",
+            "program": "${workspaceFolder}/iam/cmd/migrator/main.go",
             "cwd": "${workspaceFolder}",
-            "envFile": "${workspaceFolder}/notification/.env"
+            "envFile": "${workspaceFolder}/iam/.env"
         }
     ],
     "compounds": [
@@ -72,10 +90,11 @@
             "name": "Debug All Services (Compound)",
             "configurations": [
                 "Debug Inventory Service",
-                "Debug Order Service",
                 "Debug Payment Service",
                 "Debug Assembly Service",
-                "Debug Notification Service"
+                "Debug Notification Service",
+                "Debug IAM Service",
+                "Debug Order Service"
             ],
             "stopAll": true,
             "presentation": {

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+// Package auth.v1 содержит API для работы с авторизацией
+package auth.v1;
+
+option go_package = "github.com/CantDefeatAirmanx/space-engeneering/shared/proto/auth/v1;auth_v1";
+
+import "common/v1/session.proto";
+import "common/v1/user.proto";
+
+// AuthService предоставляет API для работы с аутентификацией
+service AuthService {
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse);
+}
+
+// LoginRequest описывает запрос на вход в систему. Можно использовать email или login.
+message LoginRequest {
+    // email электронная почта пользователя
+    string login = 1;
+    // email электронная почта пользователя
+    string email = 2;
+    // password пароль пользователя
+    string password = 3;
+}
+
+// LoginResponse описывает ответ на запрос на вход в систему
+message LoginResponse {
+    // session_uuid идентификатор сессии
+    string session_uuid = 1;
+}
+
+// WhoAmIRequest описывает запрос на получение информации о пользователе
+message WhoAmIRequest {
+    // session_uuid идентификатор сессии
+    string session_uuid = 1;
+}
+
+// WhoAmIResponse описывает ответ на запрос на получение информации о пользователе
+message WhoAmIResponse {
+    // user_uuid идентификатор пользователя
+    common.v1.Session session = 1;
+    // user информация о пользователе
+    common.v1.User user = 2;
+}

@@ -94,3 +94,7 @@ require (
 replace github.com/CantDefeatAirmanx/space-engeneering/platform => ../platform
 
 replace github.com/CantDefeatAirmanx/space-engeneering/shared => ../shared
+
+replace github.com/CantDefeatAirmanx/space-engeneering/inventory => ../inventory
+
+replace github.com/CantDefeatAirmanx/space-engeneering/payment => ../payment

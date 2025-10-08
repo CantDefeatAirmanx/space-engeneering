@@ -25,13 +25,8 @@ type TxManager[GExecutor Executor] interface {
 	// Добавляет транзакцию в контекст.
 	BeginTx(
 		ctx context.Context,
-		operationsFn func(ctx context.Context) error,
-	) (Transaction, error)
-
-	// Извлекает транзакцию из контекста.
-	//
-	// Используется внутри operationsFn для получения транзакции и коммита/отката.
-	ExtractTransactionFromCtx(ctx context.Context) (Transaction, error)
+		operationsFn func(ctx context.Context, tx Transaction) error,
+	) error
 
 	// Извлекает конкретную реализацию базы данных из контекста.
 	//

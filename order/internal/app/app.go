@@ -113,6 +113,7 @@ func (a *App) initHttpServer(ctx context.Context) error {
 	router.Use(platform_middleware.CreateReqIdMiddleware())
 	router.Use(platform_middleware.CreateLogMiddleware(logger.Logger()))
 	router.Use(platform_middleware.CreateErrorLoggingMiddleware(logger.Logger()))
+	router.Use(platform_middleware.CreateAuthMiddleware(a.diContainer.GetAuthClient(ctx).GetRawClient()))
 
 	router.Mount("/", a.diContainer.GetOrderServer(ctx))
 

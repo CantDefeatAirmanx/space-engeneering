@@ -7,10 +7,11 @@ import (
 )
 
 var (
-	_ ConfigInterface       = (*ConfigType)(nil)
-	_ MongoConfigInterface  = (*MongoConfigType)(nil)
-	_ GRPCConfigInterface   = (*GRPCConfigType)(nil)
-	_ LoggerConfigInterface = (*LoggerConfigType)(nil)
+	_ ConfigInterface           = (*ConfigType)(nil)
+	_ MongoConfigInterface      = (*MongoConfigType)(nil)
+	_ GRPCConfigInterface       = (*GRPCConfigType)(nil)
+	_ LoggerConfigInterface     = (*LoggerConfigType)(nil)
+	_ AuthClientConfigInterface = (*AuthClientConfigType)(nil)
 )
 
 var Config = &ConfigType{}
@@ -20,6 +21,7 @@ type ConfigType struct {
 	grpc       GRPCConfigInterface
 	mongo      MongoConfigInterface
 	logger     LoggerConfigInterface
+	authClient AuthClientConfigInterface
 }
 
 func NewConfig(configData ConfigData) *ConfigType {
@@ -45,7 +47,15 @@ func NewConfig(configData ConfigData) *ConfigType {
 			level:   configData.LoggerConfig.Level,
 			encoder: configData.LoggerConfig.Encoder,
 		},
+
+		authClient: &AuthClientConfigType{
+			url: configData.AuthClient.Url,
+		},
 	}
+}
+
+func (c *ConfigType) AuthClient() AuthClientConfigInterface {
+	return c.authClient
 }
 
 func (c *ConfigType) GRPC() GRPCConfigInterface {
@@ -124,6 +134,14 @@ func (m *MongoConfigType) URI() string {
 		m.dbName,
 		m.authSource,
 	)
+}
+
+type AuthClientConfigType struct {
+	url string
+}
+
+func (a *AuthClientConfigType) Url() string {
+	return a.url
 }
 
 type LoggerConfigType struct {
