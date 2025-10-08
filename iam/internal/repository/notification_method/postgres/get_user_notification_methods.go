@@ -16,10 +16,10 @@ func (n *NotificationMethodRepositoryPostgres) GetUserNotificationMethods(
 		Select(
 			"n."+columnNotificationMethodUUID,
 			"n."+columnNotificationMethodProviderName,
-			"n."+columnNotificationMethodTarget,
+			"utn."+columnUserToNotificationMethodTarget,
 		).
 		From(tableUserToNotificationMethods + " AS utn").
-		Where(squirrel.Eq{columnUserToNotificationMethodUserUUID: userUUID}).
+		Where(squirrel.Eq{"utn." + columnUserToNotificationMethodUserUUID: userUUID}).
 		Join(tableNotificationMethods + " AS n ON n.uuid = utn.notification_method_uuid").
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()

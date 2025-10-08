@@ -17,9 +17,9 @@ service UserService {
 // RegisterRequest описывает запрос на регистрацию пользователя
 message RegisterRequest {
     // password пароль пользователя
-    string password = 3;
+    string password = 1;
     // info информация о пользователе
-    RegisterUserInfo info = 1;
+    RegisterUserInfo info = 2;
 }
 
 // RegisterUserInfo описывает информацию о пользователе необходимую для регистрации

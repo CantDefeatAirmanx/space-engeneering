@@ -18,6 +18,7 @@ import (
 	platform_kafka_producer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/producer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
+	auth_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/auth/v1"
 )
 
 type DiContainer struct {
@@ -184,4 +185,8 @@ func (d *DiContainer) GetOrderProducer(
 	d.orderProducer = orderProducer
 
 	return orderProducer
+}
+
+func (d *DiContainer) GetAuthClient(ctx context.Context) auth_v1.AuthServiceClient {
+	panic("not implemented")
 }

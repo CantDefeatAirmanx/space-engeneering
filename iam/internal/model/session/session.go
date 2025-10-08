@@ -17,6 +17,7 @@ type CreateUserSessionParams struct {
 }
 
 type LoginWithPasswordData struct {
+	Login    string
 	Email    string
 	Password string
 }

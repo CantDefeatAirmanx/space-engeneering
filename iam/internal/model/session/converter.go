@@ -22,6 +22,7 @@ func ConvertLoginWithPasswordDataToModel(
 	proto *auth_v1.LoginRequest,
 ) LoginWithPasswordData {
 	return LoginWithPasswordData{
+		Login:    proto.Login,
 		Email:    proto.Email,
 		Password: proto.Password,
 	}

@@ -11,7 +11,7 @@ func (u *UserServiceImpl) GetUser(
 	ctx context.Context,
 	userUUID string,
 ) (*model_user.User, error) {
-	user, err := u.userRepo.GetUserShortInfoWithHashPwd(
+	user, err := u.userRepo.GetUserShortInfo(
 		ctx,
 		model_user.UserFilter{UUID: userUUID},
 	)

@@ -9,7 +9,7 @@ import (
 
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *model_user.UserInfoWithHashPwd) (*model_user.UserShortInfo, error)
-	GetUserShortInfoWithHashPwd(ctx context.Context, filter model_user.UserFilter) (*model_user.UserInfoWithHashPwd, error)
+	GetUserShortInfo(ctx context.Context, filter model_user.UserFilter) (*model_user.UserInfoWithHashPwd, error)
 
 	platform_transaction.WithExecutor[UserRepository, platform_transaction.Executor]
 }

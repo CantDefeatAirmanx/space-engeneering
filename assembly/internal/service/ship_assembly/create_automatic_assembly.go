@@ -22,16 +22,15 @@ func (s *ShipAssemblyServiceImpl) createAutomaticAssembly(
 	var startedTime time.Time
 	var assembly *model_ship_assembly.ShipAssembly
 
-	_, err := s.txManager.BeginTx(
+	err := s.txManager.BeginTx(
 		ctx,
-		func(ctx context.Context) error {
-			repoWithTx, tx, err := getRepoWithTx(ctx, s)
+		func(ctx context.Context, tx platform_transaction.Transaction) error {
+			repoWithTx, err := getRepoWithTx(ctx, s)
 			if err != nil {
 				return err
 			}
 			defer func() {
 				if r := recover(); r != nil {
-					tx.RollbackWithRetry(ctx)
 					panic(r)
 				}
 			}()
@@ -55,7 +54,6 @@ func (s *ShipAssemblyServiceImpl) createAutomaticAssembly(
 
 			err = repoWithTx.SetShipAssemblyStatusPending(ctx, assemblySelectParams)
 			if err != nil {
-				tx.RollbackWithRetry(ctx)
 				return err
 			}
 
@@ -67,13 +65,10 @@ func (s *ShipAssemblyServiceImpl) createAutomaticAssembly(
 			case <-ticker.C:
 				err = repoWithTx.SetShipAssemblyStatusCompleted(ctx, assemblySelectParams)
 				if err != nil {
-					tx.RollbackWithRetry(ctx)
 					return err
 				}
 
-				err = tx.Commit(ctx)
 				if err != nil {
-					tx.RollbackWithRetry(ctx)
 					return err
 				}
 			case <-ctx.Done():
@@ -113,16 +108,12 @@ func (s *ShipAssemblyServiceImpl) createAutomaticAssembly(
 func getRepoWithTx(
 	ctx context.Context,
 	s *ShipAssemblyServiceImpl,
-) (ShipAssemblyRepository, platform_transaction.Transaction, error) {
-	tx, err := s.txManager.ExtractTransactionFromCtx(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
+) (ShipAssemblyRepository, error) {
 	executor, err := s.txManager.ExtractExecutorFromCtx(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return s.repository.WithExecutor(executor), tx, nil
+	return s.repository.WithExecutor(executor), nil
 }
 
 func createErrWithInfo(

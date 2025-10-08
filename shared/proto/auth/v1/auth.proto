@@ -14,12 +14,14 @@ service AuthService {
     rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse);
 }
 
-// LoginRequest описывает запрос на вход в систему
+// LoginRequest описывает запрос на вход в систему. Можно использовать email или login.
 message LoginRequest {
     // email электронная почта пользователя
-    string email = 1;
+    string login = 1;
+    // email электронная почта пользователя
+    string email = 2;
     // password пароль пользователя
-    string password = 2;
+    string password = 3;
 }
 
 // LoginResponse описывает ответ на запрос на вход в систему

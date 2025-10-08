@@ -12,9 +12,10 @@ func (a *AuthServiceImpl) Login(
 	ctx context.Context,
 	loginWithPasswordData *model_session.LoginWithPasswordData,
 ) (*LoginWithPasswordResult, error) {
-	user, err := a.userRepository.GetUserShortInfoWithHashPwd(
+	user, err := a.userRepository.GetUserShortInfo(
 		ctx,
 		model_user.UserFilter{
+			Login: loginWithPasswordData.Login,
 			Email: loginWithPasswordData.Email,
 		},
 	)

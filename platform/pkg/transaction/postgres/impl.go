@@ -28,15 +28,15 @@ func NewTransactionManagerPostgres(
 
 func (t *TransactionManagerPostgres) BeginTx(
 	ctx context.Context,
-	operationsFn func(ctx context.Context) error,
-) (platform_transaction.Transaction, error) {
+	operationsFn func(ctx context.Context, tx platform_transaction.Transaction) error,
+) error {
 	pgxTx, err := t.pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:       pgx.ReadCommitted,
 		AccessMode:     pgx.ReadWrite,
 		DeferrableMode: pgx.NotDeferrable,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	transaction := newTransaction(
@@ -52,11 +52,18 @@ func (t *TransactionManagerPostgres) BeginTx(
 		withTransaction,
 		transaction,
 	)
-	if err := operationsFn(withExecutor); err != nil {
-		return nil, err
+	if err := operationsFn(withExecutor, transaction); err != nil {
+		transaction.RollbackWithRetry(ctx)
+		return err
 	}
 
-	return transaction, nil
+	err = transaction.Commit(ctx)
+	if err != nil {
+		transaction.RollbackWithRetry(ctx)
+		return err
+	}
+
+	return nil
 }
 
 func (t *TransactionManagerPostgres) createCtxWithTx(
@@ -91,16 +98,4 @@ func (t *TransactionManagerPostgres) ExtractExecutorFromCtx(
 		return nil, errors.New("executor not found in context")
 	}
 	return executor, nil
-}
-
-func (t *TransactionManagerPostgres) ExtractTransactionFromCtx(
-	ctx context.Context,
-) (platform_transaction.Transaction, error) {
-	tx, ok := ctx.Value(
-		platform_transaction.TransactionCtxKey,
-	).(platform_transaction.Transaction)
-	if !ok {
-		return nil, errors.New("transaction not found in context")
-	}
-	return tx, nil
 }

@@ -19,7 +19,7 @@ func (a *AuthServiceImpl) WhoAmI(
 		return nil, model_session.ErrUnauthorized
 	}
 
-	user, err := a.userRepository.GetUserShortInfoWithHashPwd(
+	user, err := a.userRepository.GetUserShortInfo(
 		ctx,
 		model_user.UserFilter{
 			UUID: session.UserUUID,

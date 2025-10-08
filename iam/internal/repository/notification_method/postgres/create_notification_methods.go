@@ -23,14 +23,12 @@ func (n *NotificationMethodRepositoryPostgres) CreateNotificationMethods(
 		Columns(
 			columnNotificationMethodUUID,
 			columnNotificationMethodProviderName,
-			columnNotificationMethodTarget,
 		).
 		PlaceholderFormat(squirrel.Dollar)
 	for _, method := range repoMethods {
 		queryBuilder = queryBuilder.Values(
 			method.NotificationMethodUUID,
 			method.NotificationMethodProviderName,
-			method.NotificationMethodTarget,
 		)
 	}
 

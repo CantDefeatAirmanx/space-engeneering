@@ -58,9 +58,9 @@ func newBusinessError(params newBusinessErrorParams) *BusinessError {
 }
 
 type BusinessHttpErrResponse struct {
-	Code     ErrCode
-	Message  string
-	HttpCode int
+	Code     ErrCode `json:"code"`
+	Message  string  `json:"message"`
+	HttpCode int     `json:"http_code"`
 }
 
 func (e *BusinessError) Error() string {

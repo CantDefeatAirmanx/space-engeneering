@@ -10,10 +10,11 @@ import (
 	model_user "github.com/CantDefeatAirmanx/space-engeneering/iam/internal/model/user"
 )
 
-func (u *UserRepositoryPostgres) GetUserShortInfoWithHashPwd(
+func (u *UserRepositoryPostgres) GetUserShortInfo(
 	ctx context.Context,
 	filter model_user.UserFilter,
 ) (*model_user.UserInfoWithHashPwd, error) {
+	filterParams := getFilterParams(filter)
 	query, args, err := squirrel.
 		Select(
 			columnUserUUID,
@@ -25,7 +26,7 @@ func (u *UserRepositoryPostgres) GetUserShortInfoWithHashPwd(
 			columnUserUpdatedAt,
 		).
 		From(tableUsers).
-		Where(getFilterParams(filter)).
+		Where(filterParams).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {

@@ -5,7 +5,6 @@ const (
 
 	columnNotificationMethodUUID         = "uuid"
 	columnNotificationMethodProviderName = "provider_name"
-	columnNotificationMethodTarget       = "target"
 
 	columnNotificationMethodCreatedAt = "created_at"
 	columnNotificationMethodUpdatedAt = "updated_at"
@@ -16,6 +15,7 @@ const (
 
 	columnUserToNotificationMethodUserUUID               = "user_uuid"
 	columnUserToNotificationMethodNotificationMethodUUID = "notification_method_uuid"
+	columnUserToNotificationMethodTarget                 = "target"
 )
 
 var (
