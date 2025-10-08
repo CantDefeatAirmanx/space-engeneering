@@ -9,12 +9,14 @@ import (
 	config_grpc "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/grpc"
 	config_logger "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/logger"
 	config_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/config/mongo"
+	config_auth_client "github.com/CantDefeatAirmanx/space-engeneering/order/config/auth_client"
 )
 
 type ConfigData struct {
-	MongoConfig  config_mongo.MongoConfigData   `envPrefix:"mongo__"`
-	GRPCConfig   config_grpc.GRPCConfigData     `envPrefix:"grpc__"`
-	LoggerConfig config_logger.LoggerConfigData `envPrefix:"logger__"`
+	AuthClient   config_auth_client.AuthClientConfigData `envPrefix:"authClient__"`
+	MongoConfig  config_mongo.MongoConfigData            `envPrefix:"mongo__"`
+	GRPCConfig   config_grpc.GRPCConfigData              `envPrefix:"grpc__"`
+	LoggerConfig config_logger.LoggerConfigData          `envPrefix:"logger__"`
 }
 
 const (

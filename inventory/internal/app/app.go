@@ -127,6 +127,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 			interceptor.UnaryErrorInterceptor(
 				interceptor.WithLogger(logger.Logger()),
 			),
+			interceptor.AuthInterceptor(a.di.GetAuthClient(ctx).GetRawClient()),
 		),
 		grpc.Creds(insecure.NewCredentials()),
 	)

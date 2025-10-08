@@ -9,6 +9,7 @@ import (
 
 	"github.com/CantDefeatAirmanx/space-engeneering/order/config"
 	api_order_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/api/order/v1"
+	client_auth_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/auth/v1"
 	client_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/inventory/v1"
 	client_payment_v1 "github.com/CantDefeatAirmanx/space-engeneering/order/internal/client/payment/v1"
 	repository_order_postgre "github.com/CantDefeatAirmanx/space-engeneering/order/internal/repository/order/postgre_impl"
@@ -18,7 +19,6 @@ import (
 	platform_kafka_producer "github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/kafka/producer"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/logger"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
-	auth_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/proto/auth/v1"
 )
 
 type DiContainer struct {
@@ -32,6 +32,7 @@ type DiContainer struct {
 	orderProducer   service_order.OrderProducer
 	inventoryClient client_inventory_v1.InventoryV1Client
 	paymentClient   client_payment_v1.PaymentV1Client
+	authClient      client_auth_v1.AuthV1Client
 }
 
 func NewDiContainer(closer closer.Closer) *DiContainer {
@@ -143,6 +144,28 @@ func (d *DiContainer) GetInventoryClient(
 	return inventoryClient
 }
 
+func (d *DiContainer) GetAuthClient(ctx context.Context) client_auth_v1.AuthV1Client {
+	if d.authClient != nil {
+		return d.authClient
+	}
+
+	authClient, err := client_auth_v1.NewAuthClient(
+		ctx,
+		config.Config.AuthClient().Url(),
+	)
+	if err != nil {
+		logger.Logger().Error("Failed to create auth client", zap.Error(err))
+		panic(err)
+	}
+
+	d.closer.AddNamed("Auth GRPC Client", func(ctx context.Context) error {
+		return authClient.Close()
+	})
+	d.authClient = authClient
+
+	return authClient
+}
+
 func (d *DiContainer) GetPaymentClient(
 	ctx context.Context,
 ) client_payment_v1.PaymentV1Client {
@@ -185,8 +208,4 @@ func (d *DiContainer) GetOrderProducer(
 	d.orderProducer = orderProducer
 
 	return orderProducer
-}
-
-func (d *DiContainer) GetAuthClient(ctx context.Context) auth_v1.AuthServiceClient {
-	panic("not implemented")
 }

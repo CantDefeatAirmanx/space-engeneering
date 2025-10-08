@@ -8,6 +8,7 @@ type ConfigInterface interface {
 	HttpServer() HttpServerConfigInterface
 	InventoryClient() InventoryClientConfigInterface
 	PaymentClient() PaymentClientConfigInterface
+	AuthClient() AuthClientConfigInterface
 	Logger() LoggerConfigInterface
 	Kafka() KafkaConfigInterface
 }
@@ -45,4 +46,8 @@ type KafkaConfigInterface interface {
 type LoggerConfigInterface interface {
 	Level() logger.Level
 	Encoder() logger.EncoderType
+}
+
+type AuthClientConfigInterface interface {
+	Url() string
 }

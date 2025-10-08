@@ -6,9 +6,11 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/config"
 	api_inventory_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/api/inventory/v1"
+	client_auth_v1 "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/client/auth/v1"
 	repository_part_mongo "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/repository/part/mongo_impl"
 	service_part "github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/service/part"
 	"github.com/CantDefeatAirmanx/space-engeneering/inventory/internal/shared/test_data"
@@ -21,6 +23,7 @@ import (
 type DiContainer struct {
 	closer closer.Closer
 
+	authClient     client_auth_v1.AuthV1Client
 	inventoryAPI   inventory_v1.InventoryServiceServer
 	partService    service_part.PartService
 	partRepository service_part.PartRepository
@@ -107,4 +110,26 @@ func (d *DiContainer) GetMongoClient(ctx context.Context) *mongo.Client {
 	})
 
 	return d.mongoClient
+}
+
+func (d *DiContainer) GetAuthClient(ctx context.Context) client_auth_v1.AuthV1Client {
+	if d.authClient != nil {
+		return d.authClient
+	}
+
+	authClient, err := client_auth_v1.NewAuthClient(
+		ctx,
+		config.Config.AuthClient().Url(),
+	)
+	if err != nil {
+		logger.Logger().Error("Failed to create auth client", zap.Error(err))
+		panic(err)
+	}
+
+	d.closer.AddNamed("Auth GRPC Client", func(ctx context.Context) error {
+		return authClient.Close()
+	})
+	d.authClient = authClient
+
+	return authClient
 }

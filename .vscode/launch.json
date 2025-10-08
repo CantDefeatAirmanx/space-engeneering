@@ -90,11 +90,11 @@
             "name": "Debug All Services (Compound)",
             "configurations": [
                 "Debug Inventory Service",
-                "Debug Order Service",
                 "Debug Payment Service",
                 "Debug Assembly Service",
                 "Debug Notification Service",
-                "Debug IAM Service"
+                "Debug IAM Service",
+                "Debug Order Service"
             ],
             "stopAll": true,
             "presentation": {

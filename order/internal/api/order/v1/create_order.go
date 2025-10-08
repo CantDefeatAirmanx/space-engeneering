@@ -8,6 +8,7 @@ import (
 
 	service_order "github.com/CantDefeatAirmanx/space-engeneering/order/internal/service/order"
 	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/contexts"
+	"github.com/CantDefeatAirmanx/space-engeneering/platform/pkg/interceptor"
 	order_v1 "github.com/CantDefeatAirmanx/space-engeneering/shared/pkg/openapi/order/v1"
 )
 
@@ -23,7 +24,7 @@ func (api *Api) CreateOrder(
 	)
 
 	result, err := api.orderService.CreateOrder(
-		ctx,
+		interceptor.ForwardSessionUUIDToOutgoingCtx(ctx),
 		service_order.CreateOrderParams{
 			UserUUID:  req.UserUUID,
 			PartUuids: req.PartUuids,
